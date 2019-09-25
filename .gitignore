@@ -1,0 +1,8 @@
+firebase-debug.log
+functions/node_modules/*
+node_modules/*
+.DS_Store
+
+config.js
+*/config.js
+public/config.js
