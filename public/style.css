@@ -95,7 +95,7 @@ body {
         transform: translateY(25%);
     }
 }
-
+/*
 @media screen and (min-width: 900px) {
     #countdown-content {
         display: flex;
@@ -130,4 +130,4 @@ body {
         margin-bottom: 30px;
         justify-content: space-evenly;
     }
-}
+}*/
