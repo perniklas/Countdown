@@ -1,13 +1,25 @@
 var db,
-    soonest = 2569600000000;
+    countdown,
+    currentTimer = {},
+    allTimers = [];
 
 $(function() {
     db = firebase.firestore();
-    let timers = fetchAllTimers();
-    let timer = startCountdown(soonest);
+    allTimers = fetchAllTimers();
+    
+    if (!allTimers[0]) {
+        countdown = startCountdown({end: new Date().getTime() + 2629800000, name: "A month has passed"});
+    } else {
+        setTimeout(() => {
+            currentTimer = allTimers[0];
+        }, fetchAllTimers);
+        countdown = startCountdown(currentTimer);
+    }
 });
 
-function startCountdown(end) {
+function startCountdown(timer) {
+    clearInterval(countdown);
+    let end = timer.end.seconds * 100;
     return setInterval(function() {
         let now = new Date().getTime();
         timeBetween = end - now;
@@ -34,10 +46,6 @@ function fetchAllTimers() {
     db.collection("timers").get().then((snapshot) => {
         snapshot.forEach((doc) => {
             timers.push(doc.data());
-            console.log(doc.data());
-            if (doc.data().end.seconds * 100 < soonest) {
-                soonest = doc.data().end.seconds * 100;
-            }
         });
     });
     return timers;
