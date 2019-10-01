@@ -6,7 +6,7 @@ var db,
 $(function() {
     db = firebase.firestore();
     allTimers = fetchAllTimers();
-    
+
     if (!allTimers[0]) {
         countdown = startCountdown({end: new Date().getTime() + 2629800000, name: "A month has passed"});
     } else {
@@ -21,6 +21,7 @@ function startCountdown(timer) {
     clearInterval(countdown);
     let end = timer.end.seconds * 100;
     return setInterval(function() {
+        $('#countdown-title').empty().text(timer.name || "Untitled");
         let now = new Date().getTime();
         timeBetween = end - now;
         if (timeBetween > 0) {
