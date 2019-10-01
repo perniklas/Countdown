@@ -1,15 +1,33 @@
-$(function() {
-    let timer = countdown(new Date('2019-12-31').getTime());
-    db.collection("timers").get().then((snapshot) => {
-        snapshot.forEach((doc) => {
-            console.log(doc.data());
-        });
-    });
+var db,
+    allTimers,
+    countdown,
+    currentTimer = {};
+
+$(() => {
+    //db = firebase.firestore();
+    //allTimers = fetchAllTimers();
+    let seconds = 0;    
+    // var timersLoaded = setInterval(() => {
+    //     console.log('Second: ' + seconds);
+    //     if (++seconds == 5) clearInterval(timersLoaded);
+    // }, 1000);
+
+    // if (!allTimers[0]) {
+    //     clearInterval(countdown);
+    //     countdown = startCountdown({end: new Date().getTime() + 2629800000, name: "A month has passed"});
+    // } else {
+    //     currentTimer = allTimers[0];
+    //     clearInterval(countdown);
+    //     countdown = startCountdown(currentTimer);
+    // }
 });
 
-function countdown(end) {
-    return setInterval(function() {
+function startCountdown(timer) {
+    console.log(timer);
+    let end = timer.end.seconds * 1000;
+    return setInterval(() => {
         let now = new Date().getTime();
+        $('#countdown-title').empty().text(timer.name || "Untitled");
         timeBetween = end - now;
         if (timeBetween > 0) {
             let days = Math.floor(timeBetween / (1000 * 60 * 60 * 24)),
@@ -27,4 +45,16 @@ function countdown(end) {
             $('#seconds').text("0");
         }
     }, 1000);
+}
+
+function fetchAllTimers() {
+    let timers = [];
+    db.collection("timers").get().then((snapshot) => {
+        snapshot.forEach((doc) => {
+            timers.push(doc.data());
+        });
+    });
+    //timers.sort((a, b) => a.end - b.end); 
+
+    return timers;
 }

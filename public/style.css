@@ -19,18 +19,21 @@ body {
 #countdown-header {
     padding: 15px 23px;
     text-align: center;
-    background: linear-gradient(to top left, #FC01D0, #13C6FB);
+    color: #13C6FB;
+    /*background: linear-gradient(to top left, #FC01D0, #13C6FB);
     -webkit-mask-image: linear-gradient(to top left, #FC01D0, #13C6FB);
     background-clip: text;
     color: transparent;
     -webkit-background-clip: text;
     -moz-background-clip: text;
     -webkit-text-fill-color: transparent;
+    */
 }
 
 #countdown-title {
     font-size: 3em;
     margin: 0;
+    color: #FC01D0;
 }
 
 #countdown-content {
@@ -85,6 +88,7 @@ body {
     #countdownsContainer {
         transform: translateY(calc(50vh - 50%));
         width: 50%;
+        max-width: 515px;
         margin: 0 auto;
     }
 }
@@ -95,7 +99,7 @@ body {
         transform: translateY(25%);
     }
 }
-
+/*
 @media screen and (min-width: 900px) {
     #countdown-content {
         display: flex;
@@ -130,4 +134,4 @@ body {
         margin-bottom: 30px;
         justify-content: space-evenly;
     }
-}
+}*/
