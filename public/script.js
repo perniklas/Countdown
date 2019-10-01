@@ -1,13 +1,25 @@
+var db,
+    countdown,
+    currentTimer = {},
+    allTimers = [];
+
 $(function() {
-    let timer = countdown(new Date('2019-12-31').getTime());
-    db.collection("timers").get().then((snapshot) => {
-        snapshot.forEach((doc) => {
-            console.log(doc.data());
-        });
-    });
+    db = firebase.firestore();
+    allTimers = fetchAllTimers();
+    
+    if (!allTimers[0]) {
+        countdown = startCountdown({end: new Date().getTime() + 2629800000, name: "A month has passed"});
+    } else {
+        setTimeout(() => {
+            currentTimer = allTimers[0];
+        }, fetchAllTimers);
+        countdown = startCountdown(currentTimer);
+    }
 });
 
-function countdown(end) {
+function startCountdown(timer) {
+    clearInterval(countdown);
+    let end = timer.end.seconds * 100;
     return setInterval(function() {
         let now = new Date().getTime();
         timeBetween = end - now;
@@ -27,4 +39,14 @@ function countdown(end) {
             $('#seconds').text("0");
         }
     }, 1000);
+}
+
+function fetchAllTimers() {
+    let timers = [];
+    db.collection("timers").get().then((snapshot) => {
+        snapshot.forEach((doc) => {
+            timers.push(doc.data());
+        });
+    });
+    return timers;
 }
