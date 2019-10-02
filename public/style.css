@@ -6,7 +6,24 @@ body {
     background-image: linear-gradient(to bottom right, #FC01D0, #13C6FB);
 }
 
+.menu-container {
+    width: fit-content;
+    height: fit-content;
+    padding: 10px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translateX(100%);
+}
+
+#menu-button {
+    font-size: 4em;
+    color: white;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
+}
+
 #countdownsContainer {
+    position: relative;
     width: 90%;
     height: fit-content;
     margin: auto;

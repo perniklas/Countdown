@@ -27,6 +27,14 @@ function loadPage() {
     setTimeout(doneLoading, 1000);
 }
 
+$('#menu-button').on('click', () => {
+    var index = allTimers.findIndex(timer => timer.name === currentTimer.name && timer.end.milliseconds === currentTimer.end.milliseconds);
+    if (index > allTimers.length) {
+        index = 0;
+    }
+    countdown = startCountdown(allTimers[index]);
+});
+
 function doneLoading() {
     $('#countdown-header, #countdown-content, #counters-text').slideDown();
 }
