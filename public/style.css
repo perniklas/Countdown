@@ -13,13 +13,19 @@ body {
     position: absolute;
     right: 0;
     top: 0;
-    transform: translateX(100%);
+    transform: translateX(108%);
 }
 
 #menu-button {
     font-size: 4em;
     color: white;
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
+}
+
+#menu-button:hover {
+    cursor: pointer;
+    font-size: 4.3em;
+    transition: ease 0.3s;
 }
 
 #countdownsContainer {

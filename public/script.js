@@ -7,6 +7,14 @@ $(() => {
     db = firebase.firestore();
     allTimers = fetchAllTimers();
     loadPage();
+
+    $('#menu-button').on('click', () => {
+        var index = allTimers.findIndex(timer => timer.name === currentTimer.name && timer.end.milliseconds === currentTimer.end.milliseconds);
+        if (index > allTimers.length) {
+            index = 0;
+        }
+        countdown = startCountdown(allTimers[index]);
+    });
 });
 
 function loadPage() {
@@ -26,14 +34,6 @@ function loadPage() {
     }, 1000);
     setTimeout(doneLoading, 1000);
 }
-
-$('#menu-button').on('click', () => {
-    var index = allTimers.findIndex(timer => timer.name === currentTimer.name && timer.end.milliseconds === currentTimer.end.milliseconds);
-    if (index > allTimers.length) {
-        index = 0;
-    }
-    countdown = startCountdown(allTimers[index]);
-});
 
 function doneLoading() {
     $('#countdown-header, #countdown-content, #counters-text').slideDown();
