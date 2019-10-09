@@ -1,4 +1,4 @@
-auth.onAuthStateChanged(user => {
+function authState(user) {
     if (user) {
         user.getIdTokenResult().then(idTokenResult => {
             user.admin = idTokenResult.claims.admin;
@@ -11,4 +11,4 @@ auth.onAuthStateChanged(user => {
     } else {
 
     }
-});
+}

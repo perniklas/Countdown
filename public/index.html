@@ -14,30 +14,93 @@
     <script src="scripts/main.js"></script>
     <link rel="shortcut icon" type="image/png" href="img/icon.png"/>
     <link rel="stylesheet" type="text/css" href="styles/style.css" />
+    <link rel="stylesheet" type="text/css" href="styles/input.css" />
   </head>
   <body>
-    <div id="countdownsContainer" class="container">
-      <div id="countdown-header" class="hidden">
-        <h1>Countdown to</h1>
-        <h2 id="countdown-title">Flytte til Oslo</h2>
+    <div id="content">
+      <!-- <div id="login">
+        <form id="loginform">
+          <h1>Log in</h1>
+          <label for="login-username">Email</label>
+          <input id="login-username" type="email"/>
+
+          <label for="login-password">Password</label>
+          <input id="login-password" type="password" required/>
+          <input type="submit" value="Go"/>
+        </form>
+        <form id="signupform" class="hidden">
+          <h1>Sign up</h1>
+          <label for="signup-username">Email</label>
+          <input id="signup-username" type="email"/>
+          
+          <label for="signup-password">Password</label>
+          <input id="signup-password" type="password" required/>
+          <input type="submit" value="Go"/>
+        </form>
+        <a href="#" id="signup">or sign up</a>
+      </div> -->
+      <div class="wrapper" id="login">
+          <form id="loginform">
+              <h1>Sign in</h1>
+              <hr class="sep" />
+              <div class="group">
+                  <input id="login-username" type="email" required="required" />
+                  <span class="highlight"></span>
+                  <span class="bar"></span>
+                  <label for="login-username">Email</label></div>
+              <div class="group">
+                  <input id="login-password" type="password" required="required" />
+                  <span class="highlight"></span>
+                  <span class="bar"></span>
+                  <label for="login-password">Password</label></div>
+              <div class="btn-box">
+                  <button class="btn btn-cancel" type="button">cancel</button>
+                  <button class="btn btn-submit" type="submit">submit</button>
+              </div>
+          </form>
+          <form id="signupform" class="hidden">
+              <h1>Sign up</h1>
+              <hr class="sep" />
+              <div class="group">
+                  <input id="signup-username" type="email" required="required" />
+                  <span class="highlight"></span>
+                  <span class="bar"></span>
+                  <label for="signup-username">Email</label></div>
+              <div class="group">
+                  <input id="signup-password" type="password" required="required" />
+                  <span class="highlight"></span>
+                  <span class="bar"></span>
+                  <label for="signup-password">Password</label></div>
+              <div class="btn-box">
+                  <button class="btn btn-cancel" type="button">cancel</button>
+                  <button class="btn btn-submit" type="submit">submit</button>
+              </div>
+          </form>
+          <a href="#" id="signup"><h5>or sign up</h5></a>
       </div>
-      <div id="countdown-content" class="hidden">
-        <div id="counters">
-          <p id="days"></p>
-          <p id="hours"></p>
-          <p id="minutes"></p>
-          <p id="seconds"></p>
+      <div id="countdownsContainer" class="container">
+        <div id="countdown-header" class="hidden">
+          <h1>Countdown to</h1>
+          <h2 id="countdown-title">Flytte til Oslo</h2>
         </div>
-        <div id="counters-text" class="hidden">
-          <p> days</p>
-          <p> hours</p>
-          <p> minutes</p>
-          <p> seconds</p>
+        <div id="countdown-content" class="hidden">
+          <div id="counters">
+            <p id="days"></p>
+            <p id="hours"></p>
+            <p id="minutes"></p>
+            <p id="seconds"></p>
+          </div>
+          <div id="counters-text" class="hidden">
+            <p> days</p>
+            <p> hours</p>
+            <p> minutes</p>
+            <p> seconds</p>
+          </div>
         </div>
+        <div class="menu-container">
+            <a id="menu-button">☰</a>
+          </div>
       </div>
-      <div class="menu-container">
-          <a id="menu-button">☰</a>
-        </div>
     </div>
     
     <!-- <a href="#" id="allCountdowns" class="hidden">

@@ -6,6 +6,38 @@ body {
     background-image: linear-gradient(to bottom right, #FC01D0, #13C6FB);
 }
 
+/* LOGIN AND SIGNUP */
+
+#content {
+    position: relative;
+    width: 90%;
+    height: fit-content;
+    margin: auto;
+    transform: translateY(2em);
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 2em;
+}
+
+#login {
+    padding: 15px;
+    width: fit-content;
+    margin: auto;
+}
+
+#login form {
+    margin: 20px 15px;
+}
+
+/* #login input, #login label {
+    display: block;
+} */
+
+#login h1 {
+    margin: 10px auto 0 15px;
+}
+
+/*        END       */
 .menu-container {
     width: fit-content;
     height: fit-content;
@@ -26,17 +58,6 @@ body {
     cursor: pointer;
     font-size: 4.3em;
     transition: ease 0.3s;
-}
-
-#countdownsContainer {
-    position: relative;
-    width: 90%;
-    height: fit-content;
-    margin: auto;
-    transform: translateY(2em);
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
-    background-color: rgba(255, 255, 255, 0.85);
-    border-radius: 2em;
 }
 
 #countdown-header {
@@ -108,7 +129,7 @@ body {
         margin: 0;
     }
 
-    #countdownsContainer {
+    #content {
         transform: translateY(calc(50vh - 50%));
         width: 50%;
         max-width: 515px;
@@ -117,7 +138,7 @@ body {
 }
 
 @media screen and (max-width: 600px) and (min-height: 800px) {
-    #countdownsContainer {
+    #content {
         margin: auto;
         transform: translateY(25%);
     }

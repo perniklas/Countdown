@@ -7,6 +7,10 @@ var db,
 $(() => {
     db = firebase.firestore();
     auth = firebase.auth();
+
+    auth.onAuthStateChanged((user) => {
+        authState(user);
+    });
     allTimers = fetchAllTimers();
     //loadPage();
 
@@ -15,6 +19,36 @@ $(() => {
         if (index > allTimers.length) { index = 0; }
         countdown = startCountdown(allTimers[index]);
     });
+
+    $('#loginform').on('submit', () => {
+        let username = $('#login-username').value,
+            password = $('#login-password').value;
+        console.log(username + ": " + password);
+        
+        auth.signInWithEmailAndPassword(username, password).then((cred) => {
+            $(this).reset();
+            $(this).querySelector('.error').innerHTML = '';
+            console.log('Signed in with: ' + cred);
+            loadPage();
+        }).catch(err => {
+            $(this).querySelector('.error').innerHTML = err.message;   
+        });
+    });
+    
+    $('#signupform').on('submit', () => {
+        console.log('sign');
+    }); 
+
+    $('#signup').on('click', () => {
+        if ((!$('#loginform').is(':hidden'))) {
+            $('#loginform, #signupform').slideToggle();
+            $('#signup h5').text("or sign in");
+        } else {
+            $('#loginform, #signupform').slideToggle();
+            $('#signup h5').text("or sign up");
+        }
+    });
+
 });
 
 function loadPage(authenticated = false) {
