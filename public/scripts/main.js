@@ -1,38 +1,42 @@
 var db,
+    auth,
     allTimers,
     countdown,
     currentTimer = {};
 
 $(() => {
     db = firebase.firestore();
+    auth = firebase.auth();
     allTimers = fetchAllTimers();
-    loadPage();
+    //loadPage();
 
     $('#menu-button').on('click', () => {
         var index = allTimers.findIndex(timer => timer.name === currentTimer.name && timer.end.milliseconds === currentTimer.end.milliseconds);
-        if (index > allTimers.length) {
-            index = 0;
-        }
+        if (index > allTimers.length) { index = 0; }
         countdown = startCountdown(allTimers[index]);
     });
 });
 
-function loadPage() {
-    let seconds = 0;    
-    var timersLoaded = setInterval(() => {
-        console.log('Second: ' + seconds * 2);
-        if (++seconds == 6 || allTimers.length > 0) {
-            if (allTimers.length > 0) {
-                clearInterval(timersLoaded);
-                convertEndToMillis(allTimers);
-                currentTimer = findSoonestTimer();
-                countdown = startCountdown(currentTimer);
-            } else {
-                countdown = startCountdown({name: 'No timers found', end: new Date().getTime() + 25252252});
+function loadPage(authenticated = false) {
+    if(authenticated) {
+        let seconds = 0;    
+        var timersLoaded = setInterval(() => {
+            console.log('Second: ' + seconds * 2);
+            if (++seconds == 6 || allTimers.length > 0) {
+                if (allTimers.length > 0) {
+                    clearInterval(timersLoaded);
+                    convertEndToMillis(allTimers);
+                    currentTimer = findSoonestTimer();
+                    countdown = startCountdown(currentTimer);
+                } else {
+                    countdown = startCountdown({name: 'No timers found', end: new Date().getTime() + 25252252});
+                }
             }
-        }
-    }, 1000);
-    setTimeout(doneLoading, 1000);
+        }, 1000);
+        setTimeout(doneLoading, 1000);
+    } else {
+        // render "no timers for you"
+    }
 }
 
 function doneLoading() {
