@@ -6,7 +6,30 @@ body {
     background-image: linear-gradient(to bottom right, #FC01D0, #13C6FB);
 }
 
+.menu-container {
+    width: fit-content;
+    height: fit-content;
+    padding: 10px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translateX(108%);
+}
+
+#menu-button {
+    font-size: 4em;
+    color: white;
+    text-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
+}
+
+#menu-button:hover {
+    cursor: pointer;
+    font-size: 4.3em;
+    transition: ease 0.3s;
+}
+
 #countdownsContainer {
+    position: relative;
     width: 90%;
     height: fit-content;
     margin: auto;
@@ -19,18 +42,21 @@ body {
 #countdown-header {
     padding: 15px 23px;
     text-align: center;
-    background: linear-gradient(to top left, #FC01D0, #13C6FB);
+    color: #13C6FB;
+    /*background: linear-gradient(to top left, #FC01D0, #13C6FB);
     -webkit-mask-image: linear-gradient(to top left, #FC01D0, #13C6FB);
     background-clip: text;
     color: transparent;
     -webkit-background-clip: text;
     -moz-background-clip: text;
     -webkit-text-fill-color: transparent;
+    */
 }
 
 #countdown-title {
     font-size: 3em;
     margin: 0;
+    color: #FC01D0;
 }
 
 #countdown-content {

@@ -4,12 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Countdown</title>
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/6.6.1/firebase-app.js"></script>
-    <script defer src="/__/firebase/6.6.1/firebase-auth.js"></script>
-    <script defer src="/__/firebase/6.6.1/firebase-firestore.js"></script>
+
+    <script defer src="/__/firebase/7.0.0/firebase-app.js"></script>
+    <script defer src="/__/firebase/7.0.0/firebase-auth.js"></script>
+    <script defer src="/__/firebase/7.0.0/firebase-firestore.js"></script>
     <script defer src="/__/firebase/init.js"></script>
-    <!-- initialize the SDK after all desired features are loaded -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="script.js"></script>
     <link rel="shortcut icon" type="image/png" href="icon.png"/>
@@ -17,30 +16,34 @@
   </head>
   <body>
     <div id="countdownsContainer" class="container">
-      <div id="countdown-header">
+      <div id="countdown-header" class="hidden">
         <h1>Countdown to</h1>
         <h2 id="countdown-title">Flytte til Oslo</h2>
       </div>
-      <div id="countdown-content">
+      <div id="countdown-content" class="hidden">
         <div id="counters">
           <p id="days"></p>
           <p id="hours"></p>
           <p id="minutes"></p>
           <p id="seconds"></p>
         </div>
-        <div id="counters-text">
+        <div id="counters-text" class="hidden">
           <p> days</p>
           <p> hours</p>
           <p> minutes</p>
           <p> seconds</p>
         </div>
       </div>
+      <div class="menu-container">
+          <a id="menu-button">☰</a>
+        </div>
     </div>
-    <a href="#" id="allCountdowns" class="hidden">
+    
+    <!-- <a href="#" id="allCountdowns" class="hidden">
       <img href="menu.png" />
     </a>
     <div id="allCountdownsContainer" class="hidden">
-      
+       -->
     </div>
   </body>
 </html>
