@@ -121,9 +121,11 @@ function fetchAllTimers(user) {
                 timers.push(doc.data());
             }
         });
+        console.log("Fetched " + timers.length + " records from firestore");
+        timers = sortTimersBySoonest(timers);
+        return timers;
     });
-    console.log("Fetched " + timers.length + " records from firestore");
-    return timers;
+    //return timers;
 }
 
 function sortTimersByNewest(timers) {

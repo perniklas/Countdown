@@ -35,20 +35,19 @@ body {
 
 /*        END       */
 .menu-container {
-    width: fit-content;
     height: fit-content;
     padding: 10px;
     position: absolute;
-    right: 0;
-    top: 0;
-    transform: translateX(108%);
+    display: flex;
+    width: 93%;
+    justify-content: space-evenly;
 }
 
 .actionbutton {
     display: block;
     font-size: 4em;
     color: white;
-    text-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 0 5px 10px rgba(0, 0, 0, 0.55);
     transition: ease 0.3s;
 }
 
