@@ -18,7 +18,7 @@ $(() => {
     });
 
     $('#next-button').on('click', () => {
-        var index = allTimers.findIndex(timer => timer.name === currentTimer.name && timer.end.milliseconds === currentTimer.end.milliseconds);
+        var index = allTimers.findIndex(timer => timer.name === currentTimer.name && timer.end.milliseconds === currentTimer.end.milliseconds) + 1;
         if (index > allTimers.length) { index = 0; }
         countdown = startCountdown(allTimers[index]);
     });
