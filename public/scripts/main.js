@@ -25,9 +25,9 @@ $(() => {
         
         db.collection('timers').add({
             name: name,
-            end = end,
-            created = created,
-            userId = userId
+            end: end,
+            created: created,
+            userId: userId
         }).then(() => {
             fetchAllTimers(auth.currentUser);
             setTimeout(() => {
