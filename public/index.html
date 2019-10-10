@@ -11,6 +11,7 @@
     <script defer src="/__/firebase/init.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="scripts/auth.js"></script>
+    <script src="scripts/db.js"></script>
     <script src="scripts/main.js"></script>
     <link rel="shortcut icon" type="image/png" href="img/icon.png"/>
     <link rel="stylesheet" type="text/css" href="styles/style.css" />
@@ -58,6 +59,7 @@
           </form>
           <a href="#" id="signup"><h5>or sign up</h5></a>
       </div>
+      
       <div id="countdownsContainer" class="container">
         <div id="countdown-header" class="hidden">
           <h1>Countdown to</h1>
@@ -78,18 +80,7 @@
           </div>
         </div>
       </div>
-      <div class="menu-container hidden">
-        <div id="menu" class="hidden">
-          <ul>
-            <li></li>
-            <li></li>
-          </ul>
-        </div>
-        <a id="menu-button" class="actionbutton">☰</a>
-        <a id="add-button" class="actionbutton">＋</a>
-        <a id="next-button" class="actionbutton">⟳</a>
-      </div>
-
+      
       <div id="newtimer" class="wrapper hidden">
         <h1>Start a countdown</h1>
         <hr class="sep" />
@@ -107,9 +98,21 @@
             <label for="newtimer-end">When</label>
           </div>
           <div class="btn-box">
-              <button class="btn btn-submit" type="submit">save</button>
+            <button class="btn btn-submit" type="submit">save</button>
           </div>
         </form>
+      </div>
+
+      <div class="menu-container hidden">
+        <div id="menu" class="hidden">
+          <ul>
+            <li></li>
+            <li></li>
+          </ul>
+        </div>
+        <!-- <a id="menu-button" class="actionbutton">☰</a> -->
+        <a id="add-button" class="actionbutton">＋</a>
+        <a id="next-button" class="actionbutton">⟳</a>
       </div>
     </div>
     

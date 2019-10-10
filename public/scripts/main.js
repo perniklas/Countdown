@@ -8,6 +8,7 @@ $(() => {
     db = firebase.firestore();
     auth = firebase.auth();
     initAuth(auth);
+    initDb(db);
 
     $('#menu-button').on('click', () => {
         alert('This function is coming soon!');
@@ -18,36 +19,25 @@ $(() => {
     });
 
     $('#newtimer-form').on('submit', () => {
-        let name = $('#newtimer-name').val(),
-            end = new Date($('#newtimer-end').val()),
-            created = new Date().getTime(),
-            userId = auth.currentUser.uid;
-        
-        db.collection('timers').add({
-            name: name,
-            end: end,
-            created: created,
-            userId: userId
-        }).then(() => {
-            fetchAllTimers(auth.currentUser);
-            setTimeout(() => {
-                countdown = startCountdown(allTimers[allTimers.findIndex(timer => 
-                    timer.name === name && timer.end.milliseconds === new Date(end).getTime())]);
-            }, 1000);
-        }).catch(error => {
-            alert(error.message);
-        });
+        saveTimer();
     });
 
     $('#next-button').on('click', () => {
-        var index = allTimers.findIndex(timer => timer.name === currentTimer.name && timer.end.milliseconds === currentTimer.end.milliseconds) + 1;
-        if (index > allTimers.length) { index = 0; }
-        countdown = startCountdown(allTimers[index]);
+        displayNextTimer();
     });
 });
 
 function displayNextTimer() {
-    let index = allTimers.findIndex(timer => timer.name == currentTimer.name)
+    $('#countdown-title, #counters-text').slideUp();
+    let next = allTimers.findIndex(timer => 
+        timer.name === currentTimer.name && 
+        timer.end.milliseconds === currentTimer.end.milliseconds &&
+        timer.created.seconds === currentTimer.created.seconds) + 1;
+    if (next >= allTimers.length) { next = 0; }
+    countdown = startCountdown(allTimers[next]);
+    setTimeout(() => {
+        $('#countdown-title, #counters-text').slideDown();
+    }, 1000);
 }
 
 function loadPage(authenticated = false) {
@@ -74,23 +64,8 @@ function loadPage(authenticated = false) {
 }
 
 function doneLoading() {
-    $('#countdown-header, #countdown-content, #counters-text, .menu-container').slideDown();
-}
-
-function findSoonestTimer() {
-    let soonestTimers = sortTimersBySoonest(allTimers);
-    let now = new Date().getTime();
-    let firstAndBest = soonestTimers[0],
-        found = false;
-    soonestTimers.forEach(timer => {
-        if (timer.end.milliseconds > now && !found) {
-            console.log("Finding soonest timer");
-            console.log(timer);
-            found = true;
-            firstAndBest = timer;
-        }
-    });
-    return firstAndBest; // {name: 'All timers expired', end: new Date().getTime() + 25252513}
+    $('#countdown-header, #countdown-content, #counters-text').slideDown();
+    $('.menu-container').css('display', 'flex');
 }
 
 function startCountdown(timer) {
@@ -117,40 +92,3 @@ function startCountdown(timer) {
     }, 1000);
 }
 
-function fetchAllTimers(user) {
-    let timers = [];
-    db.collection("timers").get().then((snapshot) => {
-        snapshot.forEach((doc) => {
-            if (doc.data().userId == user.uid) {
-                timers.push(doc.data());
-            }
-        });
-        console.log("Fetched " + timers.length + " records from firestore");
-        timers = sortTimersBySoonest(timers);
-        return timers;
-    });
-    //return timers;
-}
-
-function sortTimersByNewest(timers) {
-    return timers.sort((a, b) => b.created.seconds - a.created.seconds); 
-}
-
-function sortTimersByOldest(timers) {
-    return timers.sort((a, b) => a.created.seconds - b.created.seconds); 
-}
-
-function sortTimersBySoonest(timers) {
-    return timers.sort((a, b) => a.end.milliseconds - b.end.milliseconds); 
-}
-
-function sortTimersByLatest(timers) {
-    return timers.sort((a, b) => b.end.milliseconds - a.end.milliseconds); 
-}
-
-function convertEndToMillis(timers) {
-    timers.forEach(timer => {
-        console.log("Converting from timestamp to milliseconds");
-        timer.end.milliseconds = timer.end.toMillis();
-    });
-}
