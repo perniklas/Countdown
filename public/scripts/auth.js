@@ -1,20 +1,25 @@
 function initAuth(auth) {
     auth.onAuthStateChanged((user) => {
-        //authState(user);
+        console.log(user);
+        if (user) {
+            $('#login').slideUp();
+            allTimers = fetchAllTimers(user);
+            loadPage();
+        } else {
+            // if user logs out
+            $('#login, #countdown-header, #countdown-content, #counters-text').slideToggle();
+        }
     });
 
     $('#loginform').on('submit', (e) => {
         e.preventDefault();
         let username = $('#login-username').val(),
             password = $('#login-password').val();
-        
+                
         auth.signInWithEmailAndPassword(username, password).then((cred) => {
             $(this).trigger('reset');
             $(this).find('.error').hide();
             console.log('Signed in with: ' + cred);
-            $('#login').slideUp();
-            allTimers = fetchAllTimers(cred.User);
-            loadPage();
         }).catch(err => {
             console.log(err);
             $(this).find('.error').text(err.message).slideDown();   
@@ -30,9 +35,6 @@ function initAuth(auth) {
             $(this).trigger('reset');
             $(this).find('.error').hide();
             console.log('Created account: ' + cred);
-            $('#login').slideUp();
-            allTimers = fetchAllTimers(auth.currentUser);
-            loadPage();
         }).catch((err) => {
             console.log(err);
             $(this).find('.error').text(err.message).slideDown();   
@@ -48,16 +50,4 @@ function initAuth(auth) {
             $('#signup h5').text("or sign up");
         }
     });
-}
-
-function authState(user) {
-    if (user) {
-        user.getIdTokenResult().then(idTokenResult => {
-            user.admin = idTokenResult.claims.admin;
-            // render countdown
-        });
-        fetchAllTimers(user);
-    } else {
-
-    }
 }
