@@ -19,7 +19,7 @@ body {
     border-radius: 2em;
 }
 
-#login {
+#login, #newtimer {
     padding: 15px;
     width: fit-content;
     margin: auto;
@@ -28,10 +28,6 @@ body {
 #login form {
     margin: 20px 15px;
 }
-
-/* #login input, #login label {
-    display: block;
-} */
 
 #login h1 {
     margin: 10px auto 0 15px;
@@ -53,6 +49,7 @@ body {
     font-size: 4em;
     color: white;
     text-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
+    transition: ease 0.3s;
 }
 
 .actionbutton:hover {
