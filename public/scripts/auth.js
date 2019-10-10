@@ -13,9 +13,10 @@ function initAuth(auth) {
             $(this).find('.error').hide();
             console.log('Signed in with: ' + cred);
             $('#login').slideUp();
-            allTimers = fetchAllTimers(auth.currentUser);
+            allTimers = fetchAllTimers(cred.User);
             loadPage();
         }).catch(err => {
+            console.log(err);
             $(this).find('.error').text(err.message).slideDown();   
         });
     });
@@ -33,6 +34,7 @@ function initAuth(auth) {
             allTimers = fetchAllTimers(auth.currentUser);
             loadPage();
         }).catch((err) => {
+            console.log(err);
             $(this).find('.error').text(err.message).slideDown();   
         })
     }); 
