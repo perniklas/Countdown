@@ -8,9 +8,6 @@ $(() => {
     db = firebase.firestore();
     auth = firebase.auth();
     initAuth(auth);
-    
-    //allTimers = fetchAllTimers();
-    //loadPage();
 
     $('#menu-button').on('click', () => {
         var index = allTimers.findIndex(timer => timer.name === currentTimer.name && timer.end.milliseconds === currentTimer.end.milliseconds);

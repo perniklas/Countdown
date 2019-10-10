@@ -8,14 +8,14 @@ function initAuth(auth) {
             password = $('#login-password').val();
         
         auth.signInWithEmailAndPassword(username, password).then((cred) => {
-            $(this).reset();
-            $(this).querySelector('.error').innerHTML = '';
+            $(this).trigger('reset');
+            $(this).find('.error').hide();
             console.log('Signed in with: ' + cred);
-            allTimers = fetchAllTimers();
             $('#loginform').slideUp();
+            allTimers = fetchAllTimers();
             loadPage();
         }).catch(err => {
-            $(this).querySelector('.error').innerHTML = err.message;   
+            $(this).find('.error').text(err).slideDown();   
         });
     });
     
