@@ -46,6 +46,10 @@ $(() => {
     });
 });
 
+function displayNextTimer() {
+    let index = allTimers.findIndex(timer => timer.name == currentTimer.name)
+}
+
 function loadPage(authenticated = false) {
     if(authenticated) {
         let seconds = 0;    
