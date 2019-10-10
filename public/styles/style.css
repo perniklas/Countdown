@@ -48,15 +48,15 @@ body {
     transform: translateX(108%);
 }
 
-#menu-button {
+.actionbutton {
     font-size: 4em;
     color: white;
     text-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
 }
 
-#menu-button:hover {
+.actionbutton:hover {
     cursor: pointer;
-    font-size: 4.3em;
+    text-shadow: 0 15px 15px rgba(0, 0, 0, 0.35);
     transition: ease 0.3s;
 }
 
