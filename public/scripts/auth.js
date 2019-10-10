@@ -3,7 +3,8 @@ function initAuth(auth) {
         authState(user);
     });
 
-    $('#loginform').on('submit', () => {
+    $('#loginform').on('submit', (e) => {
+        e.preventDefault();
         let username = $('#login-username').val(),
             password = $('#login-password').val();
         
@@ -12,15 +13,31 @@ function initAuth(auth) {
             $(this).find('.error').hide();
             console.log('Signed in with: ' + cred);
             $('#loginform').slideUp();
-            allTimers = fetchAllTimers();
+            allTimers = fetchAllTimers(auth.currentUser());
             loadPage();
         }).catch(err => {
-            $(this).find('.error').text(err).slideDown();   
+            $(this).find('.error').text(err.message).slideDown();   
         });
     });
     
-    $('#signupform').on('submit', () => {
+    $('#signupform').on('submit', (e) => {
+        e.preventDefault();
+        let username = $('#signup-username').val(),
+            password = $('#signup-password').val();
+
+        auth.createUserWithEmailAndPassword(username, password).then((cred) => {
+            $(this).trigger('reset');
+            $(this).find('.error').hide();
+            console.log('Created account: ' + cred);
+            $('#loginform').slideUp();
+            allTimers = fetchAllTimers(auth.currentUser());
+            loadPage();
+        }).catch((err) => {
+            $(this).find('.error').text(err.message).slideDown();   
+        })
+
         console.log('sign');
+        $(this).find('.error').text("Signing up hasn't been implemented yet, sorry bout that").slideDown();
     }); 
 
     $('#signup').on('click', () => {
