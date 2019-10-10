@@ -9,7 +9,7 @@ function initAuth(auth) {
             }
         } else {
             // if user logs out
-            $('#login, #countdown-header, #countdown-content, #counters-text').slideToggle();
+            // $('#login, #countdown-header, #countdown-content, #counters-text').slideToggle();
         }
         loadPage();
     });
