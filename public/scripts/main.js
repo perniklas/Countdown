@@ -10,6 +10,14 @@ $(() => {
     initAuth(auth);
 
     $('#menu-button').on('click', () => {
+        alert('This function is coming soon!');
+    });
+
+    $('#add-button').on('click', () => {
+        alert('This function is coming soon!');
+    });
+
+    $('#next-button').on('click', () => {
         var index = allTimers.findIndex(timer => timer.name === currentTimer.name && timer.end.milliseconds === currentTimer.end.milliseconds);
         if (index > allTimers.length) { index = 0; }
         countdown = startCountdown(allTimers[index]);
@@ -20,16 +28,17 @@ function loadPage(authenticated = false) {
     if(authenticated) {
         let seconds = 0;    
         var timersLoaded = setInterval(() => {
-            console.log('Second: ' + seconds * 2);
+            console.log('Second: ' + seconds);
             if (++seconds == 6 || allTimers.length > 0) {
                 if (allTimers.length > 0) {
-                    clearInterval(timersLoaded);
                     convertEndToMillis(allTimers);
                     currentTimer = findSoonestTimer();
                     countdown = startCountdown(currentTimer);
                 } else {
                     countdown = startCountdown({name: 'No timers found', end: new Date().getTime() + 25252252});
+                    $('#countdown-content, #counters-text').hide();
                 }
+                clearInterval(timersLoaded);
             }
         }, 1000);
         setTimeout(doneLoading, 1000);

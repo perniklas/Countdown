@@ -11,7 +11,6 @@ function initAuth(auth) {
             // if user logs out
             // $('#login, #countdown-header, #countdown-content, #counters-text').slideToggle();
         }
-        loadPage();
     });
 
     $('#loginform').on('submit', (e) => {
