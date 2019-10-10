@@ -35,9 +35,6 @@ function initAuth(auth) {
         }).catch((err) => {
             $(this).find('.error').text(err.message).slideDown();   
         })
-
-        console.log('sign');
-        $(this).find('.error').text("Signing up hasn't been implemented yet, sorry bout that").slideDown();
     }); 
 
     $('#signup').on('click', () => {
