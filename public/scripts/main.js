@@ -39,7 +39,7 @@ function loadPage(authenticated = false) {
 }
 
 function doneLoading() {
-    $('#countdown-header, #countdown-content, #counters-text').slideDown();
+    $('#countdown-header, #countdown-content, #counters-text, .menu-container').slideDown();
 }
 
 function findSoonestTimer() {

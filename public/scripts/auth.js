@@ -2,13 +2,16 @@ function initAuth(auth) {
     auth.onAuthStateChanged((user) => {
         console.log(user);
         if (user) {
-            $('#login').slideUp();
-            allTimers = fetchAllTimers(user);
-            loadPage();
+            if (user.email) {
+                $('#login').slideUp();
+                allTimers = fetchAllTimers(user);
+                loadPage(true);
+            }
         } else {
             // if user logs out
             $('#login, #countdown-header, #countdown-content, #counters-text').slideToggle();
         }
+        loadPage();
     });
 
     $('#loginform').on('submit', (e) => {
