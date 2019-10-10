@@ -56,8 +56,9 @@ body {
 }
 
 .actionbutton:hover {
+    font-weight: bold;
     cursor: pointer;
-    text-shadow: 0 15px 15px rgba(0, 0, 0, 0.35);
+    text-shadow: 0 15px 15px rgba(0, 0, 0, 0.85);
     transition: ease 0.3s;
 }
 
