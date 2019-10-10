@@ -94,6 +94,7 @@ function startCountdown(timer) {
     return setInterval(() => {
         $('#countdown-title').empty().text(timer.name || "Untitled");
         timeBetween = timer.end.milliseconds - new Date().getTime();
+        currentTimer = timer;
         if (timeBetween > 0) {
             let days = Math.floor(timeBetween / (1000 * 60 * 60 * 24)),
                 hours = Math.floor((timeBetween % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
