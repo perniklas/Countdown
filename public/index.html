@@ -89,13 +89,26 @@
           <a id="next-button" class="actionbutton">⟳</a>
         </div>
       </div>
+
+      <div id="newtimer" class="wrapper hidden">
+        <h1>Start a countdown</h1>
+        <hr class="sep" />
+        <form id="newtimer-form">
+          <div class="group">
+            <input id="newtimer-name" type="text" required="required" />
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <label for="newtimer-name">What</label>
+          </div>
+          <div class="group">
+              <input id="newtimer-end" type="datetime-local" required="required" />
+              <span class="highlight"></span>
+              <span class="bar"></span>
+              <label for="newtimer-end">When</label>
+            </div>
+        </form>
+      </div>
     </div>
     
-    <!-- <a href="#" id="allCountdowns" class="hidden">
-      <img href="menu.png" />
-    </a>
-    <div id="allCountdownsContainer" class="hidden">
-       -->
-    </div>
   </body>
 </html>

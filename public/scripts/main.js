@@ -14,7 +14,29 @@ $(() => {
     });
 
     $('#add-button').on('click', () => {
-        alert('This function is coming soon!');
+        $('#newtimer, #countdownsContainer').slideToggle();
+    });
+
+    $('#newtimer-form').on('submit', () => {
+        let name = $('#newtimer-name').val(),
+            end = $('#newtimer-end').val(),
+            created = new Date().getTime(),
+            userId = auth.currentUser.uid;
+        
+        db.collection('timers').add({
+            name: name,
+            end = end,
+            created = created,
+            userId = userId
+        }).then(() => {
+            fetchAllTimers(auth.currentUser);
+            setTimeout(() => {
+                countdown = startCountdown(allTimers[allTimers.findIndex(timer => 
+                    timer.name === name && timer.end.milliseconds === new Date(end).getTime())]);
+            }, 1000);
+        }).catch(error => {
+            alert(error.message);
+        });
     });
 
     $('#next-button').on('click', () => {
