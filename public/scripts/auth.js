@@ -4,9 +4,8 @@ function initAuth(auth) {
     });
 
     $('#loginform').on('submit', () => {
-        let username = $('#login-username').value,
-            password = $('#login-password').value;
-        console.log(username + ": " + password);
+        let username = $('#login-username').val(),
+            password = $('#login-password').val();
         
         auth.signInWithEmailAndPassword(username, password).then((cred) => {
             $(this).reset();
