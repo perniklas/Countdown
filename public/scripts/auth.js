@@ -1,6 +1,6 @@
 function initAuth(auth) {
     auth.onAuthStateChanged((user) => {
-        authState(user);
+        //authState(user);
     });
 
     $('#loginform').on('submit', (e) => {
@@ -12,8 +12,8 @@ function initAuth(auth) {
             $(this).trigger('reset');
             $(this).find('.error').hide();
             console.log('Signed in with: ' + cred);
-            $('#loginform').slideUp();
-            allTimers = fetchAllTimers(auth.currentUser());
+            $('#login').slideUp();
+            allTimers = fetchAllTimers(auth.currentUser);
             loadPage();
         }).catch(err => {
             $(this).find('.error').text(err.message).slideDown();   
@@ -29,8 +29,8 @@ function initAuth(auth) {
             $(this).trigger('reset');
             $(this).find('.error').hide();
             console.log('Created account: ' + cred);
-            $('#loginform').slideUp();
-            allTimers = fetchAllTimers(auth.currentUser());
+            $('#login').slideUp();
+            allTimers = fetchAllTimers(auth.currentUser);
             loadPage();
         }).catch((err) => {
             $(this).find('.error').text(err.message).slideDown();   
@@ -53,8 +53,8 @@ function authState(user) {
         user.getIdTokenResult().then(idTokenResult => {
             user.admin = idTokenResult.claims.admin;
             // render countdown
-    });
-    fetchAllTimers(user);
+        });
+        fetchAllTimers(user);
     } else {
 
     }
