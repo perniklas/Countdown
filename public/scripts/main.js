@@ -19,7 +19,7 @@ $(() => {
 
     $('#newtimer-form').on('submit', () => {
         let name = $('#newtimer-name').val(),
-            end = $('#newtimer-end').val(),
+            end = new Date($('#newtimer-end').val()),
             created = new Date().getTime(),
             userId = auth.currentUser.uid;
         
