@@ -11,6 +11,7 @@ function initAuth(auth) {
             $(this).reset();
             $(this).querySelector('.error').innerHTML = '';
             console.log('Signed in with: ' + cred);
+            allTimers = fetchAllTimers();
             $('#loginform').slideUp();
             loadPage();
         }).catch(err => {

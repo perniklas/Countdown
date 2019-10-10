@@ -9,7 +9,7 @@ $(() => {
     auth = firebase.auth();
     initAuth(auth);
     
-    allTimers = fetchAllTimers();
+    //allTimers = fetchAllTimers();
     //loadPage();
 
     $('#menu-button').on('click', () => {
