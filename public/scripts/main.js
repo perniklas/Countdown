@@ -39,6 +39,7 @@ $(() => {
 });
 
 function displayNextTimer() {
+    $('#content').addClass('slidefix');
     $('#countdown-title, #counters, #counters p, #counters-text, #counters-text p').slideUp(600, () => {
         let next = allTimers.findIndex(timer => 
             timer.name === currentTimer.name && 
@@ -48,6 +49,7 @@ function displayNextTimer() {
         countdown = startCountdown(allTimers[next]);
     });
     setTimeout(() => {
+        $('#content').removeClass('slidefix')
         $('#countdown-title, #counters, #counters p, #counters-text, #counters-text p').slideDown();
     }, 1000);
 }
@@ -76,7 +78,9 @@ function loadPage(authenticated = false) {
 }
 
 function doneLoading() {
+    $('#content').addClass('slidefix');
     $('#countdown-header, #countdown-content, #counters-text, .menu-container').slideDown();
+    $('#content').removeClass('slidefix');
 }
 
 function startCountdown(timer) {
