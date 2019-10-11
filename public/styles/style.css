@@ -54,11 +54,28 @@ input[type="datetime-local" i] {
     transition: ease 0.3s;
 }
 
-.actionbutton:hover {
+.actionbutton:active {
     font-weight: bold;
     cursor: pointer;
     text-shadow: 0 15px 15px rgba(0, 0, 0, 0.85);
     transition: ease 0.3s;
+}
+
+#menu {
+    width: 100%;
+    text-align: center;
+    font-size: 3em;
+    background-color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+
+#menu li {
+    list-style: none;
+}
+
+#menu-buttons-container {
+    display: block;
+    width: 100%;
 }
 
 #countdown-header {
@@ -135,6 +152,13 @@ input[type="datetime-local" i] {
         width: 50%;
         max-width: 515px;
         margin: 0 auto;
+    }
+
+    .actionbutton:hover {
+        font-weight: bold;
+        cursor: pointer;
+        text-shadow: 0 15px 15px rgba(0, 0, 0, 0.85);
+        transition: ease 0.3s;
     }
 }
 
