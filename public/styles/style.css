@@ -21,16 +21,12 @@ body {
 
 #login, #newtimer {
     padding: 15px;
-    width: fit-content;
     margin: auto;
 }
 
 #login form {
     margin: 20px 15px;
-}
-
-#login h1 {
-    margin: 10px auto 0 15px;
+    text-align: center;
 }
 
 /*        END       */
