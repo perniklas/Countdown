@@ -9,7 +9,7 @@ function initAuth(auth) {
             }
         } else {
             // if user logs out
-            // $('#login, #countdown-header, #countdown-content, #counters-text').slideToggle();
+            $('#login, #countdown-header, #countdown-content, #counters-text, .menu-container').slideToggle();
         }
     });
 
@@ -51,5 +51,13 @@ function initAuth(auth) {
             $('#loginform, #signupform').slideToggle();
             $('#signup h5').text("or sign up");
         }
+    });
+}
+
+function logout() {
+    auth.signOut().then(() => {
+        console.log("Signed out");
+    }).catch(error => {
+        alert(error.message);
     });
 }

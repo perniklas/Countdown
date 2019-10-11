@@ -45,6 +45,8 @@ function fetchAllTimers(user) {
     db.collection("timers").get().then((snapshot) => {
         snapshot.forEach((doc) => {
             if (doc.data().userId == user.uid) {
+                let timer = doc.data();
+                timer.ref = doc.ref;
                 timers.push(doc.data());
             }
         });
@@ -61,8 +63,6 @@ function findSoonestTimer() {
         found = false;
     soonestTimers.forEach(timer => {
         if (timer.end.milliseconds > now && !found) {
-            console.log("Finding soonest timer");
-            console.log(timer);
             found = true;
             firstAndBest = timer;
         }
@@ -97,7 +97,6 @@ function migrateEndedTimers() {
     db.collection("timers").get().then((snapshot) => {
         let counter = 0;
         snapshot.forEach((doc) => {
-            let expired = {};
             if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
                 db.collection('expired').add(doc.data());
                 counter += 1;
@@ -111,4 +110,14 @@ function migrateEndedTimers() {
             console.log("Removed " + counter + " expired timers.");
         }
     });
+}
+
+var deleteCount = 0;
+function deleteCurrentTimer() {
+    deleteCount += 1;
+    if (deleteCount > 2) {
+        alert("IT'S NOT GONNA MAGICALLY APPEAR JUST BECAUSE YOU PRESSED THE BUTTON A BUNCH OF TIMES");
+    } else {
+        alert("I'm working on it, come back later");
+    }
 }

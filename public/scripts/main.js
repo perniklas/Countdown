@@ -11,7 +11,17 @@ $(() => {
     initDb(db);
 
     $('#menu-button').on('click', () => {
-        alert('This function is coming soon!');
+        $('#menu').slideTogge();
+    });
+
+    $('#logout-button').on('click', () => {
+        logout();
+    });
+
+    $('#delete-button').on('click', () => {
+        if(confirm("Are you sure you want to delete this timer?")) {
+            deleteCurrentTimer();
+        }
     });
 
     $('#add-button').on('click', () => {
@@ -70,8 +80,9 @@ function doneLoading() {
 
 function startCountdown(timer) {
     if (countdown) clearInterval(countdown);
+    if (!timer.name) { timer.name = "Untitled"; }
+    $('#countdown-title').empty().text(timer.name);
     return setInterval(() => {
-        $('#countdown-title').empty().text(timer.name || "Untitled");
         timeBetween = timer.end.milliseconds - new Date().getTime();
         currentTimer = timer;
         if (timeBetween > 0) {
