@@ -2,7 +2,8 @@ var db,
     auth,
     allTimers,
     countdown,
-    currentTimer = {};
+    currentTimer = {},
+    timersListener;
 
 $(() => {
     db = firebase.firestore();

@@ -42,7 +42,7 @@ function getHighestId() {
 
 function fetchAllTimers(user) {
     let timers = [];
-    db.collection("timers").get().then((snapshot) => {
+    timersListener = db.collection("timers").get().then((snapshot) => {
         snapshot.forEach((doc) => {
             if (doc.data().userId == user.uid) {
                 let timer = doc.data();
@@ -120,4 +120,8 @@ function deleteCurrentTimer() {
     } else {
         alert("I'm working on it, come back later");
     }
+}
+
+function detachDbListener() {
+    
 }
