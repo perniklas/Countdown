@@ -8,7 +8,7 @@ form h5 {
     color: black;
 }
 
-form hr.sep {
+hr.sep {
     background-image: linear-gradient(to top left, #FC01D0, #13C6FB);
     box-shadow: none;
     border: none;
@@ -36,7 +36,7 @@ input, textarea {
     font-size: 18px;
     padding: 10px 10px 10px 5px;
     display: block;
-    width: 80%;
+    width: 94%;
     border: none;
     border-radius: 0;
     border-bottom: 1px solid black;

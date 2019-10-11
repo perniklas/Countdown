@@ -34,7 +34,6 @@ body {
     height: fit-content;
     padding: 10px;
     position: absolute;
-    display: flex;
     width: 93%;
     justify-content: space-evenly;
 }
@@ -70,7 +69,8 @@ input[type="datetime-local" i] {
 }
 
 #menu-buttons-container {
-    display: block;
+    display: flex;
+    justify-content: space-around;
     width: 100%;
 }
 

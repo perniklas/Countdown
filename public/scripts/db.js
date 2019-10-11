@@ -33,11 +33,11 @@ function getHighestId() {
                 id = doc.data().id;
             }
         })
+        return id;
     }).catch(error => {
         alert(error.message);
-        return null;
+        id = -9999;
     });
-    return id;
 }
 
 function fetchAllTimers(user) {
