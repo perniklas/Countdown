@@ -9,7 +9,8 @@ function initAuth(auth) {
             }
         } else {
             // if user logs out
-            $('#login, #countdown-header, #countdown-content, #counters-text, .menu-container').slideToggle();
+            $('#countdown-header, #countdown-content, #counters-text, .menu-container').slideUp();
+            $('#login').slideDown();
         }
     });
 

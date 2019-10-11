@@ -11,7 +11,7 @@ $(() => {
     initDb(db);
 
     $('#menu-button').on('click', () => {
-        $('#menu').slideTogge();
+        $('#menu').slideToggle();
     });
 
     $('#logout-button').on('click', () => {
@@ -38,13 +38,14 @@ $(() => {
 });
 
 function displayNextTimer() {
-    $('#countdown-title, #counters, #counters p, #counters-text, #counters-text p').slideUp();
-    let next = allTimers.findIndex(timer => 
-        timer.name === currentTimer.name && 
-        timer.end.milliseconds === currentTimer.end.milliseconds &&
-        timer.created.seconds === currentTimer.created.seconds) + 1;
-    if (next >= allTimers.length) { next = 0; }
-    countdown = startCountdown(allTimers[next]);
+    $('#countdown-title, #counters, #counters p, #counters-text, #counters-text p').slideUp(600, () => {
+        let next = allTimers.findIndex(timer => 
+            timer.name === currentTimer.name && 
+            timer.end.milliseconds === currentTimer.end.milliseconds &&
+            timer.created.seconds === currentTimer.created.seconds) + 1;
+        if (next >= allTimers.length) { next = 0; }
+        countdown = startCountdown(allTimers[next]);
+    });
     setTimeout(() => {
         $('#countdown-title, #counters, #counters p, #counters-text, #counters-text p').slideDown();
     }, 1000);
