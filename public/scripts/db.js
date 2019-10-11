@@ -1,5 +1,5 @@
 function initDb(db) {
-
+    migrateEndedTimers();
 }
 
 function saveTimer() {
@@ -90,5 +90,25 @@ function convertEndToMillis(timers) {
     timers.forEach(timer => {
         console.log("Converting from timestamp to milliseconds");
         timer.end.milliseconds = timer.end.toMillis();
+    });
+}
+
+function migrateEndedTimers() {
+    db.collection("timers").get().then((snapshot) => {
+        let counter = 0;
+        snapshot.forEach((doc) => {
+            let expired = {};
+            if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
+                db.collection('expired').add(doc.data());
+                counter += 1;
+                doc.ref.delete();
+            }
+        });
+
+        if (counter == 0) {
+
+        } else {
+            console.log("Removed " + counter + " expired timers.");
+        }
     });
 }

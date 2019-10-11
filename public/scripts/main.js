@@ -28,7 +28,7 @@ $(() => {
 });
 
 function displayNextTimer() {
-    $('#countdown-title, #counters-text').slideUp();
+    $('#countdown-title, #counters, #counters p, #counters-text, #counters-text p').slideUp();
     let next = allTimers.findIndex(timer => 
         timer.name === currentTimer.name && 
         timer.end.milliseconds === currentTimer.end.milliseconds &&
@@ -36,7 +36,7 @@ function displayNextTimer() {
     if (next >= allTimers.length) { next = 0; }
     countdown = startCountdown(allTimers[next]);
     setTimeout(() => {
-        $('#countdown-title, #counters-text').slideDown();
+        $('#countdown-title, #counters, #counters p, #counters-text, #counters-text p').slideDown();
     }, 1000);
 }
 
