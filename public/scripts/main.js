@@ -76,8 +76,7 @@ function loadPage(authenticated = false) {
 }
 
 function doneLoading() {
-    $('#countdown-header, #countdown-content, #counters-text').slideDown();
-    $('.menu-container').css('display', 'flex');
+    $('#countdown-header, #countdown-content, #counters-text, .menu-container').slideDown();
 }
 
 function startCountdown(timer) {
