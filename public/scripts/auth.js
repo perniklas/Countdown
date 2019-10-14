@@ -57,7 +57,7 @@ function initAuth(auth) {
 
 function logout() {
     auth.signOut().then(() => {
-        timersListener();
+        stopListening();
         console.log("Signed out");
     }).catch(error => {
         alert(error.message);

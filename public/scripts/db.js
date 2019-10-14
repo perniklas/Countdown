@@ -42,13 +42,11 @@ function getHighestId() {
 
 function fetchAllTimers(user) {
     let timers = [];
-    timersListener = db.collection("timers").get().then((snapshot) => {
+    timersListener = db.collection("timers").where('userId', '==', user.uid).onSnapshot(snapshot => {
         snapshot.forEach((doc) => {
-            if (doc.data().userId == user.uid) {
-                let timer = doc.data();
-                timer.ref = doc.ref;
-                timers.push(doc.data());
-            }
+            let timer = doc.data();
+            timer.ref = doc.ref;
+            timers.push(doc.data());
         });
         console.log("Fetched " + timers.length + " records from firestore");
         timers = sortTimersBySoonest(timers);
@@ -116,12 +114,12 @@ var deleteCount = 0;
 function deleteCurrentTimer() {
     deleteCount += 1;
     if (deleteCount > 2) {
-        alert("IT'S NOT GONNA MAGICALLY APPEAR JUST BECAUSE YOU PRESSED THE BUTTON A BUNCH OF TIMES");
+        alert("Listen here you lil' shit");
     } else {
         alert("I'm working on it, come back later");
     }
 }
 
-function detachDbListener() {
-    
+function stopListening() {
+    timersListener();
 }
