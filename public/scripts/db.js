@@ -92,7 +92,7 @@ function convertEndToMillis(timers) {
 }
 
 function migrateEndedTimers() {
-    db.collection("timers").get().then((snapshot) => {
+    let migrate = db.collection("timers").onSnapshot(snapshot => {
         let counter = 0;
         snapshot.forEach((doc) => {
             if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
@@ -108,16 +108,37 @@ function migrateEndedTimers() {
             console.log("Removed " + counter + " expired timers.");
         }
     });
+    migrate();
 }
 
-var deleteCount = 0;
+var deleteAttempts = 0;
 function deleteCurrentTimer() {
-    deleteCount += 1;
-    if (deleteCount > 2) {
+    let deleteTimer = db.collection('timers').where('userId', '==', auth.currentUser.uid);
+    
+    deleteTimer = deleteTimer.where('end.seconds', '==', currentTimer.end.seconds);
+    deleteTimer = deleteTimer.where('end.nanoseconds', '==', currentTimer.end.nanoseconds);
+    deleteTimer = deleteTimer.where('name', '==', currentTimer.name);
+    deleteTimer.onSnapshot(snapshot => {
+        snapshot.forEach((doc) => {
+            console.log('Deleting timer: ' + doc.data());
+            doc.ref.delete();
+        });
+
+        if (counter == 0) {
+
+        } else {
+            console.log("Removed " + counter + " expired timers.");
+        }
+    });
+
+    /*
+    deleteAttempts += 1;
+    if (deleteAttempts > 2) {
         alert("Listen here you lil' shit");
     } else {
         alert("I'm working on it, come back later");
     }
+    */
 }
 
 function stopListening() {
