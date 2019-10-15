@@ -1,6 +1,5 @@
 function initAuth(auth) {
     auth.onAuthStateChanged((user) => {
-        console.log(user);
         if (user) {
             if (user.email) {
                 $('#login').slideUp();
@@ -20,12 +19,12 @@ function initAuth(auth) {
             password = $('#login-password').val();
                 
         auth.signInWithEmailAndPassword(username, password).then((cred) => {
-            $(this).trigger('reset');
-            $(this).find('.error').hide();
+            $('#loginform').trigger('reset');
+            $('#loginform .error').hide();
             console.log('Signed in with: ' + cred);
         }).catch(err => {
             console.log(err);
-            $(this).find('.error').text(err.message).slideDown();   
+            $('#loginform .error').text(err.message).slideDown();   
         });
     });
     
@@ -35,12 +34,12 @@ function initAuth(auth) {
             password = $('#signup-password').val();
 
         auth.createUserWithEmailAndPassword(username, password).then((cred) => {
-            $(this).trigger('reset');
-            $(this).find('.error').hide();
+            $('#signupform').trigger('reset');
+            $('#signupform .error').hide();
             console.log('Created account: ' + cred);
         }).catch((err) => {
             console.log(err);
-            $(this).find('.error').text(err.message).slideDown();   
+            $('#signupform .error').text(err.message).slideDown();   
         })
     }); 
 
