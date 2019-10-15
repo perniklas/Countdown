@@ -3,22 +3,17 @@ function initDb(db) {
 }
 
 function saveTimer() {
-    let name = $('#newtimer-name').val(),
-        end = new Date($('#newtimer-end').val()),
-        created = new Date(),
-        userId = auth.currentUser.uid;
+    let newTimer = {
+        name: $('#newtimer-name').val(),
+        end: new Date($('#newtimer-end').val()),
+        created: new Date(),
+        userId: auth.currentUser.uid
+    };
     
-    db.collection('timers').add({
-        name: name,
-        end: end,
-        created: created,
-        userId: userId
-    }).then(() => {
-        fetchAllTimers(auth.currentUser);
-        setTimeout(() => {
-            countdown = startCountdown(allTimers[allTimers.findIndex(timer => 
-                timer.name === name && timer.end.milliseconds === new Date(end).getTime())]);
-        }, 1000);
+    db.collection('timers').add(newTimer).then(() => {
+        allTimers.push(newTimer);
+        currentTimer = newTimer;
+        countdown = startCountdown(currentTimer);
     }).catch(error => {
         alert(error.message);
     });
@@ -117,6 +112,7 @@ function deleteCurrentTimer() {
     deleteTimer = deleteTimer.where('created.seconds', '==', currentTimer.created.seconds);
     deleteTimer = deleteTimer.where('created.nanoseconds', '==', currentTimer.created.nanoseconds);
     deleteTimer = deleteTimer.where('name', '==', currentTimer.name);
+
     deleteTimer.onSnapshot(snapshot => {
         snapshot.forEach((doc) => {
             console.log('Deleting timer: ' + doc.data());
