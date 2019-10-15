@@ -116,7 +116,6 @@ function migrateEndedTimers() {
             console.log("Migrated " + counter + " expired timers.");
         }
     });
-    migrate();
 }
 
 function deleteCurrentTimer() {
