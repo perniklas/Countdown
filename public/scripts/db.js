@@ -5,7 +5,6 @@
 function initDb(db) {
     if (db) {
         console.log('Firestore connection established.');
-        addUserToCollection();
     }
 }
 

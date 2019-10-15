@@ -3,11 +3,13 @@
 */
 
 function initAuth(auth) {
+    var userLog = {};
     auth.onAuthStateChanged((user) => {
         if (user) {
             if (user.email) {
                 $('#login').slideUp();
                 allTimers = fetchAllTimers(user);
+                addOrUpdateUserCollecton();
                 loadPage();
             }
         } else {
@@ -18,11 +20,11 @@ function initAuth(auth) {
     });
 
     $('#loginform').on('submit', (e) => {
-        updateUserUpdated(new Date());
         e.preventDefault();
         let username = $('#login-username').val(),
             password = $('#login-password').val();
-                
+        userLog.updated = new Date();
+
         auth.signInWithEmailAndPassword(username, password).then((cred) => {
             $('#loginform').trigger('reset');
             $('#loginform .error').hide();
@@ -35,15 +37,12 @@ function initAuth(auth) {
     
     $('#signupform').on('submit', (e) => {
         e.preventDefault();
-        let user = {
-            displayname: $('#signup-displayname').val(),
-            username: $('#signup-username').val(),
-            password: $('#signup-password').val(),
-            joined: new Date(),
-            updated: new Date()
-        }
+        userLog.displayname = $('#signup-displayname').val(),
+        userLog.username = $('#signup-username').val(),
+        userLog.joined = new Date(),
+        userLog.updated = new Date();
         
-        auth.createUserWithEmailAndPassword(user.username, user.password).then((cred) => {
+        auth.createUserWithEmailAndPassword(user.username, $('#signup-password').val()).then((cred) => {
             $('#signupform').trigger('reset');
             $('#signupform .error').hide();
             console.log('Created account: ' + cred.User.email);
