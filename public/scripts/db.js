@@ -6,8 +6,7 @@ function saveTimer() {
     let name = $('#newtimer-name').val(),
         end = new Date($('#newtimer-end').val()),
         created = new Date().getTime(),
-        userId = auth.currentUser.uid
-        id = getHighestId() + 1;
+        userId = auth.currentUser.uid;
     
     db.collection('timers').add({
         name: name,
@@ -25,20 +24,20 @@ function saveTimer() {
     });
 }
 
-function getHighestId() {
-    let id = 0;
-    db.collection("timers").get().then((snapshot) => {
-        snapshot.forEach(doc => {
-            if (doc.data().id > id) {
-                id = doc.data().id;
-            }
-        })
-        return id;
-    }).catch(error => {
-        alert(error.message);
-        id = -9999;
-    });
-}
+// function getHighestId() {
+//     let id = 0;
+//     db.collection("timers").get().then((snapshot) => {
+//         snapshot.forEach(doc => {
+//             if (doc.data().id > id) {
+//                 id = doc.data().id;
+//             }
+//         })
+//         return id;
+//     }).catch(error => {
+//         alert(error.message);
+//         id = -9999;
+//     });
+// }
 
 function fetchAllTimers(user) {
     let timers = [];
@@ -111,34 +110,19 @@ function migrateEndedTimers() {
     migrate();
 }
 
-var deleteAttempts = 0;
 function deleteCurrentTimer() {
-    let deleteTimer = db.collection('timers').where('userId', '==', auth.currentUser.uid);
-    
+    let deleteTimer = db.collection('timers').where('userId', '==', currentTimer.userId);
     deleteTimer = deleteTimer.where('end.seconds', '==', currentTimer.end.seconds);
     deleteTimer = deleteTimer.where('end.nanoseconds', '==', currentTimer.end.nanoseconds);
+    deleteTimer = deleteTimer.where('created.seconds', '==', currentTimer.created.seconds);
+    deleteTimer = deleteTimer.where('created.nanoseconds', '==', currentTimer.created.nanoseconds);
     deleteTimer = deleteTimer.where('name', '==', currentTimer.name);
     deleteTimer.onSnapshot(snapshot => {
         snapshot.forEach((doc) => {
             console.log('Deleting timer: ' + doc.data());
             doc.ref.delete();
         });
-
-        if (counter == 0) {
-
-        } else {
-            console.log("Removed " + counter + " expired timers.");
-        }
     });
-
-    /*
-    deleteAttempts += 1;
-    if (deleteAttempts > 2) {
-        alert("Listen here you lil' shit");
-    } else {
-        alert("I'm working on it, come back later");
-    }
-    */
 }
 
 function stopListening() {

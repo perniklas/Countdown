@@ -5,7 +5,7 @@ function initAuth(auth) {
             if (user.email) {
                 $('#login').slideUp();
                 allTimers = fetchAllTimers(user);
-                loadPage(true);
+                loadPage();
             }
         } else {
             // if user logs out

@@ -54,8 +54,8 @@ function displayNextTimer() {
     }, 1000);
 }
 
-function loadPage(authenticated = false) {
-    if(authenticated) {
+function loadPage() {
+    if(auth.currentUser) {
         let seconds = 0;    
         var timersLoaded = setInterval(() => {
             console.log('Second: ' + seconds);
