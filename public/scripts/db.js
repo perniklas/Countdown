@@ -5,10 +5,15 @@ function initDb(db) {
 function saveTimer() {
     let newTimer = {
         name: $('#newtimer-name').val(),
-        end: new Date($('#newtimer-end').val()),
+        end: concatDateAndTime($('#newtimer-end-date').val(), $('#newtimer-end-time').val()),
         created: new Date(),
         userId: auth.currentUser.uid
     };
+
+    console.log('NEW TIMER:');
+    console.log(newTimer);
+
+    // conditionals? Or let users add empty values
     
     db.collection('timers').add(newTimer).then(() => {
         allTimers.push(newTimer);
@@ -18,6 +23,12 @@ function saveTimer() {
         alert(error.message);
     });
 }
+
+function concatDateAndTime(date, time) {
+    let timeString = time.getHours() + ':' + time.getMinutes() + ':00',
+        dateString = '' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    return new Date(dateString + ' ' + timeString);
+};
 
 // function getHighestId() {
 //     let id = 0;
