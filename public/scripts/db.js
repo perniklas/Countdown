@@ -5,7 +5,7 @@ function initDb(db) {
 function saveTimer() {
     let name = $('#newtimer-name').val(),
         end = new Date($('#newtimer-end').val()),
-        created = new Date().getTime(),
+        created = new Date(),
         userId = auth.currentUser.uid;
     
     db.collection('timers').add({
