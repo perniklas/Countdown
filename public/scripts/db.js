@@ -25,9 +25,11 @@ function saveTimer() {
 }
 
 function concatDateAndTime(date, time) {
-    let timeString = time.getHours() + ':' + time.getMinutes() + ':00',
-        dateString = '' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-    return new Date(dateString + ' ' + timeString);
+    if (time.length > 0) {
+        return new Date(date + "T" + time);
+    } else {
+        return new Date(date);
+    }
 };
 
 // function getHighestId() {
