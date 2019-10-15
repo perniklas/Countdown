@@ -144,20 +144,26 @@ function stopListening() {
     timersListener();
 }
 
-function addUserToCollection(user) {
-    db.collection('users').doc(auth.currentUser.uid).set(user).then(() => {
-        console.log('Added ' + user.displayName + ' to collection');
-    }).catch(error => {
-        alert(error.message);
-    });
-}
-
-function updateUserInCollection(date) {
-    db.collection('users').doc(auth.currentUser.uid).update({
-        joined: date
-    }).then(() => {
-        console.log('Successfully updated login date');
-    }).catch(error => {
-        alert(error.message);
-    });
+function addOrUpdateUserCollecton(user) {
+    let userDb = db.collection('users').doc(auth.currentUser.uid);
+    if (userDb) {
+        userDb.set({
+            updated: user.updated
+        }, { merge: true }).then(() => {
+            console.log('Updated user ' + auth.currentUser.email + ', login date: ' + user.updated);
+        }).catch(error => {
+            console.log('Error: ' + error.message);
+        });
+    } else {
+        userDb.set({
+            displayname: user.displayname,
+            username: user.username,
+            joined: user.joined,
+            updated: user.updated
+        }, { merge: true }).then(() => {
+            console.log('Added user ' + user.username + ' to collection.');
+        }).catch(error => {
+            console.log('Error: ' + error.message);
+        });
+    }
 }

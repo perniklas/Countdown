@@ -44,7 +44,6 @@ function initAuth(auth) {
         }
         
         auth.createUserWithEmailAndPassword(user.username, user.password).then((cred) => {
-            addUserToCollection(user);
             $('#signupform').trigger('reset');
             $('#signupform .error').hide();
             console.log('Created account: ' + cred.User.email);
