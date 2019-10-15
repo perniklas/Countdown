@@ -1,3 +1,7 @@
+/* 
+    Mostly UI and global variables.
+*/ 
+
 var db,
     auth,
     allTimers,
@@ -107,4 +111,3 @@ function startCountdown(timer) {
         }
     }, 1000);
 }
-

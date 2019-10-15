@@ -1,3 +1,7 @@
+/*
+    Authentication handling.
+*/
+
 function initAuth(auth) {
     auth.onAuthStateChanged((user) => {
         if (user) {
@@ -14,6 +18,7 @@ function initAuth(auth) {
     });
 
     $('#loginform').on('submit', (e) => {
+        updateUserUpdated(new Date());
         e.preventDefault();
         let username = $('#login-username').val(),
             password = $('#login-password').val();
@@ -21,7 +26,7 @@ function initAuth(auth) {
         auth.signInWithEmailAndPassword(username, password).then((cred) => {
             $('#loginform').trigger('reset');
             $('#loginform .error').hide();
-            console.log('Signed in with: ' + cred);
+            console.log('Signed in user ' + cred.User.email);
         }).catch(err => {
             console.log(err);
             $('#loginform .error').text(err.message).slideDown();   
@@ -30,13 +35,19 @@ function initAuth(auth) {
     
     $('#signupform').on('submit', (e) => {
         e.preventDefault();
-        let username = $('#signup-username').val(),
-            password = $('#signup-password').val();
-
-        auth.createUserWithEmailAndPassword(username, password).then((cred) => {
+        let user = {
+            displayname: $('#signup-displayname').val(),
+            username: $('#signup-username').val(),
+            password: $('#signup-password').val(),
+            joined: new Date(),
+            updated: new Date()
+        }
+        
+        auth.createUserWithEmailAndPassword(user.username, user.password).then((cred) => {
+            addUserToCollection(user);
             $('#signupform').trigger('reset');
             $('#signupform .error').hide();
-            console.log('Created account: ' + cred);
+            console.log('Created account: ' + cred.User.email);
         }).catch((err) => {
             console.log(err);
             $('#signupform .error').text(err.message).slideDown();   

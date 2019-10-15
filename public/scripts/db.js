@@ -1,5 +1,12 @@
+/*
+    Database (Firestore) related JS and jQuery.
+*/
+
 function initDb(db) {
-    migrateEndedTimers();
+    if (db) {
+        console.log('Firestore connection established.');
+        addUserToCollection();
+    }
 }
 
 function saveTimer() {
@@ -50,6 +57,7 @@ function concatDateAndTime(date, time) {
 function fetchAllTimers(user) {
     let timers = [];
     timersListener = db.collection("timers").where('userId', '==', user.uid).onSnapshot(snapshot => {
+        migrateEndedTimers(snapshot);
         snapshot.forEach((doc) => {
             let timer = doc.data();
             timer.ref = doc.ref;
@@ -98,24 +106,22 @@ function convertEndToMillis(timers) {
     });
 }
 
-function migrateEndedTimers() {
-    db.collection("timers").get().then(snapshot => {
-        console.log('Migrating ended timers...');
-        let counter = 0;
-        snapshot.forEach((doc) => {
-            if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
-                db.collection('expired').add(doc.data());
-                counter += 1;
-                doc.ref.delete();
-            }
-        });
-
-        if (counter == 0) {
-            console.log('No timers migrated');
-        } else {
-            console.log("Migrated " + counter + " expired timers.");
+function migrateEndedTimers(snapshot) {
+    console.log('Migrating ended timers...');
+    let counter = 0;
+    snapshot.forEach((doc) => {
+        if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
+            db.collection('expired').add(doc.data());
+            counter += 1;
+            doc.ref.delete();
         }
     });
+
+    if (counter == 0) {
+        console.log('No timers migrated');
+    } else {
+        console.log("Migrated " + counter + " expired timers.");
+    }
 }
 
 function deleteCurrentTimer() {
@@ -136,4 +142,22 @@ function deleteCurrentTimer() {
 
 function stopListening() {
     timersListener();
+}
+
+function addUserToCollection(user) {
+    db.collection('users').doc(auth.currentUser.uid).set(user).then(() => {
+        console.log('Added ' + user.displayName + ' to collection');
+    }).catch(error => {
+        alert(error.message);
+    });
+}
+
+function updateUserInCollection(date) {
+    db.collection('users').doc(auth.currentUser.uid).update({
+        joined: date
+    }).then(() => {
+        console.log('Successfully updated login date');
+    }).catch(error => {
+        alert(error.message);
+    });
 }
