@@ -100,6 +100,7 @@ function convertEndToMillis(timers) {
 
 function migrateEndedTimers() {
     let migrate = db.collection("timers").onSnapshot(snapshot => {
+        console.log('Migrating ended timers...');
         let counter = 0;
         snapshot.forEach((doc) => {
             if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
@@ -112,7 +113,7 @@ function migrateEndedTimers() {
         if (counter == 0) {
 
         } else {
-            console.log("Removed " + counter + " expired timers.");
+            console.log("Migrated " + counter + " expired timers.");
         }
     });
     migrate();
