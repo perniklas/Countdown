@@ -9,7 +9,7 @@ function initAuth(auth) {
             if (user.email) {
                 $('#login').slideUp();
                 allTimers = fetchAllTimers(user);
-                addOrUpdateUserCollecton();
+                addOrUpdateUserCollecton(userLog);
                 loadPage();
             }
         } else {
