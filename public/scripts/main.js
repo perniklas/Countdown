@@ -78,6 +78,7 @@ function loadPage() {
 }
 
 function doneLoading() {
+    migrateEndedTimers();
     $('#content').addClass('slidefix');
     $('#countdown-header, #countdown-content, #counters-text, .menu-container').slideDown();
     $('#content').removeClass('slidefix');
