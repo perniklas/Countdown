@@ -144,6 +144,7 @@ function stopListening() {
 }
 
 function addOrUpdateUserCollecton(user) {
+    user.updated = new Date();
     let userDb = db.collection('users').doc(auth.currentUser.uid);
     if (userDb) {
         userDb.set({

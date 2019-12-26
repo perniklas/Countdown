@@ -6,8 +6,7 @@ var db,
     auth,
     allTimers,
     countdown,
-    currentTimer = {},
-    timersListener;
+    currentTimer = {};
 
 $(() => {
     db = firebase.firestore();
@@ -15,11 +14,11 @@ $(() => {
     initAuth(auth);
     initDb(db);
 
-    $('#menu-button').on('click', () => {
-        $('#menu').slideToggle();
+    $('#menu-extra').on('click', () => {
+        $('#menu-modal').slideToggle();
     });
 
-    $('#logout-button').on('click', () => {
+    $('#menu-extra-logout').on('click', () => {
         logout();
     });
 
@@ -29,8 +28,8 @@ $(() => {
         }
     });
 
-    $('#add-button').on('click', () => {
-        $('#newtimer, #countdownsContainer').slideToggle();
+    $('#menu-newtimer').on('click', () => {
+        $('#newtimer, #countdown-header, #countdown-content').slideToggle();
     });
 
     $('#newtimer-form').on('submit', () => {
@@ -63,7 +62,8 @@ function loadPage() {
         let seconds = 0;    
         var timersLoaded = setInterval(() => {
             console.log('Second: ' + seconds);
-            if (++seconds == 6 || allTimers.length > 0) {
+            if (seconds > 10 || allTimers.length > 0) {
+                seconds += 1;
                 if (allTimers.length > 0) {
                     convertEndToMillis(allTimers);
                     currentTimer = findSoonestTimer();
@@ -83,7 +83,7 @@ function loadPage() {
 
 function doneLoading() {
     $('#content').addClass('slidefix');
-    $('#countdown-header, #countdown-content, #counters-text, .menu-container').slideDown();
+    $('#countdown-header, #countdown-content, #counters-text, #menu').slideDown();
     $('#content').removeClass('slidefix');
 }
 
@@ -91,23 +91,49 @@ function startCountdown(timer) {
     if (countdown) clearInterval(countdown);
     if (!timer.name) { timer.name = "Untitled"; }
     $('#countdown-title').empty().text(timer.name);
+    displayEndDateTime(timer.end);
     return setInterval(() => {
         timeBetween = timer.end.milliseconds - new Date().getTime();
         currentTimer = timer;
-        if (timeBetween > 0) {
-            let days = Math.floor(timeBetween / (1000 * 60 * 60 * 24)),
-                hours = Math.floor((timeBetween % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                minutes = Math.floor((timeBetween % (1000 * 60 * 60)) / (1000 * 60)),
-                seconds = Math.floor((timeBetween % (1000 * 60)) / 1000);
-            $('#days').text(days);
-            $('#hours').text(hours);
-            $('#minutes').text(minutes);
-            $('#seconds').text(seconds);
-        } else {
-            $('#days').text("0");
-            $('#hours').text("0");
-            $('#minutes').text("0");
-            $('#seconds').text("0");
-        }
+        displayTimerNumbers(timeBetween);
     }, 1000);
+}
+
+function displayEndDateTime(end) {
+    let e = new Date(end.milliseconds);
+    let date = e.getDate() + "." + (e.getMonth() + 1) + "." + e.getFullYear() + " ";
+    if (e.getHours() < 10) {
+        date = date + "0" + e.getHours() + ":";
+    } else {
+        date = date + e.getHours() + ":";
+    }
+    if (e.getMinutes() < 10) {
+        date = date + "0" + e.getMinutes() + ":";
+    } else {
+        date = date + e.getMinutes() + ":";
+    }
+    if (e.getSeconds() < 10) {
+        date = date + "0" + e.getSeconds();
+    } else {
+        date = date + e.getSeconds();
+    }
+    $('#countdown-end-datetime').empty().text(date);
+}
+
+function displayTimerNumbers(time) {
+    if (time > 0) {
+        let days = Math.floor(time / (1000 * 60 * 60 * 24)),
+            hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+            minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)),
+            seconds = Math.floor((time % (1000 * 60)) / 1000);
+        $('#days').text(days);
+        $('#hours').text(hours);
+        $('#minutes').text(minutes);
+        $('#seconds').text(seconds);
+    } else {
+        $('#days').text("0");
+        $('#hours').text("0");
+        $('#minutes').text("0");
+        $('#seconds').text("0");
+    }
 }

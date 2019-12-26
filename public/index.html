@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Countdown</title>
-
     <script defer src="/__/firebase/7.0.0/firebase-app.js"></script>
     <script defer src="/__/firebase/7.0.0/firebase-auth.js"></script>
     <script defer src="/__/firebase/7.0.0/firebase-firestore.js"></script>
@@ -15,7 +14,6 @@
     <script src="scripts/main.js"></script>
     <link rel="shortcut icon" type="image/png" href="img/icon.png"/>
     <link rel="stylesheet" type="text/css" href="styles/style.css" />
-    <link rel="stylesheet" type="text/css" href="styles/input.css" />
   </head>
   <body>
     <div id="content">
@@ -24,15 +22,11 @@
               <h1>Sign in</h1>
               <hr class="sep" />
               <h3 class="error"></h3>
-              <div class="group">
+              <div>
                   <input id="login-username" type="email" required="required" />
-                  <span class="highlight"></span>
-                  <span class="bar"></span>
                   <label for="login-username">Email</label></div>
-              <div class="group">
+              <div>
                   <input id="login-password" type="password" required="required" />
-                  <span class="highlight"></span>
-                  <span class="bar"></span>
                   <label for="login-password">Password</label></div>
               <div class="btn-box">
                   <button class="btn btn-submit" type="submit">submit</button>
@@ -40,22 +34,22 @@
           </form>
           <form id="signupform" class="hidden">
               <h1>Sign up</h1>
-              <hr class="sep" />
-              <div class="group">
+              <h3 class="error"></h3>
+              <div>
                   <input id="signup-displayname" type="text" required="required" />
-                  <span class="highlight"></span>
-                  <span class="bar"></span>
-                  <label for="signup-displayname">Username</label></div>
-              <div class="group">
+                  <label for="signup-displayname">Username</label>
+                </div>
+              <div>
                   <input id="signup-username" type="email" required="required" />
-                  <span class="highlight"></span>
-                  <span class="bar"></span>
-                  <label for="signup-username">Email</label></div>
-              <div class="group">
+                  <label for="signup-username">Email</label>
+                </div>
+              <div>
                   <input id="signup-password" type="password" required="required" />
-                  <span class="highlight"></span>
-                  <span class="bar"></span>
-                  <label for="signup-password">Password</label></div>
+                  <label for="signup-password">Password</label>
+                  <span class="separator"></span>
+                  <input id="signup-password-verify" type="password" required="required">
+                  <label for="signup-password-verify">Verify password</label>
+                </div>
               <div class="btn-box">
                   <button class="btn btn-submit" type="submit">submit</button>
               </div>
@@ -64,9 +58,20 @@
       </div>
       
       <div id="countdownsContainer" class="container">
+        <div id="menu" class="hidden">
+          <a id="menu-alltimers">Timers</a>
+          <a id="menu-newtimer">New</a>
+          <img id="menu-extra" src="img/menu.svg"></img>
+          <div id="menu-modal" class="hidden">
+            <a id="menu-extra-edit">Edit</a>
+            <a id="menu-extra-delete">Delete</a>
+            <a id="menu-extra-logout">Log out</a>
+          </div>
+        </div>
         <div id="countdown-header" class="hidden">
           <h1>Countdown to</h1>
           <h2 id="countdown-title">Loading timers...</h2>
+          <h3 id="countdown-end-datetime"></h3>
         </div>
         <div id="countdown-content" class="hidden">
           <div id="counters">
@@ -88,42 +93,22 @@
         <h1>Start a countdown</h1>
         <hr class="sep" />
         <form id="newtimer-form">
-          <div class="group">
+          <div>
             <input id="newtimer-name" type="text" required="required" />
-            <span class="highlight"></span>
-            <span class="bar"></span>
             <label for="newtimer-name">What</label>
           </div>
-          <div class="group">
+          <div>
             <input id="newtimer-end-date" type="date" required="required" />
-            <span class="highlight"></span>
-            <span class="bar"></span>
             <label for="newtimer-end-date">Which date</label>
           </div>
-          <div class="group">
+          <div>
             <input id="newtimer-end-time" type="time" />
-            <span class="highlight"></span>
-            <span class="bar"></span>
             <label for="newtimer-end-time">What time</label>
           </div>
           <div class="btn-box">
             <button class="btn btn-submit" type="submit">save</button>
           </div>
         </form>
-      </div>
-
-      <div class="menu-container hidden">
-        <div id="menu" class="hidden">
-          <ul>
-            <li><a href="#" id="logout-button">Logout</a></li>
-            <li><a href="#" id="delete-button">Delete countdown</a></li>
-          </ul>
-        </div>
-        <div id="menu-buttons-container">
-          <a id="menu-button" class="actionbutton">⛧</a>
-          <a id="add-button" class="actionbutton">＋</a>
-          <a id="next-button" class="actionbutton">⟳</a>
-      </div>
       </div>
     </div>
     
