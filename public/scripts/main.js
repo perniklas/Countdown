@@ -15,55 +15,57 @@ $(() => {
     db = firebase.firestore();
     initDb(db);
 
-    $('#menu-extra').on('click', () => {
+    $('#menu-extra').on('click', function(e) {
         ToggleMenuModal(true);
     });
     
-    $('body').not('#menu-modal, #menu-modal *').on('click', () => {
-        ToggleMenuModal();
-    });
+    $(document).on('click', function(event) {
+        if (!$(event.target).closest('#menu-modal').length) {
+            ToggleMenuModal();
+        }
+      });
 
-    $('#menu-extra-logout').on('click', () => {
+    $('#menu-extra-logout').on('click', function() {
         logout();
     });
 
-    $('#menu-extra-delete').on('click', () => {
+    $('#menu-extra-delete').on('click', function() {
         if(confirm("Are you sure you want to delete this timer?")) {
             deleteCurrentTimer();
         }
     });
 
-    $('#menu-newtimer').on('click', () => {
+    $('#menu-newtimer').on('click', function() {
         if ($(this).hasClass('button-active')) {
             $(this).removeClass('button-active');
             DisplayMainContent('#countdown');
         } else {
-            $(this).addClass('button-active');
+            SetMenuButtonActive($(this));
             DisplayMainContent('#newtimer');
         }
     });
 
-    $('#menu-nexttimer').on('click', () => {
+    $('#menu-nexttimer').on('click', function() {
+        $('.button-active').removeClass('button-active');
         displayNextTimer();
     });
 
-    $('#menu-alltimers').on('click', () => {
+    $('#menu-alltimers').on('click', function() {
         if ($(this).hasClass('button-active')) {
             $(this).removeClass('button-active');
             DisplayMainContent('#countdown');
         } else {
-            $(this).addClass('button-active');
+            SetMenuButtonActive($(this));
             DisplayMainContent('#alltimers');
         }
     });
 
-    $('#newtimer-form').on('submit', () => {
+    $('#newtimer-form').on('submit', function() {
         saveTimer();
         DisplayMainContent('#countdown');
     });
 
-    $('#alltimers-timers > div').on('click', () => {
-        console.log($(this).attr("data-timerid"));
+    $('#alltimers-timers > div').on('click', function() {
         countdown = startCountdown(allTimers.find(timer => timer.ref.id == $(this).attr("data-timerid")));
     });
 });

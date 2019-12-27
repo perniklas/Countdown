@@ -151,7 +151,7 @@ body {
 }
 
 .slidefix {
-    transition: ease 0.4s;
+    transition: ease 0.4s; 
 }
 
 .button-active {

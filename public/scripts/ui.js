@@ -57,3 +57,8 @@ function ToggleMenuModal(show = false) {
         $('#menu-modal').slideUp();
     }
 }
+
+function SetMenuButtonActive(button) {
+    $('.button-active').removeClass('button-active');
+    button.addClass('button-active');
+}
