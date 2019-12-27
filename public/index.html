@@ -14,6 +14,7 @@
     <script src="scripts/main.js"></script>
     <link rel="shortcut icon" type="image/png" href="img/icon.png"/>
     <link rel="stylesheet" type="text/css" href="styles/style.css" />
+    <link rel="stylesheet" type="text/css" href="styles/input.css" />
   </head>
   <body>
     <div id="content">
@@ -23,13 +24,13 @@
               <hr class="sep" />
               <h3 class="error"></h3>
               <div>
-                  <input id="login-username" type="email" required="required" />
-                  <label for="login-username">Email</label></div>
+                <label for="login-username">Email</label></div>
+                <input id="login-username" type="email" required="required" />
               <div>
-                  <input id="login-password" type="password" required="required" />
-                  <label for="login-password">Password</label></div>
+                <label for="login-password">Password</label></div>
+                <input id="login-password" type="password" required="required" />
               <div class="btn-box">
-                  <button class="btn btn-submit" type="submit">submit</button>
+                <button class="btn btn-submit" type="submit">submit</button>
               </div>
           </form>
           <form id="signupform" class="hidden">
@@ -93,17 +94,19 @@
         <h1>Start a countdown</h1>
         <hr class="sep" />
         <form id="newtimer-form">
-          <div>
-            <input id="newtimer-name" type="text" required="required" />
+          <div class="input-group">
             <label for="newtimer-name">What</label>
+            <input id="newtimer-name" type="text" required="required" />
           </div>
           <div>
-            <input id="newtimer-end-date" type="date" required="required" />
-            <label for="newtimer-end-date">Which date</label>
-          </div>
-          <div>
-            <input id="newtimer-end-time" type="time" />
-            <label for="newtimer-end-time">What time</label>
+            <div class="input-group">
+              <label for="newtimer-end-date">date</label>
+              <input id="newtimer-end-date" type="date" required="required" />
+            </div>
+            <div class="input-group">
+              <label for="newtimer-end-time">time</label>
+              <input id="newtimer-end-time" type="time" />
+            </div>
           </div>
           <div class="btn-box">
             <button class="btn btn-submit" type="submit">save</button>

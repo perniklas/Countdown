@@ -1,0 +1,17 @@
+.inline {
+    display: inline-block;
+}
+
+.input-group input {
+    display: block;
+    margin: auto auto 20px auto;
+}
+
+.input-group label {
+    display: block;
+    text-transform: uppercase;
+    color: purple;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: auto;
+    padding-left: 10px;
+}

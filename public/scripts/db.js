@@ -60,7 +60,7 @@ function fetchAllTimers(user) {
         snapshot.forEach((doc) => {
             let timer = doc.data();
             timer.ref = doc.ref;
-            timers.push(doc.data());
+            timers.push(timer);
         });
         console.log("Fetched " + timers.length + " records from firestore");
         timers = sortTimersBySoonest(timers);
@@ -124,19 +124,7 @@ function migrateEndedTimers(snapshot) {
 }
 
 function deleteCurrentTimer() {
-    let deleteTimer = db.collection('timers').where('userId', '==', currentTimer.userId);
-    deleteTimer = deleteTimer.where('end.seconds', '==', currentTimer.end.seconds);
-    deleteTimer = deleteTimer.where('end.nanoseconds', '==', currentTimer.end.nanoseconds);
-    deleteTimer = deleteTimer.where('created.seconds', '==', currentTimer.created.seconds);
-    deleteTimer = deleteTimer.where('created.nanoseconds', '==', currentTimer.created.nanoseconds);
-    deleteTimer = deleteTimer.where('name', '==', currentTimer.name);
-
-    deleteTimer.onSnapshot(snapshot => {
-        snapshot.forEach((doc) => {
-            console.log('Deleting timer: ' + doc.data());
-            doc.ref.delete();
-        });
-    });
+    currentTimer.ref.delete();
 }
 
 function stopListening() {

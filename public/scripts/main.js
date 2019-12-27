@@ -22,7 +22,7 @@ $(() => {
         logout();
     });
 
-    $('#delete-button').on('click', () => {
+    $('#menu-extra-delete').on('click', () => {
         if(confirm("Are you sure you want to delete this timer?")) {
             deleteCurrentTimer();
         }
@@ -62,18 +62,18 @@ function loadPage() {
         let seconds = 0;    
         var timersLoaded = setInterval(() => {
             console.log('Second: ' + seconds);
-            if (seconds > 10 || allTimers.length > 0) {
-                seconds += 1;
+            if (seconds > 5 || allTimers.length > 0) {
                 if (allTimers.length > 0) {
                     convertEndToMillis(allTimers);
                     currentTimer = findSoonestTimer();
                     countdown = startCountdown(currentTimer);
                 } else {
                     countdown = startCountdown({name: 'No timers found', end: new Date().getTime() + 25252252});
-                    $('#countdown-content, #counters-text').hide();
+                    //$('#countdown-content, #counters-text').hide();
                 }
                 clearInterval(timersLoaded);
             }
+            seconds += 1;
         }, 1000);
         setTimeout(doneLoading, 1000);
     } else {
@@ -91,7 +91,7 @@ function startCountdown(timer) {
     if (countdown) clearInterval(countdown);
     if (!timer.name) { timer.name = "Untitled"; }
     $('#countdown-title').empty().text(timer.name);
-    displayEndDateTime(timer.end);
+    if (timer.end) displayEndDateTime(timer.end);
     return setInterval(() => {
         timeBetween = timer.end.milliseconds - new Date().getTime();
         currentTimer = timer;
@@ -108,14 +108,9 @@ function displayEndDateTime(end) {
         date = date + e.getHours() + ":";
     }
     if (e.getMinutes() < 10) {
-        date = date + "0" + e.getMinutes() + ":";
+        date = date + "0" + e.getMinutes();
     } else {
-        date = date + e.getMinutes() + ":";
-    }
-    if (e.getSeconds() < 10) {
-        date = date + "0" + e.getSeconds();
-    } else {
-        date = date + e.getSeconds();
+        date = date + e.getMinutes();
     }
     $('#countdown-end-datetime').empty().text(date);
 }

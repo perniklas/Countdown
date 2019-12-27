@@ -69,6 +69,7 @@ body {
     transition: ease 0.7s;
     color: purple;
     cursor: pointer;
+    text-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
 }
 
 #menu img {
@@ -82,7 +83,7 @@ body {
     right: 0;
     background-color: #e7edf9;
     border-radius: 1.2em;
-    border: #824cb6 2px solid;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
     padding: 10px;
     top: 25px;
 }
@@ -90,6 +91,7 @@ body {
 #menu-modal > a {
     display: block;
     margin: 13px auto;
+    transition: ease 0.7s;
 }
 
 #countdown-header {
