@@ -38,21 +38,6 @@ function concatDateAndTime(date, time) {
     }
 };
 
-// function getHighestId() {
-//     let id = 0;
-//     db.collection("timers").get().then((snapshot) => {
-//         snapshot.forEach(doc => {
-//             if (doc.data().id > id) {
-//                 id = doc.data().id;
-//             }
-//         })
-//         return id;
-//     }).catch(error => {
-//         alert(error.message);
-//         id = -9999;
-//     });
-// }
-
 function fetchAllTimers(user) {
     let timers = [];
     timersListener = db.collection("timers").where('userId', '==', user.uid).onSnapshot(snapshot => {
@@ -157,6 +142,7 @@ function addOrUpdateUserCollecton(user) {
 }
 
 function addTimersToAllTimersList() {
+    $('#alltimers-timers').empty();
     $.each(allTimers, (index, timer) => {
         $('#alltimers-timers').append(
             '<div class="timer-element" data-timerid="' + timer.ref.id + '"><p>' + timer.name + '</p><p>' + formatEndDateTimeToString(timer.end) + '</p></div>'

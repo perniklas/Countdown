@@ -9,14 +9,18 @@ var db,
     currentTimer = {};
 
 $(() => {
-    $('#menu').hide();
-    db = firebase.firestore();
     auth = firebase.auth();
     initAuth(auth);
+
+    db = firebase.firestore();
     initDb(db);
 
     $('#menu-extra').on('click', () => {
-        $('#menu-modal').slideToggle();
+        ToggleMenuModal(true);
+    });
+    
+    $('body').not('#menu-modal, #menu-modal *').on('click', () => {
+        ToggleMenuModal();
     });
 
     $('#menu-extra-logout').on('click', () => {
@@ -30,7 +34,13 @@ $(() => {
     });
 
     $('#menu-newtimer').on('click', () => {
-        $('#newtimer, #countdown-header, #countdown-content').slideToggle();
+        if ($(this).hasClass('button-active')) {
+            $(this).removeClass('button-active');
+            DisplayMainContent('#countdown');
+        } else {
+            $(this).addClass('button-active');
+            DisplayMainContent('#newtimer');
+        }
     });
 
     $('#menu-nexttimer').on('click', () => {
@@ -38,32 +48,33 @@ $(() => {
     });
 
     $('#menu-alltimers').on('click', () => {
-        $('#alltimers, #countdown-header, #countdown-content').slideToggle();
+        if ($(this).hasClass('button-active')) {
+            $(this).removeClass('button-active');
+            DisplayMainContent('#countdown');
+        } else {
+            $(this).addClass('button-active');
+            DisplayMainContent('#alltimers');
+        }
     });
 
     $('#newtimer-form').on('submit', () => {
         saveTimer();
+        DisplayMainContent('#countdown');
     });
 
-    $('.timer-element').on('click', () => {
+    $('#alltimers-timers > div').on('click', () => {
+        console.log($(this).attr("data-timerid"));
         countdown = startCountdown(allTimers.find(timer => timer.ref.id == $(this).attr("data-timerid")));
     });
 });
 
 function displayNextTimer() {
-    $('#content').addClass('slidefix');
-    $('#countdown-title, #counters, #counters p, #counters-text, #counters-text p').slideUp(600, () => {
-        let next = allTimers.findIndex(timer => 
-            timer.name === currentTimer.name && 
-            timer.end.milliseconds === currentTimer.end.milliseconds &&
-            timer.created.seconds === currentTimer.created.seconds) + 1;
-        if (next >= allTimers.length) { next = 0; }
-        countdown = startCountdown(allTimers[next]);
-    });
-    setTimeout(() => {
-        $('#content').removeClass('slidefix')
-        $('#countdown-title, #counters, #counters p, #counters-text, #counters-text p').slideDown();
-    }, 1000);
+    HideTimer();
+    let next = allTimers.findIndex(timer => timer.ref.id == currentTimer.ref.id) + 1;
+    if (next >= allTimers.length) { next = 0; }
+    countdown = startCountdown(allTimers[next]);
+    DisplayMainContent('#countdown');
+    ShowTimer();
 }
 
 function loadPage() {
@@ -85,16 +96,10 @@ function loadPage() {
             }
             seconds += 1;
         }, 1000);
-        setTimeout(doneLoading, 1000);
+        setTimeout(DoneLoading, 1000);
     } else {
         // render "no timers for you"
     }
-}
-
-function doneLoading() {
-    $('#content').addClass('slidefix');
-    $('#countdown-header, #countdown-content, #counters-text, #menu').slideDown();
-    $('#content').removeClass('slidefix');
 }
 
 function startCountdown(timer) {

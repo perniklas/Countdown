@@ -8,15 +8,15 @@ function initAuth(auth) {
         if (user) {
             if (user.email) {
                 console.log(userLog);
-                $('#login').slideUp();
+                DisplayMainContent('#countdown');
                 allTimers = fetchAllTimers(user);
                 addOrUpdateUserCollecton(userLog);
                 loadPage();
             }
         } else {
-            // if user logs out
-            $('#countdown-header, #countdown-content, #counters-text, .menu-container').slideUp();
-            $('#login').slideDown();
+            /* User logs out */
+            DisplayMainContent('login');
+            LoginOrSignup();
         }
     });
 

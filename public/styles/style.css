@@ -129,7 +129,7 @@ body {
 
 #counters {
     text-align: right;
-    color: #4f0099;
+    color: #858585;
     font-size: 29px;
     font-weight: bold;
     line-height: 33px;
@@ -147,11 +147,21 @@ body {
 }
 
 .hidden {
-    display: none ;
+    display: none;
 }
 
 .slidefix {
     transition: ease 0.4s;
+}
+
+.button-active {
+    border-bottom: #00adcc 2px solid;
+    transition: ease 0.3s;
+}
+
+.button-active:hover {
+    border-bottom: purple 2px solid;
+    transition: ease 0.3s;
 }
 
 .timer-element {
@@ -166,7 +176,7 @@ body {
 .timer-element:hover {
     transition: ease 0.7s;
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
-    width: 110%;
+    padding: 18px 3px;
     cursor: pointer;
 }
 
