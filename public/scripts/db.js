@@ -155,3 +155,11 @@ function addOrUpdateUserCollecton(user) {
         });
     }
 }
+
+function addTimersToAllTimersList() {
+    $.each(allTimers, (index, timer) => {
+        $('#alltimers-timers').append(
+            '<div class="timer-element" data-timerid="' + timer.ref.id + '"><p>' + timer.name + '</p><p>' + formatEndDateTimeToString(timer.end) + '</p></div>'
+        )
+    });
+}

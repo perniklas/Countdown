@@ -9,6 +9,7 @@ var db,
     currentTimer = {};
 
 $(() => {
+    $('#menu').hide();
     db = firebase.firestore();
     auth = firebase.auth();
     initAuth(auth);
@@ -32,12 +33,20 @@ $(() => {
         $('#newtimer, #countdown-header, #countdown-content').slideToggle();
     });
 
+    $('#menu-nexttimer').on('click', () => {
+        displayNextTimer();
+    });
+
+    $('#menu-alltimers').on('click', () => {
+        $('#alltimers, #countdown-header, #countdown-content').slideToggle();
+    });
+
     $('#newtimer-form').on('submit', () => {
         saveTimer();
     });
 
-    $('#next-button').on('click', () => {
-        displayNextTimer();
+    $('.timer-element').on('click', () => {
+        countdown = startCountdown(allTimers.find(timer => timer.ref.id == $(this).attr("data-timerid")));
     });
 });
 
@@ -67,6 +76,7 @@ function loadPage() {
                     convertEndToMillis(allTimers);
                     currentTimer = findSoonestTimer();
                     countdown = startCountdown(currentTimer);
+                    addTimersToAllTimersList();
                 } else {
                     countdown = startCountdown({name: 'No timers found', end: new Date().getTime() + 25252252});
                     //$('#countdown-content, #counters-text').hide();
@@ -91,7 +101,7 @@ function startCountdown(timer) {
     if (countdown) clearInterval(countdown);
     if (!timer.name) { timer.name = "Untitled"; }
     $('#countdown-title').empty().text(timer.name);
-    if (timer.end) displayEndDateTime(timer.end);
+    if (timer.end) $('#countdown-end-datetime').empty().text(formatEndDateTimeToString(timer.end));
     return setInterval(() => {
         timeBetween = timer.end.milliseconds - new Date().getTime();
         currentTimer = timer;
@@ -99,20 +109,14 @@ function startCountdown(timer) {
     }, 1000);
 }
 
-function displayEndDateTime(end) {
+function formatEndDateTimeToString(end) {
     let e = new Date(end.milliseconds);
-    let date = e.getDate() + "." + (e.getMonth() + 1) + "." + e.getFullYear() + " ";
-    if (e.getHours() < 10) {
-        date = date + "0" + e.getHours() + ":";
-    } else {
-        date = date + e.getHours() + ":";
-    }
-    if (e.getMinutes() < 10) {
-        date = date + "0" + e.getMinutes();
-    } else {
-        date = date + e.getMinutes();
-    }
-    $('#countdown-end-datetime').empty().text(date);
+    let date = (e.getDate() < 10 ? "0" + e.getDate() : e.getDate()) + "." +
+        (e.getMonth() < 10 ? "0" + (e.getMonth() + 1) : (e.getMonth() + 1)) + "." +
+        e.getFullYear() + ", " +
+        (e.getHours() < 10 ? "0" + e.getHours() : e.getHours()) + ":" +
+        (e.getMinutes() < 10 ? "0" + e.getMinutes() : e.getMinutes());
+    return date;
 }
 
 function displayTimerNumbers(time) {

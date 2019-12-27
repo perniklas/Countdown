@@ -3,7 +3,6 @@ body {
     height: 100vh;
     width: 100%;
     margin: 0;
-    /* background-image: linear-gradient(to bottom right, #FC01D0, #13C6FB); */
     background-image: linear-gradient(to bottom right, rgb(230, 48, 196), rgb(47, 178, 218));
 }
 
@@ -21,7 +20,7 @@ body {
     transition: ease 0.4s;
 }
 
-#login, #newtimer {
+#login, #newtimer, #alltimers {
     padding: 15px;
     margin: auto;
 }
@@ -63,6 +62,8 @@ body {
     transition: ease 0.7s;
     margin: 25px auto 0 auto;
     color: #00adcc;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 #menu a:hover, #menu img:hover {
@@ -98,14 +99,6 @@ body {
     padding: 0 23px 15px 23px;
     text-align: center;
     color: rgb(112, 112, 112);
-    /*background: linear-gradient(to top left, #FC01D0, #13C6FB);
-    -webkit-mask-image: linear-gradient(to top left, #FC01D0, #13C6FB);
-    background-clip: text;
-    color: transparent;
-    -webkit-background-clip: text;
-    -moz-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    */
 }
 
 #countdown-title {
@@ -154,21 +147,31 @@ body {
 }
 
 .hidden {
-    display: none;
-}
-
-#allCountdowns {
-    position: absolute;
-}
-
-#allCountdowns img {
-    height: 20px;
-    width: 20px;
+    display: none ;
 }
 
 .slidefix {
     transition: ease 0.4s;
-    /*transform: translateY(-150%) !important;*/
+}
+
+.timer-element {
+    padding: 3px;
+    background-image: linear-gradient(to top left, rgb(230, 48, 196, 0.7), rgb(47, 178, 218, 0.7));
+    color: white;
+    border-radius: 1.2em;
+    margin: 10px auto;
+    transition: ease 0.7s;
+}
+
+.timer-element:hover {
+    transition: ease 0.7s;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
+    width: 110%;
+    cursor: pointer;
+}
+
+.timer-element p {
+    padding: 3px 10px;
 }
 
 @media screen and (min-width: 600px) {
@@ -189,6 +192,11 @@ body {
         cursor: pointer;
         text-shadow: 0 15px 15px rgba(0, 0, 0, 0.85);
         transition: ease 0.3s;
+    }
+
+    .timer-element {
+        display: flex;
+        justify-content: space-between;
     }
 }
 

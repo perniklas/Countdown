@@ -37,22 +37,21 @@
               <h1>Sign up</h1>
               <h3 class="error"></h3>
               <div>
-                  <input id="signup-displayname" type="text" required="required" />
-                  <label for="signup-displayname">Username</label>
-                </div>
+                <label for="signup-displayname">Username</label>
+                <input id="signup-displayname" type="text" required="required" />
+              </div>
               <div>
-                  <input id="signup-username" type="email" required="required" />
-                  <label for="signup-username">Email</label>
-                </div>
+                <label for="signup-username">Email</label>
+                <input id="signup-username" type="email" required="required" />
+              </div>
               <div>
-                  <input id="signup-password" type="password" required="required" />
-                  <label for="signup-password">Password</label>
-                  <span class="separator"></span>
-                  <input id="signup-password-verify" type="password" required="required">
-                  <label for="signup-password-verify">Verify password</label>
-                </div>
+                <label for="signup-password">Password</label>
+                <input id="signup-password" type="password" required="required" />
+                <label for="signup-password-verify">Verify password</label>
+                <input id="signup-password-verify" type="password" required="required">
+              </div>
               <div class="btn-box">
-                  <button class="btn btn-submit" type="submit">submit</button>
+                <button class="btn btn-submit" type="submit">submit</button>
               </div>
           </form>
           <a href="#" id="signup"><h5>or sign up</h5></a>
@@ -62,7 +61,8 @@
         <div id="menu" class="hidden">
           <a id="menu-alltimers">Timers</a>
           <a id="menu-newtimer">New</a>
-          <img id="menu-extra" src="img/menu.svg"></img>
+          <a id="menu-nexttimer">Next</a>
+          <a id="menu-extra">︙</a>
           <div id="menu-modal" class="hidden">
             <a id="menu-extra-edit">Edit</a>
             <a id="menu-extra-delete">Delete</a>
@@ -103,7 +103,7 @@
               <label for="newtimer-end-date">date</label>
               <input id="newtimer-end-date" type="date" required="required" />
             </div>
-            <div class="input-group">
+            <div class="input-group inline">
               <label for="newtimer-end-time">time</label>
               <input id="newtimer-end-time" type="time" />
             </div>
@@ -112,6 +112,13 @@
             <button class="btn btn-submit" type="submit">save</button>
           </div>
         </form>
+      </div>
+
+      <div id="alltimers" class="wrapper hidden">
+        <h1>Your timers</h1>
+        <hr class="sep" />
+        <div id="alltimers-timers">
+        </div>
       </div>
     </div>
     

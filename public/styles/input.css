@@ -2,12 +2,12 @@
     display: inline-block;
 }
 
-.input-group input {
+.input-group input, #signupform input {
     display: block;
     margin: auto auto 20px auto;
 }
 
-.input-group label {
+.input-group label, #signupform label {
     display: block;
     text-transform: uppercase;
     color: purple;
