@@ -129,7 +129,7 @@ body {
 
 #counters {
     text-align: right;
-    color: #858585;
+    color: #4f2199;
     font-size: 29px;
     font-weight: bold;
     line-height: 33px;
@@ -176,7 +176,7 @@ body {
 .timer-element:hover {
     transition: ease 0.7s;
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
-    padding: 18px 3px;
+    padding: 10px 3px;
     cursor: pointer;
 }
 

@@ -62,11 +62,15 @@ $(() => {
 
     $('#newtimer-form').on('submit', function() {
         saveTimer();
+        $('.button-active').removeClass('button-active');
         DisplayMainContent('#countdown');
     });
 
-    $('#alltimers-timers > div').on('click', function() {
+    $(document).on('click', '.timer-element', function() {
+        console.log($(this));
+        $('.button-active').removeClass('button-active');
         countdown = startCountdown(allTimers.find(timer => timer.ref.id == $(this).attr("data-timerid")));
+        DisplayMainContent('#countdown');
     });
 });
 
