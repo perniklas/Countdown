@@ -126,7 +126,10 @@ function migrateEndedTimers(snapshot) {
  * Deletes the timer that is currently displayed for a user.
  */
 function deleteCurrentTimer() {
-    currentTimer.ref.delete();
+    currentTimer.ref.delete().then(() => {
+        allTimers = fetchAllTimers(auth.currentUser);
+        DisplayMainContent('#countdown');
+    });
 }
 
 /** 
