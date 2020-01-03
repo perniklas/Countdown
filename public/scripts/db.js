@@ -16,18 +16,18 @@ function saveTimer() {
         userId: auth.currentUser.uid
     };
 
-    console.log('NEW TIMER:');
-    console.log(newTimer);
+    // db.collection('timers').add(newTimer).then(function() {
+    //     allTimers.push(newTimer);
+    //     currentTimer = newTimer;
+    //     countdown = startCountdown(currentTimer);
+    // }).catch(error => {
+    //     alert(error.message);
+    // });
 
-    // conditionals? Or let users add empty values
-    
-    db.collection('timers').add(newTimer).then(() => {
-        allTimers.push(newTimer);
-        currentTimer = newTimer;
-        countdown = startCountdown(currentTimer);
-    }).catch(error => {
-        alert(error.message);
-    });
+    db.collection('timers').add(newTimer);
+    allTimers.push(newTimer);
+    currentTimer = newTimer;
+    countdown = startCountdown(currentTimer);
 }
 
 function concatDateAndTime(date, time) {
@@ -53,6 +53,9 @@ function fetchAllTimers(user) {
     return timers;
 }
 
+/**
+ * Returns a Timer object that is the one with the shortest amount of time left on the countdown.
+ */
 function findSoonestTimer() {
     let soonestTimers = sortTimersBySoonest(allTimers);
     let now = new Date().getTime();
@@ -64,7 +67,7 @@ function findSoonestTimer() {
             firstAndBest = timer;
         }
     });
-    return firstAndBest; // {name: 'All timers expired', end: new Date().getTime() + 25252513}
+    return firstAndBest;
 }
 
 function sortTimersByNewest(timers) {
@@ -83,13 +86,24 @@ function sortTimersByLatest(timers) {
     return timers.sort((a, b) => b.end.milliseconds - a.end.milliseconds); 
 }
 
+/**
+ * Converts the Firestore timestamp from seconds/nanoseconds to milliseconds (much easier to work with).
+ * 
+ * @param {allTimers[]} timers 
+ */
 function convertEndToMillis(timers) {
     timers.forEach(timer => {
-        console.log("Converting from timestamp to milliseconds");
         timer.end.milliseconds = timer.end.toMillis();
     });
 }
 
+/**
+ * Takes the current snapshot of Firestore and pilfers through each record to check if they have ended.
+ * If they have indeed ended they are first copied to the 'expired' collection before being removed from 
+ * the 'timers' collection. Helps clean up the mess without actually deleting the timers.
+ * 
+ * @param {snapshot?} snapshot firestore snapshot
+ */
 function migrateEndedTimers(snapshot) {
     console.log('Migrating ended timers...');
     let counter = 0;
@@ -108,14 +122,26 @@ function migrateEndedTimers(snapshot) {
     }
 }
 
+/**
+ * Deletes the timer that is currently displayed for a user.
+ */
 function deleteCurrentTimer() {
     currentTimer.ref.delete();
 }
 
+/** 
+ * Kills the DB listener (when logging out).
+ */
 function stopListening() {
     timersListener();
 }
 
+/**
+ * Adds users to a Users collection in Firestore. This lets me see when the user was created and when the user last logged in,
+ * which in turn is used to automagically delete accounts that are not used for 2 years.
+ * 
+ * @param {User} user A Firebase User object.
+ */
 function addOrUpdateUserCollecton(user) {
     user.updated = new Date();
     let userDb = db.collection('users').doc(auth.currentUser.uid);
@@ -123,7 +149,7 @@ function addOrUpdateUserCollecton(user) {
         userDb.set({
             updated: user.updated
         }, { merge: true }).then(() => {
-            console.log('Updated user ' + auth.currentUser.email + ', login date: ' + user.updated);
+            console.log('Updated user ' + auth.currentUser.email + ' with new login date: ' + user.updated);
         }).catch(error => {
             console.log('Error: ' + error.message);
         });
@@ -134,13 +160,17 @@ function addOrUpdateUserCollecton(user) {
             joined: user.joined,
             updated: user.updated
         }, { merge: true }).then(() => {
-            console.log('Added user ' + user.username + ' to collection.');
+            console.log('Added new user ' + user.username + ' to user list.');
         }).catch(error => {
             console.log('Error: ' + error.message);
         });
     }
 }
 
+/**
+ * Adds all elements in allTimers array (found in fetchAllTimers) to the alltimers-timers HTML element.
+ * The timers' identity is provided as a data attribute for ease of use when element is clicked.
+ */
 function addTimersToAllTimersList() {
     $('#alltimers-timers').empty();
     $.each(allTimers, (index, timer) => {

@@ -54,6 +54,7 @@ body {
 }
 
 #menu {
+    padding: 0 10px;
     display: flex;
     justify-content: space-evenly;
 }
@@ -66,13 +67,6 @@ body {
     text-transform: uppercase;
 }
 
-#menu a:hover, #menu img:hover {
-    transition: ease 0.7s;
-    color: purple;
-    cursor: pointer;
-    text-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
-}
-
 #menu img {
     max-height: 25px;
     max-width: 25px;
@@ -81,7 +75,7 @@ body {
 #menu-modal {
     display: none;
     position: fixed;
-    right: 0;
+    right: -3%;
     background-color: #e7edf9;
     border-radius: 1.2em;
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
@@ -91,7 +85,7 @@ body {
 
 #menu-modal > a {
     display: block;
-    margin: 13px auto;
+    margin: 13px 25px;
     transition: ease 0.7s;
 }
 
@@ -159,11 +153,6 @@ body {
     transition: ease 0.3s;
 }
 
-.button-active:hover {
-    border-bottom: purple 2px solid;
-    transition: ease 0.3s;
-}
-
 .timer-element {
     padding: 3px;
     background-image: linear-gradient(to top left, rgb(230, 48, 196, 0.7), rgb(47, 178, 218, 0.7));
@@ -171,13 +160,6 @@ body {
     border-radius: 1.2em;
     margin: 10px auto;
     transition: ease 0.7s;
-}
-
-.timer-element:hover {
-    transition: ease 0.7s;
-    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
-    padding: 10px 3px;
-    cursor: pointer;
 }
 
 .timer-element p {
@@ -208,6 +190,25 @@ body {
         display: flex;
         justify-content: space-between;
     }
+
+    #menu a:hover, #menu img:hover {
+        transition: ease 0.7s;
+        color: purple;
+        cursor: pointer;
+        text-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
+    }
+
+    .button-active:hover {
+        border-bottom: purple 2px solid;
+        transition: ease 0.3s;
+    }
+
+    .timer-element:hover {
+        transition: ease 0.7s;
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
+        padding: 10px 3px;
+        cursor: pointer;
+    }    
 }
 
 @media screen and (max-width: 600px) and (min-height: 800px) {

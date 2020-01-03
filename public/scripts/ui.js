@@ -52,9 +52,9 @@ function ShowTimer() {
 
 function ToggleMenuModal(show = false) {
     if (show) {
-        $('#menu-modal').slideDown();
+        $('#menu-modal').fadeIn();
     } else {
-        $('#menu-modal').slideUp();
+        $('#menu-modal').fadeOut();
     }
 }
 

@@ -15,15 +15,15 @@ $(() => {
     db = firebase.firestore();
     initDb(db);
 
-    $('#menu-extra').on('click', function(e) {
+    $('#menu-extra').on('click', function() {
         ToggleMenuModal(true);
     });
     
     $(document).on('click', function(event) {
-        if (!$(event.target).closest('#menu-modal').length) {
+        if (!$(event.target).closest('#menu-modal, #menu-extra').length) {
             ToggleMenuModal();
         }
-      });
+    });
 
     $('#menu-extra-logout').on('click', function() {
         logout();
@@ -95,7 +95,9 @@ function loadPage() {
                     countdown = startCountdown(currentTimer);
                     addTimersToAllTimersList();
                 } else {
-                    countdown = startCountdown({name: 'No timers found', end: new Date().getTime() + 25252252});
+                    countdown = startCountdown({name: 'No timers found', end: {
+                        milliseconds: new Date().getTime()}
+                    });
                     //$('#countdown-content, #counters-text').hide();
                 }
                 clearInterval(timersLoaded);
@@ -110,9 +112,8 @@ function loadPage() {
 
 function startCountdown(timer) {
     if (countdown) clearInterval(countdown);
-    if (!timer.name) { timer.name = "Untitled"; }
     $('#countdown-title').empty().text(timer.name);
-    if (timer.end) $('#countdown-end-datetime').empty().text(formatEndDateTimeToString(timer.end));
+    if (timer.end.seconds) $('#countdown-end-datetime').empty().text(formatEndDateTimeToString(timer.end));
     return setInterval(() => {
         timeBetween = timer.end.milliseconds - new Date().getTime();
         currentTimer = timer;
