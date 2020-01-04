@@ -15,17 +15,9 @@ function saveTimer() {
         created: new Date(),
         userId: auth.currentUser.uid
     };
-
-    // db.collection('timers').add(newTimer).then(function() {
-    //     allTimers.push(newTimer);
-    //     currentTimer = newTimer;
-    //     countdown = startCountdown(currentTimer);
-    // }).catch(error => {
-    //     alert(error.message);
-    // });
-
     db.collection('timers').add(newTimer);
     allTimers.push(newTimer);
+    addTimersToAllTimersList();
     currentTimer = newTimer;
     countdown = startCountdown(currentTimer);
 }
@@ -34,7 +26,7 @@ function concatDateAndTime(date, time) {
     if (time.length > 0) {
         return new Date(date + "T" + time);
     } else {
-        return new Date(date);
+        return new Date(date + "T12:00");
     }
 };
 
@@ -126,10 +118,13 @@ function migrateEndedTimers(snapshot) {
  * Deletes the timer that is currently displayed for a user.
  */
 function deleteCurrentTimer() {
-    currentTimer.ref.delete().then(() => {
-        allTimers = fetchAllTimers(auth.currentUser);
-        DisplayMainContent('#countdown');
-    });
+    HideTimer();
+    let next = getNextTimer();
+    currentTimer.ref.delete();
+    allTimers = fetchAllTimers(auth.currentUser);
+    addTimersToAllTimersList();
+    countdown = startCountdown(next);
+    DisplayMainContent('#countdown');
 }
 
 /** 
@@ -181,4 +176,10 @@ function addTimersToAllTimersList() {
             '<div class="timer-element" data-timerid="' + timer.ref.id + '"><p>' + timer.name + '</p><p>' + formatEndDateTimeToString(timer.end) + '</p></div>'
         )
     });
+}
+
+function getNextTimer() {
+    let index = allTimers.findIndex(t => t.ref.id == currentTimer.ref.id) + 1;
+    if (index >= allTimers.length) index = 0;
+    return allTimers[index];
 }

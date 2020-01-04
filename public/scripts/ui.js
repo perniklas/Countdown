@@ -1,8 +1,10 @@
 /**
  * UI functionality based on states.
  * States:
- * - Initial load 
- * - Login (signup)
+ * - Login
+ *      - Sign up
+ * 
+ * - Loading timers
  * - Display timer
  * - Show all timers
  * - Add new timer

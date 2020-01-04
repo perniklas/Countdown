@@ -1,5 +1,5 @@
 /* 
-    Mostly UI and global variables.
+    Mostly global variables and some countdown logic.
 */ 
 
 var db,
@@ -31,6 +31,7 @@ $(() => {
 
     $('#menu-extra-delete').on('click', function() {
         if(confirm("Are you sure you want to delete this timer?")) {
+            ToggleMenuModal();
             deleteCurrentTimer();
         }
     });
@@ -61,9 +62,13 @@ $(() => {
     });
 
     $('#newtimer-form').on('submit', function() {
-        saveTimer();
-        $('.button-active').removeClass('button-active');
-        DisplayMainContent('#countdown');
+        if ($('#newtimer-end-date').val() && $('#newtimer-name').val()) {
+            saveTimer();
+            $('.button-active').removeClass('button-active');
+            DisplayMainContent('#countdown');
+        } else {
+            alert("A timer needs at least a name and an end date.");
+        }
     });
 
     $(document).on('click', '.timer-element', function() {
@@ -74,15 +79,20 @@ $(() => {
     });
 });
 
+/**
+ * Displays the timer that is after the currentTimer in allTimers array (whichever way the array has been ordered).
+ */
 function displayNextTimer() {
     HideTimer();
-    let next = allTimers.findIndex(timer => timer.ref.id == currentTimer.ref.id) + 1;
-    if (next >= allTimers.length) { next = 0; }
-    countdown = startCountdown(allTimers[next]);
+    countdown = startCountdown(getNextTimer());
     DisplayMainContent('#countdown');
     ShowTimer();
 }
 
+/**
+ * Horrible name. Takes care of loading the page after users log in (waiting for timers to load etc).
+ * Does too many things, should be split up at some point.
+ */
 function loadPage() {
     if(auth.currentUser) {
         let seconds = 0;    
@@ -110,17 +120,27 @@ function loadPage() {
     }
 }
 
+/**
+ * startCountdown takes care of the necessary workings to put a timer object into motion,
+ * starting the countdown on the main countdown page.
+ * 
+ * @param {object} timer a timer object that has a name, end.milliseconds and a userid.
+ */
 function startCountdown(timer) {
     if (countdown) clearInterval(countdown);
     $('#countdown-title').empty().text(timer.name);
     if (timer.end.seconds) $('#countdown-end-datetime').empty().text(formatEndDateTimeToString(timer.end));
+    currentTimer = timer;
     return setInterval(() => {
         timeBetween = timer.end.milliseconds - new Date().getTime();
-        currentTimer = timer;
         displayTimerNumbers(timeBetween);
     }, 1000);
 }
 
+/**
+ * Formats a timers end time object to a string that is displayed under a timers' name.
+ * @param {object} end 
+ */
 function formatEndDateTimeToString(end) {
     let e = new Date(end.milliseconds);
     let date = (e.getDate() < 10 ? "0" + e.getDate() : e.getDate()) + "." +
@@ -131,6 +151,11 @@ function formatEndDateTimeToString(end) {
     return date;
 }
 
+/**
+ * Turn a millisecond value into the actual numbers being displayed in the countdown window.
+ * 
+ * @param {int} time Millisecond value
+ */
 function displayTimerNumbers(time) {
     if (time > 0) {
         let days = Math.floor(time / (1000 * 60 * 60 * 24)),
