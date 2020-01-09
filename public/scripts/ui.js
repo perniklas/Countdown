@@ -44,12 +44,12 @@ function DoneLoading() {
 
 function HideTimer() {
     $('#content').addClass('slidefix');
-    $('#countdown-title, #counters, #counters p, #counters-text, #counters-text p').slideUp();
+    $('#countdown-content').slideUp();
 }
 
 function ShowTimer() {
     $('#content').removeClass('slidefix')
-    $('#countdown-title, #counters, #counters p, #counters-text, #counters-text p').slideDown();
+    $('#countdown-content').slideDown();
 }
 
 function ToggleMenuModal(show = false) {
@@ -64,3 +64,11 @@ function SetMenuButtonActive(button) {
     $('.button-active').removeClass('button-active');
     button.addClass('button-active');
 }
+
+let vh = window.innerHeight * 0.01;
+document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+window.addEventListener('resize', () => {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+});

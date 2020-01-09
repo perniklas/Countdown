@@ -6,3 +6,8 @@ node_modules/*
 config.js
 */config.js
 public/config.js
+.firebase
+.firebase/*
+.cache
+
+package-lock.json

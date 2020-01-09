@@ -125,6 +125,7 @@ function deleteCurrentTimer() {
     addTimersToAllTimersList();
     countdown = startCountdown(next);
     DisplayMainContent('#countdown');
+    ShowTimer();
 }
 
 /** 

@@ -86,7 +86,7 @@ function displayNextTimer() {
     HideTimer();
     countdown = startCountdown(getNextTimer());
     DisplayMainContent('#countdown');
-    ShowTimer();
+    setTimeout(ShowTimer, 700);
 }
 
 /**
