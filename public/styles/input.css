@@ -1,4 +1,4 @@
-.input-group input, #signupform input {
+.input-group input, #signupform input, input:-webkit-autofill {
     display: block;
     margin: auto auto 20px auto;
     height: 2.5em;
@@ -9,12 +9,12 @@
     border: 2px solid transparent;
 }
 
-.input-group input:hover, #signupform input:hover {
+.input-group input:hover, #signupform input:hover, input:-webkit-autofill:hover {
     border: 2px solid purple;
     transition: ease 0.3s;
 }
 
-.input-group input:focus, #signupform input:focus {
+.input-group input:focus, #signupform input:focus, input:-webkit-autofill:focus {
     outline: none;
     border: 2px solid purple;
     transition: ease 0.3s;
