@@ -156,7 +156,7 @@ body {
 }
 
 .button-active {
-    border-bottom: #00adcc 2px solid;
+    border-bottom: white 3px solid;
     transition: ease 0.3s;
 }
 

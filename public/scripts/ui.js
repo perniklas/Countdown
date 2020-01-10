@@ -42,9 +42,19 @@ function DoneLoading() {
     $('#content').removeClass('slidefix');
 }
 
-function HideTimer() {
+function HideTimer(next = false) {
     $('#content').addClass('slidefix');
-    $('#countdown-content').slideUp();
+    $('#countdown-content').slideUp("swing", () => {
+        if (next) {
+            StartNext();
+        }
+    });
+}
+
+function StartNext() {
+    countdown = startCountdown(getNextTimer());
+    DisplayMainContent('#countdown');
+    ShowTimer();
 }
 
 function ShowTimer() {

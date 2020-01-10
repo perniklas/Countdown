@@ -83,10 +83,7 @@ $(() => {
  * Displays the timer that is after the currentTimer in allTimers array (whichever way the array has been ordered).
  */
 function displayNextTimer() {
-    HideTimer();
-    countdown = startCountdown(getNextTimer());
-    DisplayMainContent('#countdown');
-    setTimeout(ShowTimer, 700);
+    HideTimer(true);
 }
 
 /**
@@ -131,10 +128,18 @@ function startCountdown(timer) {
     $('#countdown-title').empty().text(timer.name);
     if (timer.end.seconds) $('#countdown-end-datetime').empty().text(formatEndDateTimeToString(timer.end));
     currentTimer = timer;
-    return setInterval(() => {
-        timeBetween = timer.end.milliseconds - new Date().getTime();
-        displayTimerNumbers(timeBetween);
-    }, 1000);
+    let time = timer.end.milliseconds - new Date().getTime();
+    if (time > 0) {
+        UpdateTimer(time);
+        return setInterval(() => {
+            UpdateTimer(time);
+        }, 1000);
+    } else {
+        DisplayEndedTimer();
+        return setInterval(() => {
+            DisplayEndedTimer();
+        }, 214748364);
+    }
 }
 
 /**
@@ -156,20 +161,20 @@ function formatEndDateTimeToString(end) {
  * 
  * @param {int} time Millisecond value
  */
-function displayTimerNumbers(time) {
-    if (time > 0) {
-        let days = Math.floor(time / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-            minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)),
-            seconds = Math.floor((time % (1000 * 60)) / 1000);
-        $('#days').text(days);
-        $('#hours').text(hours);
-        $('#minutes').text(minutes);
-        $('#seconds').text(seconds);
-    } else {
-        $('#days').text("0");
-        $('#hours').text("0");
-        $('#minutes').text("0");
-        $('#seconds').text("0");
-    }
+function UpdateTimer(time) {
+    let days = Math.floor(time / (1000 * 60 * 60 * 24)),
+        hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds = Math.floor((time % (1000 * 60)) / 1000);
+    $('#days').text(days);
+    $('#hours').text(hours);
+    $('#minutes').text(minutes);
+    $('#seconds').text(seconds);
+}
+
+function DisplayEndedTimer() {
+    $('#days').text("0");
+    $('#hours').text("0");
+    $('#minutes').text("0");
+    $('#seconds').text("0");
 }
