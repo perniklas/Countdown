@@ -24,6 +24,8 @@ function saveTimer() {
 
 function concatDateAndTime(date, time) {
     if (time.length > 0) {
+        // let dd = new Date(date + "T" + time);
+        // return new Date(dd.getFullYear(), dd.getMonth(), dd.getDate(), dd.getHours(), (dd.getMinutes() + dd.getTimezoneOffset()))
         return new Date(date + "T" + time);
     } else {
         return new Date(date + "T12:00");

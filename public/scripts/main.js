@@ -132,13 +132,11 @@ function startCountdown(timer) {
     if (time > 0) {
         UpdateTimer(time);
         return setInterval(() => {
+            time = timer.end.milliseconds - new Date().getTime();
             UpdateTimer(time);
         }, 1000);
     } else {
         DisplayEndedTimer();
-        return setInterval(() => {
-            DisplayEndedTimer();
-        }, 214748364);
     }
 }
 

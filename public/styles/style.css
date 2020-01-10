@@ -14,7 +14,7 @@ body {
     width: 90%;
     height: fit-content;
     margin: auto;
-    transform: translateY(2em);
+    transform: translateY(calc(calc(var(--vh, 1vh) * 47) - 50%));
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 2em;
@@ -22,13 +22,26 @@ body {
     z-index: 2;
 }
 
-#login, #newtimer, #alltimers {
+#login, #newtimer {
     padding: 15px;
     margin: auto;
 }
 
-#login form {
-    margin: 20px 15px;
+#alltimers {
+    overflow: scroll;
+    max-height: calc(var(--vh, 1vh) * 75);
+    padding: 15px;
+    margin: auto;
+}
+
+#newtimer-form {
+    margin: 35px auto;
+    width: fit-content;
+}
+
+#login form, #signupform {
+    width: fit-content;
+    margin: 20px auto;
     text-align: center;
 }
 
@@ -161,6 +174,7 @@ body {
 }
 
 .timer-element {
+    width: 88%;
     padding: 3px;
     background-image: linear-gradient(to top left, rgb(230, 48, 196, 0.7), rgb(47, 178, 218, 0.7));
     color: white;
@@ -206,7 +220,7 @@ body {
     }
 
     .button-active:hover {
-        border-bottom: purple 2px solid;
+        border-bottom: purple 3px solid;
         transition: ease 0.3s;
     }
 
@@ -218,12 +232,12 @@ body {
     }    
 }
 
-@media screen and (max-width: 600px) and (min-height: 800px) {
+/* @media screen and (max-width: 600px) and (min-height: 800px) {
     #content {
         margin: auto;
         transform: translateY(25%);
     }
-}
+} */
 /*
 @media screen and (min-width: 900px) {
     #countdown-content {

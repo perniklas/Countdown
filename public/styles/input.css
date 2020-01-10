@@ -1,9 +1,8 @@
 .input-group input, #signupform input, input:-webkit-autofill {
     display: block;
-    margin: auto auto 20px auto;
+    margin: 0 0 20px 0;
     height: 2.5em;
     padding: 0 15px;
-    border: none;
     border-radius: 0.5em;
     transition: ease 0.3s;
     border: 2px solid transparent;
@@ -21,7 +20,7 @@
 }
 
 .input-group {
-    width: fit-content;
+    width: 100%;
     margin: auto;
 }
 
