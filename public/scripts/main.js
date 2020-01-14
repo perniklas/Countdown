@@ -132,7 +132,7 @@ function startCountdown(timer) {
     if (time > 0) {
         UpdateTimer(time);
         return setInterval(() => {
-            time = timer.end.milliseconds - new Date().getTime();
+            time -= 1000;
             UpdateTimer(time);
         }, 1000);
     } else {
@@ -160,14 +160,19 @@ function formatEndDateTimeToString(end) {
  * @param {int} time Millisecond value
  */
 function UpdateTimer(time) {
-    let days = Math.floor(time / (1000 * 60 * 60 * 24)),
-        hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds = Math.floor((time % (1000 * 60)) / 1000);
-    $('#days').text(days);
-    $('#hours').text(hours);
-    $('#minutes').text(minutes);
-    $('#seconds').text(seconds);
+    if (time <= 0) {
+        DisplayEndedTimer()
+    } else {
+        confetti.stop();
+        let days = Math.floor(time / (1000 * 60 * 60 * 24)),
+            hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+            minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)),
+            seconds = Math.floor((time % (1000 * 60)) / 1000);
+        $('#days').text(days);
+        $('#hours').text(hours);
+        $('#minutes').text(minutes);
+        $('#seconds').text(seconds);
+    }
 }
 
 function DisplayEndedTimer() {
@@ -175,4 +180,5 @@ function DisplayEndedTimer() {
     $('#hours').text("0");
     $('#minutes').text("0");
     $('#seconds').text("0");
+    confetti.start();
 }

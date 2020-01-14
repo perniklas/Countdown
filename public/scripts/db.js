@@ -13,9 +13,14 @@ function saveTimer() {
         name: $('#newtimer-name').val(),
         end: concatDateAndTime($('#newtimer-end-date').val(), $('#newtimer-end-time').val()),
         created: new Date(),
-        userId: auth.currentUser.uid
+        userId: auth.currentUser.uid,
+        ref: {
+            id: null
+        }
     };
-    db.collection('timers').add(newTimer);
+    newTimer.ref.id = newTimer.userId + "///" + newTimer.name + "///" + newTimer.created.toISOString();
+    db.collection('timers').doc(newTimer.ref.id).set(newTimer);
+    //db.collection('timers').add(newTimer);
     allTimers.push(newTimer);
     addTimersToAllTimersList();
     currentTimer = newTimer;
