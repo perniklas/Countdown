@@ -13,7 +13,7 @@ $(() => {
     auth = firebase.auth();
     initAuth(auth);
 
-    func = firebase.functions();
+    //func = firebase.functions();
 
     db = firebase.firestore();
     initDb(db);
