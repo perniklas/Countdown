@@ -4,6 +4,7 @@
 
 var db,
     auth,
+    func,
     allTimers,
     countdown,
     currentTimer = {};
@@ -11,6 +12,8 @@ var db,
 $(() => {
     auth = firebase.auth();
     initAuth(auth);
+
+    func = firebase.functions();
 
     db = firebase.firestore();
     initDb(db);

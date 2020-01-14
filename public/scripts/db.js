@@ -18,7 +18,7 @@ function saveTimer() {
             id: null
         }
     };
-    newTimer.ref.id = newTimer.userId + "///" + newTimer.name + "///" + newTimer.created.toISOString();
+    newTimer.ref.id = newTimer.userId + "---" + newTimer.name + "---" + newTimer.created.toISOString();
     db.collection('timers').doc(newTimer.ref.id).set(newTimer);
     //db.collection('timers').add(newTimer);
     allTimers.push(newTimer);
