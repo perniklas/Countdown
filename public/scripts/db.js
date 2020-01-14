@@ -5,6 +5,7 @@
 function initDb(db) {
     if (db) {
         console.log('Firestore connection established.');
+        // call func
     }
 }
 
@@ -20,7 +21,6 @@ function saveTimer() {
     };
     newTimer.ref.id = newTimer.userId + "---" + newTimer.name + "---" + newTimer.created.toISOString();
     db.collection('timers').doc(newTimer.ref.id).set(newTimer);
-    //db.collection('timers').add(newTimer);
     allTimers.push(newTimer);
     addTimersToAllTimersList();
     currentTimer = newTimer;
@@ -29,8 +29,6 @@ function saveTimer() {
 
 function concatDateAndTime(date, time) {
     if (time.length > 0) {
-        // let dd = new Date(date + "T" + time);
-        // return new Date(dd.getFullYear(), dd.getMonth(), dd.getDate(), dd.getHours(), (dd.getMinutes() + dd.getTimezoneOffset()))
         return new Date(date + "T" + time);
     } else {
         return new Date(date + "T12:00");
@@ -49,6 +47,7 @@ function fetchAllTimers(user) {
         console.log("Fetched " + timers.length + " records from firestore");
         timers = sortTimersBySoonest(timers);
     });
+    addTimersToAllTimersList(timers);
     return timers;
 }
 
@@ -129,7 +128,6 @@ function deleteCurrentTimer() {
     let next = getNextTimer();
     currentTimer.ref.delete();
     allTimers = fetchAllTimers(auth.currentUser);
-    addTimersToAllTimersList();
     countdown = startCountdown(next);
     DisplayMainContent('#countdown');
     ShowTimer();
@@ -177,9 +175,9 @@ function addOrUpdateUserCollecton(user) {
  * Adds all elements in allTimers array (found in fetchAllTimers) to the alltimers-timers HTML element.
  * The timers' identity is provided as a data attribute for ease of use when element is clicked.
  */
-function addTimersToAllTimersList() {
+function addTimersToAllTimersList(timers = allTimers) {
     $('#alltimers-timers').empty();
-    $.each(allTimers, (index, timer) => {
+    $.each(timers, (index, timer) => {
         $('#alltimers-timers').append(
             '<div class="timer-element" data-timerid="' + timer.ref.id + '"><p>' + timer.name + '</p><p>' + formatEndDateTimeToString(timer.end) + '</p></div>'
         )
