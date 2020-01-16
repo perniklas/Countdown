@@ -10,9 +10,10 @@ function initDb(db) {
 }
 
 function saveTimer() {
+    let endDateTime = concatDateAndTime($('#newtimer-end-date').val(), $('#newtimer-end-time').val());
     let newTimer = {
         name: $('#newtimer-name').val(),
-        end: concatDateAndTime($('#newtimer-end-date').val(), $('#newtimer-end-time').val()),
+        end: endDateTime,
         created: new Date(),
         userId: auth.currentUser.uid,
         ref: {
@@ -21,6 +22,9 @@ function saveTimer() {
     };
     newTimer.ref.id = newTimer.userId + "---" + newTimer.name + "---" + newTimer.created.toISOString();
     db.collection('timers').doc(newTimer.ref.id).set(newTimer);
+    newTimer.end = {
+        milliseconds: endDateTime.getTime()
+    }
     allTimers.push(newTimer);
     addTimersToAllTimersList();
     currentTimer = newTimer;

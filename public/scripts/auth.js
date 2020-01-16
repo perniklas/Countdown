@@ -7,9 +7,6 @@ function initAuth(auth) {
     auth.onAuthStateChanged((user) => {
         if (user) {
             if (user.email) {
-                console.log(userLog);
-                DisplayMainContent('#countdown');
-                allTimers = fetchAllTimers(user);
                 addOrUpdateUserCollecton(userLog);
                 loadPage();
             }

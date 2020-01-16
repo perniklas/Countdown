@@ -36,7 +36,7 @@ function DisplayMainContent(container) {
     $(container).slideDown();
 }
 
-function DoneLoading() {
+function TimersAreLoaded() {
     $('#content').addClass('slidefix');
     $('#countdown-header, #countdown-content, #counters-text, #menu').slideDown();
     $('#content').removeClass('slidefix');

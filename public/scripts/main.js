@@ -95,28 +95,43 @@ function displayNextTimer() {
  */
 function loadPage() {
     if(auth.currentUser) {
-        let seconds = 0;    
+        DisplayMainContent('#countdown');
+        allTimers = fetchAllTimers(user);
+        let seconds = 0;
         var timersLoaded = setInterval(() => {
-            console.log('Second: ' + seconds);
-            if (seconds > 5 || allTimers.length > 0) {
-                if (allTimers.length > 0) {
-                    convertEndToMillis(allTimers);
-                    currentTimer = findSoonestTimer();
-                    countdown = startCountdown(currentTimer);
-                    addTimersToAllTimersList();
-                } else {
-                    countdown = startCountdown({name: 'No timers found', end: {
-                        milliseconds: new Date().getTime()}
-                    });
-                    //$('#countdown-content, #counters-text').hide();
-                }
+            if (LoadTimer(seconds) == 1) {
+                LoadingComplete(timersLoaded);
+            } else if (LoadTimer(seconds) == -1) {
+                countdown = startCountdown({name: 'No timers found', end: {
+                    milliseconds: new Date().getTime()}
+                });
                 clearInterval(timersLoaded);
             }
             seconds += 1;
         }, 1000);
-        setTimeout(DoneLoading, 1000);
+        setTimeout(TimersAreLoaded, 1000);
     } else {
         // render "no timers for you"
+    }
+}
+
+function LoadingComplete(interval) {
+    clearInterval(interval);
+    convertEndToMillis(allTimers);
+    currentTimer = findSoonestTimer();
+    countdown = startCountdown(currentTimer);
+}
+
+function LoadTimer(seconds) {
+    console.log(`Loading for ${seconds} seconds...`);
+    if (seconds > 5 || allTimers.length > 0) {
+        if (allTimers.length > 0) {
+            return 1;
+        } else {
+            return -1;
+        }
+    } else {
+        return 0;
     }
 }
 
@@ -128,8 +143,7 @@ function loadPage() {
  */
 function startCountdown(timer) {
     if (countdown) clearInterval(countdown);
-    $('#countdown-title').empty().text(timer.name);
-    if (timer.end.seconds) $('#countdown-end-datetime').empty().text(formatEndDateTimeToString(timer.end));
+    DisplayTimerInfo(timer);
     currentTimer = timer;
     let time = timer.end.milliseconds - new Date().getTime();
     if (time > 0) {
@@ -141,6 +155,11 @@ function startCountdown(timer) {
     } else {
         DisplayEndedTimer();
     }
+}
+
+function DisplayTimerInfo(timer) {
+    $('#countdown-title').empty().text(timer.name);
+    if (timer.end.milliseconds) $('#countdown-end-datetime').empty().text(formatEndDateTimeToString(timer.end));
 }
 
 /**
