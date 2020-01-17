@@ -96,7 +96,7 @@ function displayNextTimer() {
 function loadPage() {
     if(auth.currentUser) {
         DisplayMainContent('#countdown');
-        allTimers = fetchAllTimers(user);
+        allTimers = fetchAllTimers(auth.currentUser);
         let seconds = 0;
         var timersLoaded = setInterval(() => {
             if (LoadTimer(seconds) == 1) {

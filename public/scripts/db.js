@@ -49,9 +49,10 @@ function fetchAllTimers(user) {
             timers.push(timer);
         });
         console.log("Fetched " + timers.length + " records from firestore");
+        convertEndToMillis(timers);
         timers = sortTimersBySoonest(timers);
+        addTimersToAllTimersList(timers);
     });
-    addTimersToAllTimersList(timers);
     return timers;
 }
 
