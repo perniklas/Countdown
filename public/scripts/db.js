@@ -130,7 +130,7 @@ function migrateEndedTimers(snapshot) {
  */
 function deleteCurrentTimer() {
     HideTimer();
-    let next = getNextTimer();
+    let next = GetNextTimer();
     currentTimer.ref.delete();
     allTimers = fetchAllTimers(auth.currentUser);
     countdown = startCountdown(next);
@@ -189,8 +189,14 @@ function addTimersToAllTimersList(timers = allTimers) {
     });
 }
 
-function getNextTimer() {
+function GetNextTimer() {
     let index = allTimers.findIndex(t => t.ref.id == currentTimer.ref.id) + 1;
     if (index >= allTimers.length) index = 0;
+    return allTimers[index];
+}
+
+function GetPreviousTimer() {
+    let index = allTimers.findIndex(t => t.ref.id == currentTimer.ref.id) - 1;
+    if (index < 0) index = allTimers.length - 1;
     return allTimers[index];
 }

@@ -52,7 +52,7 @@ function HideTimer(next = false) {
 }
 
 function StartNext() {
-    countdown = startCountdown(getNextTimer());
+    countdown = startCountdown(GetNextTimer());
     DisplayMainContent('#countdown');
     ShowTimer();
 }
