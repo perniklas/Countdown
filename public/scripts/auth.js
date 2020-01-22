@@ -1,9 +1,9 @@
 /*
     Authentication handling.
 */
+var userLog = {};
 
 function initAuth(auth) {
-    var userLog = {};
     auth.onAuthStateChanged((user) => {
         if (user) {
             if (user.email) {
@@ -26,7 +26,7 @@ function initAuth(auth) {
         auth.signInWithEmailAndPassword(username, password).then((cred) => {
             $('#loginform').trigger('reset');
             $('#loginform .error').hide();
-            console.log('Signed in user ' + cred.User.email);
+            console.log('Signed in user ' + cred.user.email);
         }).catch(err => {
             console.log(err);
             $('#loginform .error').text(err.message).slideDown();   

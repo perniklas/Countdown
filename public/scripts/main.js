@@ -66,6 +66,7 @@ $(() => {
 
     $('#newtimer-form').on('submit', function() {
         validateNewTimer();
+        return false;
     });
 
     // $('#signupform-save').on('click', function() {
@@ -105,33 +106,35 @@ function loadPage() {
     if(auth.currentUser) {
         DisplayMainContent('#countdown');
         allTimers = fetchAllTimers(auth.currentUser);
-        let seconds = 0;
-        var timersLoaded = setInterval(() => {
-            if (LoadTimer(seconds) == 1) {
-                LoadingComplete(timersLoaded);
-            } else if (LoadTimer(seconds) == -1) {
-                countdown = startCountdown({name: 'No timers found', end: {
-                    milliseconds: new Date().getTime()}
-                });
-                clearInterval(timersLoaded);
-            }
-            seconds += 1;
-        }, 1000);
-        setTimeout(TimersAreLoaded, 1000);
+        hasTimersLoadedYet();
     } else {
         // render "no timers for you"
     }
 }
 
-function LoadingComplete(interval) {
-    clearInterval(interval);
-    convertEndToMillis(allTimers);
-    currentTimer = findSoonestTimer();
-    countdown = startCountdown(currentTimer);
+function hasTimersLoadedYet() {
+    let seconds = 0;
+    var timersLoaded = setInterval(() => {
+        if (CheckForTimerLength(seconds) == 1) {
+            LoadingComplete(timersLoaded);
+        } else if (CheckForTimerLength(seconds) == -1) {
+            countdown = startCountdown({name: 'No timers found', end: {
+                milliseconds: new Date().getTime()}
+            });
+            clearInterval(timersLoaded);
+        }
+        seconds += 0.25;
+    }, 250);
+    setTimeout(TimersAreLoaded, 1000);
 }
 
-function LoadTimer(seconds) {
-    console.log(`Loading for ${seconds} seconds...`);
+function LoadingComplete(interval) {
+    clearInterval(interval);
+    countdown = startCountdown(findSoonestTimer());
+}
+
+function CheckForTimerLength(seconds) {
+    if (seconds % 1 == 0) console.log(`Loading for ${seconds} seconds`);
     if (seconds > 5 || allTimers.length > 0) {
         if (allTimers.length > 0) {
             return 1;
