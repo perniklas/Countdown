@@ -65,14 +65,12 @@ $(() => {
     });
 
     $('#newtimer-form').on('submit', function() {
-        if ($('#newtimer-end-date').val() && $('#newtimer-name').val()) {
-            saveTimer();
-            $('.button-active').removeClass('button-active');
-            DisplayMainContent('#countdown');
-        } else {
-            alert("A timer needs at least a name and an end date.");
-        }
+        validateNewTimer();
     });
+
+    // $('#signupform-save').on('click', function() {
+    //     validateNewTimer();
+    // });
 
     $(document).on('click', '.timer-element', function() {
         console.log($(this));
@@ -81,6 +79,16 @@ $(() => {
         DisplayMainContent('#countdown');
     });
 });
+
+function validateNewTimer() {
+    if ($('#newtimer-end-date').val() && $('#newtimer-name').val()) {
+        saveTimer();
+        $('.button-active').removeClass('button-active');
+        DisplayMainContent('#countdown');
+    } else {
+        alert("A timer needs at least a name and an end date.");
+    }
+}
 
 /**
  * Displays the timer that is after the currentTimer in allTimers array (whichever way the array has been ordered).

@@ -22,13 +22,10 @@ function saveTimer() {
     };
     newTimer.ref.id = newTimer.userId + "---" + newTimer.name + "---" + newTimer.created.toISOString();
     db.collection('timers').doc(newTimer.ref.id).set(newTimer);
-    newTimer.end = {
-        milliseconds: endDateTime.getTime()
-    }
-    allTimers.push(newTimer);
-    addTimersToAllTimersList();
-    currentTimer = newTimer;
-    countdown = startCountdown(currentTimer);
+    allTimers = fetchAllTimers(auth.currentUser);
+    setTimeout(() => {
+        countdown = startCountdown(GetTimerByID(newTimer.ref.id));
+    }, 200);
 }
 
 function concatDateAndTime(date, time) {
@@ -199,4 +196,8 @@ function GetPreviousTimer() {
     let index = allTimers.findIndex(t => t.ref.id == currentTimer.ref.id) - 1;
     if (index < 0) index = allTimers.length - 1;
     return allTimers[index];
+}
+
+function GetTimerByID(id) {
+    return allTimers.find(t => t.ref.id === id);
 }
