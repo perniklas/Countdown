@@ -24,14 +24,14 @@ admin.initializeApp();
 //     return count;
 // });
 
-exports.cleanupEndedTimers = functions.https.onRequest((req, res) => {
-    var db = admin.firestore();
-    db.collection('timers').get().then((snapshot) => {
-        snapshot.forEach((doc) => {
-            if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
-                db.collection('expired').add(doc.data());
-                doc.ref.delete();
-            }
-        });
-    });
-});
+// exports.cleanupEndedTimers = functions.https.onRequest((req, res) => {
+//     var db = admin.firestore();
+//     db.collection('timers').get().then((snapshot) => {
+//         snapshot.forEach((doc) => {
+//             if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
+//                 db.collection('expired').add(doc.data());
+//                 doc.ref.delete();
+//             }
+//         });
+//     });
+// });

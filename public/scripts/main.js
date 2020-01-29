@@ -57,6 +57,10 @@ $(() => {
         return false;
     });
 
+    $('#edittimer-cancel').on('click', function () {
+        DisplayMainContent('#countdown');
+    });
+
     $('#menu-nexttimer').on('click', function() {
         $('.button-active').removeClass('button-active');
         displayNextTimer();
@@ -69,6 +73,16 @@ $(() => {
         } else {
             SetMenuButtonActive($(this));
             DisplayMainContent('#alltimers');
+        }
+    });
+
+    let shift = null;
+    $('#countdown-content').dblclick(function() {
+        if (shift) {
+            clearInterval(shift);
+            shift = null;
+        } else {
+            shift = StartGradientShift();
         }
     });
 
