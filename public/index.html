@@ -22,7 +22,7 @@
   </head>
   <body>
     <div id="menu" class="hidden">
-      <a id="menu-alltimers">Timers</a>
+      <a id="menu-alltimers">Countdowns</a>
       <a id="menu-newtimer">New</a>
       <a id="menu-nexttimer">Next</a>
       <a id="menu-extra" class="fas fa-bars"></a>
@@ -78,7 +78,7 @@
       <div id="countdown" class="container hidden">
         <div id="countdown-header" class="hidden">
           <h1>Countdown to</h1>
-          <h2 id="countdown-title">Loading timers...</h2>
+          <h2 id="countdown-title">Loading countdowns...</h2>
           <h3 id="countdown-end-datetime"></h3>
         </div>
         <div id="countdown-content">
@@ -116,13 +116,37 @@
             </div>
           </div>
           <div class="btn-box">
-            <button class="btn btn-submit" id="signupform-save">save</button>
+            <button class="btn btn-submit" id="newtimer-save">save</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="edittimer" class="hidden">
+        <h1>Edit countdown</h1>
+        <hr class="sep" />
+        <form id="edittimer-form">
+          <div class="input-group">
+            <label for="edittimer-name">What</label>
+            <input id="edittimer-name" type="text" required="required" />
+          </div>
+          <div class="input-group">
+            <div class="input-group input-dt">
+              <label for="edittimer-end-date">date</label>
+              <input id="edittimer-end-date" type="date" required="required" />
+            </div>
+            <div class="input-group input-dt">
+              <label for="edittimer-end-time">time</label>
+              <input id="edittimer-end-time" type="time" />
+            </div>
+          </div>
+          <div class="btn-box">
+            <button class="btn btn-submit" id="edittimer-save">save</button>
           </div>
         </form>
       </div>
 
       <div id="alltimers" class="hidden">
-        <h1>Your timers</h1>
+        <h1>Your countdowns</h1>
         <hr class="sep" />
         <div id="alltimers-timers">
         </div>

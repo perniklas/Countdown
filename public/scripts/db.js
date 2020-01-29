@@ -6,10 +6,34 @@ function initDb(db) {
     if (db) {
         console.log('Firestore connection established.');
         // call func
+    } else {
+        console.log('[ERROR]: Could not connect to Firestore.');
     }
+
+    CleanupEndedTimers();
 }
 
-function saveTimer() {
+function CleanupEndedTimers() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        // Typical action to be performed when the document is ready:
+        document.getElementById("demo").innerHTML = xhttp.responseText;
+        }
+    };
+    xhttp.open("GET", "filename", true);
+    xhttp.send();
+}
+
+function SaveTimer(timer) {
+    db.collection('timers').doc(timer.ref.id).set(timer);
+    allTimers = fetchAllTimers(auth.currentUser);
+    setTimeout(() => {
+        countdown = startCountdown(GetTimerByID(timer.ref.id));
+    }, 200);
+}
+
+function AddNewTimer() {
     let endDateTime = concatDateAndTime($('#newtimer-end-date').val(), $('#newtimer-end-time').val());
     let newTimer = {
         name: $('#newtimer-name').val(),
@@ -21,11 +45,18 @@ function saveTimer() {
         }
     };
     newTimer.ref.id = newTimer.userId + "---" + newTimer.name + "---" + newTimer.created.toISOString();
-    db.collection('timers').doc(newTimer.ref.id).set(newTimer);
-    allTimers = fetchAllTimers(auth.currentUser);
-    setTimeout(() => {
-        countdown = startCountdown(GetTimerByID(newTimer.ref.id));
-    }, 200);
+    SaveTimer(newTimer);
+}
+
+function EditTimer() {
+    let timer = {
+        name: $('#edittimer-name').val(),
+        end: concatDateAndTime($('#edittimer-end-date').val(), $('#edittimer-end-time').val()),
+        edited: new Date(),
+        userId: currentTimer.userId,
+        ref: currentTimer.ref
+    };
+    SaveTimer(timer);
 }
 
 function concatDateAndTime(date, time) {

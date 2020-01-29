@@ -13,8 +13,6 @@ $(() => {
     auth = firebase.auth();
     initAuth(auth);
 
-    //func = firebase.functions();
-
     db = firebase.firestore();
     initDb(db);
 
@@ -39,6 +37,11 @@ $(() => {
         }
     });
 
+    $('#menu-extra-edit').on('click', function() {
+        UpdateEditFields();
+        DisplayMainContent('#edittimer');
+    });
+
     $('#menu-newtimer').on('click', function() {
         if ($(this).hasClass('button-active')) {
             $(this).removeClass('button-active');
@@ -47,6 +50,11 @@ $(() => {
             SetMenuButtonActive($(this));
             DisplayMainContent('#newtimer');
         }
+    });
+
+    $('#edittimer-form').on('submit', function() {
+        validateNewTimer();
+        return false;
     });
 
     $('#menu-nexttimer').on('click', function() {
@@ -81,14 +89,31 @@ $(() => {
     });
 });
 
-function validateNewTimer() {
-    if ($('#newtimer-end-date').val() && $('#newtimer-name').val()) {
-        saveTimer();
+function validateNewTimer(edit = false) {
+    if (($('#newtimer-end-date').val() && $('#newtimer-name').val()) 
+        || ($('#edittimer-end-date').val() && $('#edittimer-name').val())) {
+        if (edit) {
+            EditTimer();
+        } else {
+            AddNewTimer();
+        }
         $('.button-active').removeClass('button-active');
         DisplayMainContent('#countdown');
     } else {
-        alert("A timer needs at least a name and an end date.");
+        alert("A countdown needs at least a name and an end date.");
     }
+}
+
+function UpdateEditFields() {
+    $('#edittimer-name').val(currentTimer.name);
+    let dt = new Date(currentTimer.end.milliseconds);
+    let date = dt.getFullYear() + "-" 
+        + (dt.getMonth() < 10 ? ("0" + (dt.getMonth() + 1)) : (dt.getMonth() + 1)) + "-"
+        + (dt.getDate() < 10 ? ("0" + dt.getDate()) : dt.getDate());
+    let time = (dt.getHours() < 10 ? "0" + dt.getHours() : dt.getHours()) + ":" 
+        + (dt.getMinutes() < 10 ? "0" + dt.getMinutes() : dt.getMinutes());
+    $('#edittimer-end-date').val(date);
+    $('#edittimer-end-time').val(time);
 }
 
 /**

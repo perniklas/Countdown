@@ -22,7 +22,7 @@ body {
     z-index: 2;
 }
 
-#login, #newtimer {
+#login, #newtimer, #edittimer {
     padding: 15px;
     margin: auto;
 }
@@ -34,7 +34,7 @@ body {
     margin: auto;
 }
 
-#newtimer-form {
+#newtimer-form, #edittimer-form {
     margin: 35px auto;
     width: fit-content;
 }

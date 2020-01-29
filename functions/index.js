@@ -9,13 +9,29 @@ admin.initializeApp();
 //  response.send("Hello from Firebase!");
 // });
 
-// exports.cleanupEndedTimers = functions.firestore.document('/timers/{documentId}')
-//     .onCreate((snap, context) => {
-//         const original = snap.data().original;
-//         console.log('Uppercasing', context.params.documentId, original);
-//         const uppercase = original.toUpperCase();
-//         // You must return a Promise when performing asynchronous tasks inside a Functions such as
-//         // writing to the Cloud Firestore.
-//         // Setting an 'uppercase' field in the Cloud Firestore document returns a Promise.
-//         return snap.ref.set({uppercase}, {merge: true});
+// exports.cleanupEndedTimers = functions.https.onCall((data, context) => {
+//     var db = admin.firestore();
+//     var count = 0;
+//     db.collection('timers').get().then((snapshot) => {
+//         snapshot.forEach((doc) => {
+//             if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
+//                 count += 1;
+//                 db.collection('expired').add(doc.data());
+//                 doc.ref.delete();
+//             }
+//         });
 //     });
+//     return count;
+// });
+
+exports.cleanupEndedTimers = functions.https.onRequest((req, res) => {
+    var db = admin.firestore();
+    db.collection('timers').get().then((snapshot) => {
+        snapshot.forEach((doc) => {
+            if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
+                db.collection('expired').add(doc.data());
+                doc.ref.delete();
+            }
+        });
+    });
+});
