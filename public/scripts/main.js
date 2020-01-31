@@ -77,10 +77,9 @@ $(() => {
     });
 
     let shift = null;
-    $('#countdown-content').dblclick(function() {
+    $('#enableShift').on('click', function() {
         if (shift) {
-            clearInterval(shift);
-            shift = null;
+            shift = clearInterval(shift);
         } else {
             shift = StartGradientShift();
         }
