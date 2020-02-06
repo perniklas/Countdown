@@ -10,6 +10,7 @@ var db,
     currentTimer = {};
 
 $(() => {
+    FluxV2();
     auth = firebase.auth();
     initAuth(auth);
 

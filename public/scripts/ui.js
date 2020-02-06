@@ -10,6 +10,17 @@
  * - Add new timer
  * - Show menu modal
  */
+var light = 55;
+function FluxV2() {
+    let now = new Date().getHours();
+
+    if (now < 8 || now > 18) {
+        if (now > 18) light = light - ((24 - (now == 0 ? 0.5 : now)) * 4);
+        else light = light - ((now == 0 ? 0.5 : now) * 4);
+    } else {
+        light = light + (now * 4);
+    }
+}
 
 function LoginOrSignup(signup = false) {
     if (signup) {
@@ -92,8 +103,10 @@ function StartGradientShift() {
     return setInterval(function() {
         col1 = IncreaseHSLValues(col1, 0.3);
         col2 = IncreaseHSLValues(col2, 0.3);
-        let gradient = 'linear-gradient(to bottom right, hsl(' + col1.h + ',' + col1.s + '%,' + col1.l + '%), hsl(' + col2.h + ',' + col2.s + '%,' + col2.l + '%))';
-        $('body').css({'background-image': gradient});
+        let gradient = 'linear-gradient(to bottom right, hsl(' + col1.h + ',' + col1.s + '%,' + light + '%), hsl(' + col2.h + ',' + col2.s + '%,' + light + '%))',
+            reverse = 'linear-gradient(to top left, hsl(' + col1.h + ',' + col1.s + '%,' + light + '%), hsl(' + col2.h + ',' + col2.s + '%,' + light + '%))';
+        $('body, .timer-element').css({'background-image': gradient});
+        $('#menu-modal, .btn-submit').css({'background-image': reverse});
     }, 16.7);
 }
 
