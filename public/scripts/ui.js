@@ -10,7 +10,11 @@
  * - Add new timer
  * - Show menu modal
  */
-var light = 55;
+var ogh1 = GetHSLValues(RGBToHSL(GetRGBFromLinearGradient($('body').css('background-image').split('),')[0]))),
+    ogh2 = GetHSLValues(RGBToHSL(GetRGBFromLinearGradient($('body').css('background-image').split('),')[1]))),
+    changed = false,
+    light = 55;
+    
 function FluxV2(now) {
     if (now < 12) {
         light = 55 - ((12 - now) * 2);
@@ -20,12 +24,14 @@ function FluxV2(now) {
         light = 55 - (n * n);
     }
 
-    let rgb1 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[0]),
-        rgb2 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[1]),
-        col1 = GetHSLValues(RGBToHSL(rgb1)),
-        col2 = GetHSLValues(RGBToHSL(rgb2));
+    if (changed) {
+        let rgb1 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[0]),
+            rgb2 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[1]);
+        ogh1 = GetHSLValues(RGBToHSL(rgb1));
+        ogh2 = GetHSLValues(RGBToHSL(rgb2));
+    }
 
-    let gradient = 'linear-gradient(to bottom right, hsl(' + col1.h + ',' + col1.s + '%,' + light + '%), hsl(' + col2.h + ',' + col2.s + '%,' + light + '%))';
+    let gradient = 'linear-gradient(to bottom right, hsl(' + ogh1.h + ',' + ogh1.s + '%,' + light + '%), hsl(' + ogh2.h + ',' + ogh2.s + '%,' + light + '%))';
     $('body, .timer-element').css({'background-image': gradient});
 }
 
@@ -102,6 +108,7 @@ window.addEventListener('resize', () => {
 });
 
 function StartGradientShift() {
+    changed = true;
     let rgb1 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[0]),
         rgb2 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[1]),
         col1 = GetHSLValues(RGBToHSL(rgb1)),
