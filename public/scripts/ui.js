@@ -11,15 +11,22 @@
  * - Show menu modal
  */
 var light = 55;
-function FluxV2() {
-    let now = new Date().getHours();
-
-    if (now < 8 || now > 18) {
-        if (now > 18) light = light - ((24 - (now == 0 ? 0.5 : now)) * 4);
-        else light = light - ((now == 0 ? 0.5 : now) * 4);
-    } else {
-        light = light + (now * 4);
+function FluxV2(now) {
+    if (now < 12) {
+        light = 55 - ((12 - now) * 2);
     }
+    else if (now > 17) {
+        let n = ((now / 2) / 2.5);
+        light = 55 - (n * n);
+    }
+
+    let rgb1 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[0]),
+        rgb2 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[1]),
+        col1 = GetHSLValues(RGBToHSL(rgb1)),
+        col2 = GetHSLValues(RGBToHSL(rgb2));
+
+    let gradient = 'linear-gradient(to bottom right, hsl(' + col1.h + ',' + col1.s + '%,' + light + '%), hsl(' + col2.h + ',' + col2.s + '%,' + light + '%))';
+    $('body, .timer-element').css({'background-image': gradient});
 }
 
 function LoginOrSignup(signup = false) {

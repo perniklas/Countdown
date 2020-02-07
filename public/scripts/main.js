@@ -10,7 +10,7 @@ var db,
     currentTimer = {};
 
 $(() => {
-    FluxV2();
+    FluxV2(new Date().getHours());
     auth = firebase.auth();
     initAuth(auth);
 
