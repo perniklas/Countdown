@@ -10,25 +10,33 @@
  * - Add new timer
  * - Show menu modal
  */
-var ogh1 = GetHSLValues(RGBToHSL(GetRGBFromLinearGradient($('body').css('background-image').split('),')[0]))),
-    ogh2 = GetHSLValues(RGBToHSL(GetRGBFromLinearGradient($('body').css('background-image').split('),')[1]))),
+var originalColors,
+    ogh1,
+    ogh2,
     changed = false,
     light = 55;
     
 function FluxV2(now) {
+    if (!changed) {
+        originalColors = GetRGBFromLinearGradient('body');
+        ogh1 = GetHSLValues(RGBToHSL(originalColors.col1));
+        ogh2 = GetHSLValues(RGBToHSL(originalColors.col2));
+    }
+
     if (now < 12) {
         light = 55 - ((12 - now) * 2);
     }
     else if (now > 17) {
         let n = ((now / 2) / 2.5);
         light = 55 - (n * n);
+    } else {
+        light = 55;
     }
 
     if (changed) {
-        let rgb1 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[0]),
-            rgb2 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[1]);
-        ogh1 = GetHSLValues(RGBToHSL(rgb1));
-        ogh2 = GetHSLValues(RGBToHSL(rgb2));
+        let colors = GetRGBFromLinearGradient('body');
+        ogh1 = GetHSLValues(RGBToHSL(colors.col1));
+        ogh2 = GetHSLValues(RGBToHSL(colors.col2));
     }
 
     let gradient = 'linear-gradient(to bottom right, hsl(' + ogh1.h + ',' + ogh1.s + '%,' + light + '%), hsl(' + ogh2.h + ',' + ogh2.s + '%,' + light + '%))';
@@ -109,10 +117,9 @@ window.addEventListener('resize', () => {
 
 function StartGradientShift() {
     changed = true;
-    let rgb1 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[0]),
-        rgb2 = GetRGBFromLinearGradient($('body').css('background-image').split('),')[1]),
-        col1 = GetHSLValues(RGBToHSL(rgb1)),
-        col2 = GetHSLValues(RGBToHSL(rgb2));
+    let colors = GetRGBFromLinearGradient('body');
+    let col1 = GetHSLValues(RGBToHSL(colors.col1)),
+        col2 = GetHSLValues(RGBToHSL(colors.col2));
     
     return setInterval(function() {
         col1 = IncreaseHSLValues(col1, 0.3);
@@ -124,9 +131,15 @@ function StartGradientShift() {
     }, 16.7);
 }
 
-function GetRGBFromLinearGradient(str) {
-    var match = str.match(/rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/);
-    return "rgb(" + match[1] + ", " + match[2] + ", " + match[3] + ")";
+function GetRGBFromLinearGradient(element) {
+    let css = $(element).css('background-image');
+    if (!css) return;
+    let m1 = css.split('),')[0].match(/rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/),
+        m2 = css.split('),')[1].match(/rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/);
+    return {
+        col1: "rgb(" + m1[1] + ", " + m1[2] + ", " + m1[3] + ")",
+        col2: "rgb(" + m2[1] + ", " + m2[2] + ", " + m2[3] + ")"
+    };
 }
 
 function GetHSLValues(str){

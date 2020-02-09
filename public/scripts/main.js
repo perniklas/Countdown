@@ -2,12 +2,15 @@
     Mostly global variables and some countdown logic.
 */ 
 
+/*      GLOBAL VARS       */
 var db,
     auth,
     func,
     allTimers,
     countdown,
     currentTimer = {};
+/*      GLOBAL VARS       */
+
 
 $(() => {
     FluxV2(new Date().getHours());
