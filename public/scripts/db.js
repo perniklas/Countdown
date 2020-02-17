@@ -232,3 +232,34 @@ function GetPreviousTimer() {
 function GetTimerByID(id) {
     return allTimers.find(t => t.ref.id === id);
 }
+
+function SaveCurrentGradient() {
+    let rgb = GetRGBFromLinearGradient('body');
+    let col1 = GetHSLValues(RGBToHSL(rgb.col1)),
+        col2 = GetHSLValues(RGBToHSL(rgb.col1));
+    db.collection('users').doc(auth.currentUser.uid).update({
+        'colors.col1': col1,
+        'colors.col2': col2
+    });
+}
+
+function GetCurrentGradient() {
+    let user = db.collection('users').doc(auth.currentUser.uid);
+    if (user) {
+        let colors = user.get().then(a => console.log("haha",a.data()))
+        return colors;
+    } else {
+        return {
+            col1: {
+                h: 311,
+                s: 65,
+                l: 55
+            },
+            col2: {
+                h: 194,
+                s: 65,
+                l: 55
+            }
+        };
+    }
+}
