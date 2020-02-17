@@ -233,7 +233,7 @@ function GetTimerByID(id) {
     return allTimers.find(t => t.ref.id === id);
 }
 
-function SaveCurrentGradient() {
+function SaveCurrentGradientToDB() {
     let rgb = GetRGBFromLinearGradient('body');
     let col1 = GetHSLValues(RGBToHSL(rgb.col1)),
         col2 = GetHSLValues(RGBToHSL(rgb.col1));
@@ -243,7 +243,7 @@ function SaveCurrentGradient() {
     });
 }
 
-function GetCurrentGradient() {
+function GetCurrentGradientFromDB() {
     let user = db.collection('users').doc(auth.currentUser.uid);
     if (user) {
         let colors = user.get().then(a => console.log("haha",a.data()))

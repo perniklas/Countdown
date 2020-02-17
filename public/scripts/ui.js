@@ -18,9 +18,11 @@ var originalColors,
     
 function FluxV2(now) {
     if (!changed) {
-        originalColors = GetRGBFromLinearGradient('body');
-        ogh1 = GetHSLValues(RGBToHSL(originalColors.col1));
-        ogh2 = GetHSLValues(RGBToHSL(originalColors.col2));
+        originalColors = GetCurrentGradientFromDB();
+        ogh1 = originalColors.col1;
+        ogh2 = originalColors.col2;
+        // ogh1 = GetHSLValues(RGBToHSL(originalColors.col1));
+        // ogh2 = GetHSLValues(RGBToHSL(originalColors.col2));
     }
 
     if (now < 12) {

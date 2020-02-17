@@ -84,7 +84,7 @@ $(() => {
     $('#enableShift').on('click', function() {
         if (shift) {
             shift = clearInterval(shift);
-            SaveCurrentGradient();
+            SaveCurrentGradientToDB();
         } else {
             shift = StartGradientShift();
         }
