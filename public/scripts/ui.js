@@ -17,12 +17,6 @@ var originalColors,
     light = 55;
     
 function FluxV2(now) {
-    if (!changed) {
-        originalColors = GetRGBFromLinearGradient('body');
-        ogh1 = GetHSLValues(RGBToHSL(originalColors.col1));
-        ogh2 = GetHSLValues(RGBToHSL(originalColors.col2));
-    }
-
     if (now < 12) {
         light = 55 - ((12 - now) * 2);
     }
@@ -33,14 +27,7 @@ function FluxV2(now) {
         light = 55;
     }
 
-    if (changed) {
-        let colors = GetRGBFromLinearGradient('body');
-        ogh1 = GetHSLValues(RGBToHSL(colors.col1));
-        ogh2 = GetHSLValues(RGBToHSL(colors.col2));
-    }
-
-    let gradient = 'linear-gradient(to bottom right, hsl(' + ogh1.h + ',' + ogh1.s + '%,' + light + '%), hsl(' + ogh2.h + ',' + ogh2.s + '%,' + light + '%))';
-    $('body, .timer-element').css({'background-image': gradient});
+    SetBGColors();
 }
 
 function LoginOrSignup(signup = false) {
@@ -55,6 +42,21 @@ function LoginOrSignup(signup = false) {
         $('#signupform').hide();
         $('#login, #loginform').slideDown();
     }
+}
+
+function SetBGColors() {
+    if (!changed) {
+        originalColors = GetRGBFromLinearGradient('body');
+        ogh1 = GetHSLValues(RGBToHSL(originalColors.col1));
+        ogh2 = GetHSLValues(RGBToHSL(originalColors.col2));
+    } else {
+        let colors = GetRGBFromLinearGradient('body');
+        ogh1 = GetHSLValues(RGBToHSL(colors.col1));
+        ogh2 = GetHSLValues(RGBToHSL(colors.col2));
+    }
+
+    let gradient = 'linear-gradient(to bottom right, hsl(' + ogh1.h + ',' + ogh1.s + '%,' + light + '%), hsl(' + ogh2.h + ',' + ogh2.s + '%,' + light + '%))';
+    $('body, .timer-element').css({'background-image': gradient});
 }
 
 /**
