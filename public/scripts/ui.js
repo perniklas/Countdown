@@ -44,9 +44,14 @@ function LoginOrSignup(signup = false) {
     }
 }
 
-function SetBGColors() {
+function SetBGColors(user = false) {
+    let colors;
+    if (user) {
+        colors = GetCurrentGradientFromDB();
+    }
+
     if (!changed) {
-        originalColors = GetRGBFromLinearGradient('body');
+        originalColors = (colors == null) ? GetRGBFromLinearGradient('body') : colors;
         ogh1 = GetHSLValues(RGBToHSL(originalColors.col1));
         ogh2 = GetHSLValues(RGBToHSL(originalColors.col2));
     } else {

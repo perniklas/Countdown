@@ -12,7 +12,6 @@ function initDb(db) {
 
     CleanupEndedTimers();
     changed = true;
-    originalColors = GetCurrentGradientFromDB();
     FluxV2(new Date().getTime());
 }
 
@@ -247,10 +246,14 @@ function SaveCurrentGradientToDB() {
 }
 
 function GetCurrentGradientFromDB() {
+    if (!auth.currentUser) {
+        setTimeout(500);
+    }
     let user = db.collection('users').doc(auth.currentUser.uid);
     if (user) {
-        let colors = user.get().then(a => console.log("haha", a.data()))
-        return colors;
+        user.get().then(a => {
+            return a.data().colors
+        });
     } else {
         return {
             col1: {
