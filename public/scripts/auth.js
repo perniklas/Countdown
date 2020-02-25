@@ -8,7 +8,6 @@ function initAuth(auth) {
         if (user) {
             if (user.email) {
                 addOrUpdateUserCollecton(userLog);
-                SetBGColors(user);
                 loadPage();
             }
         } else {

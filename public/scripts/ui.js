@@ -10,24 +10,94 @@
  * - Add new timer
  * - Show menu modal
  */
+var colors = {
+    original: {},
+    col1: DefaultColors().col1,
+    col2: DefaultColors().col2,
+    light: 55,
+    shiftInterval: null,
+    GetColorsFromDB: function(setbackground = false) {
+        if (!auth.currentUser) setTimeout(500);
+        db.collection('users').doc(auth.currentUser.uid).get().then(c => {
+            if (c.data().colors) {
+                colors.col1 = c.data().colors.col1;
+                colors.col2 = c.data().colors.col2;
+                if (setbackground) colors.SetBGColors(); //colors.GentlySetBackgroundColor();
+            }
+        });
+    },
+    SaveColorsToDB: function() {
+        db.collection('users').doc(auth.currentUser.uid).update({
+            'colors.col1': colors.col1,
+            'colors.col2': colors.col2
+        });
+    },
+    GetColorsFromCurrentBG: function() {
+        let bg = GetRGBFromLinearGradient('body');
+        col1 = GetHSLValues(RGBToHSL(bg.col1));
+        col2 = GetHSLValues(RGBToHSL(bg.col2));
+    },
+    SetBGColors: function() {
+        let gradient = 'linear-gradient(to bottom right, hsl(' + colors.col1.h + ',' + colors.col1.s + '%,' + colors.light + '%),' + 
+                        'hsl(' + colors.col2.h + ',' + colors.col2.s + '%,' + colors.light + '%))',
+            reverse = 'linear-gradient(to top left, hsl(' + colors.col1.h + ',' + colors.col1.s + '%,' + colors.light + '%),' +
+                        'hsl(' + colors.col2.h + ',' + colors.col2.s + '%,' + colors.light + '%))';
+        $('body, .timer-element').css({'background-image': gradient});
+        $('#menu-modal, .btn-submit').css({'background-image': reverse});
+    },
+    StartGradientShift: function() {
+        if (colors.shiftInterval) {
+            clearInterval(colors.shiftInterval);
+            colors.shiftInterval = null;
+            colors.SaveColorsToDB();
+        } else {
+            colors.shiftInterval = setInterval(function() {
+                colors.col1.h = (colors.col1.h + 0.25 > 360) ? 0 : colors.col1.h + 0.25;
+                colors.col2.h = (colors.col2.h + 0.25 > 360) ? 0 : colors.col2.h + 0.25;
+                colors.SetBGColors();
+            }, 16.7);
+        }
+    },
+    GentlySetBackgroundColor: function() {
+        let templight = colors.light;
+        //colors.original = { col1: colors.col1, col2 = colors.col2 }; // Fix this!
+        let dark = setInterval(function() {
+            templight = templight - 0.3;
+            if (templight < 0.3) {
+                clearInterval(dark);
+            }
+        }, 16.7);
+    }
+};
+
 var originalColors,
     ogh1,
     ogh2,
-    changed = false,
-    light = 55;
+    changed = false;
+
+function DefaultColors() {
+    return {
+        col1: {
+            h: 311, s: 65, l: 55
+        },
+        col2: {
+            h: 194, s: 65, l: 55
+        }
+    };
+}
     
 function FluxV2(now) {
     if (now < 12) {
-        light = 55 - ((12 - now) * 2);
+        colors.light = 55 - ((12 - now) * 2.5);
     }
     else if (now > 17) {
         let n = ((now / 2) / 2.5);
-        light = 55 - (n * n);
+        colors.light = 55 - (n * n);
     } else {
-        light = 55;
+        colors.light = 55;
     }
 
-    SetBGColors();
+    colors.SetBGColors();
 }
 
 function LoginOrSignup(signup = false) {
@@ -44,25 +114,20 @@ function LoginOrSignup(signup = false) {
     }
 }
 
-function SetBGColors(user = false) {
-    let colors;
-    if (user) {
-        colors = GetCurrentGradientFromDB();
-    }
+// function SetBGColors(colors = null) {
+//     if (!changed) {
+//         originalColors = (colors == null) ? GetRGBFromLinearGradient('body') : colors;
+//         ogh1 = GetHSLValues(RGBToHSL(originalColors.col1));
+//         ogh2 = GetHSLValues(RGBToHSL(originalColors.col2));
+//     } else {
+//         let colors = GetRGBFromLinearGradient('body');
+//         ogh1 = GetHSLValues(RGBToHSL(colors.col1));
+//         ogh2 = GetHSLValues(RGBToHSL(colors.col2));
+//     }
 
-    if (!changed) {
-        originalColors = (colors == null) ? GetRGBFromLinearGradient('body') : colors;
-        ogh1 = GetHSLValues(RGBToHSL(originalColors.col1));
-        ogh2 = GetHSLValues(RGBToHSL(originalColors.col2));
-    } else {
-        let colors = GetRGBFromLinearGradient('body');
-        ogh1 = GetHSLValues(RGBToHSL(colors.col1));
-        ogh2 = GetHSLValues(RGBToHSL(colors.col2));
-    }
-
-    let gradient = 'linear-gradient(to bottom right, hsl(' + ogh1.h + ',' + ogh1.s + '%,' + light + '%), hsl(' + ogh2.h + ',' + ogh2.s + '%,' + light + '%))';
-    $('body, .timer-element').css({'background-image': gradient});
-}
+//     let gradient = 'linear-gradient(to bottom right, hsl(' + ogh1.h + ',' + ogh1.s + '%,' + light + '%), hsl(' + ogh2.h + ',' + ogh2.s + '%,' + light + '%))';
+//     $('body, .timer-element').css({'background-image': gradient});
+// }
 
 /**
  * Hides everything except the desired container.
@@ -79,6 +144,7 @@ function TimersAreLoaded() {
     $('#content').addClass('slidefix');
     $('#countdown-header, #countdown-content, #counters-text, #menu').slideDown();
     $('#content').removeClass('slidefix');
+    colors.GetColorsFromDB(true);
 }
 
 function HideTimer(next = false) {
@@ -121,22 +187,6 @@ window.addEventListener('resize', () => {
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
 });
-
-function StartGradientShift() {
-    changed = true;
-    let colors = GetRGBFromLinearGradient('body');
-    let col1 = GetHSLValues(RGBToHSL(colors.col1)),
-        col2 = GetHSLValues(RGBToHSL(colors.col2));
-    
-    return setInterval(function() {
-        col1 = IncreaseHSLValues(col1, 0.3);
-        col2 = IncreaseHSLValues(col2, 0.3);
-        let gradient = 'linear-gradient(to bottom right, hsl(' + col1.h + ',' + col1.s + '%,' + light + '%), hsl(' + col2.h + ',' + col2.s + '%,' + light + '%))',
-            reverse = 'linear-gradient(to top left, hsl(' + col1.h + ',' + col1.s + '%,' + light + '%), hsl(' + col2.h + ',' + col2.s + '%,' + light + '%))';
-        $('body, .timer-element').css({'background-image': gradient});
-        $('#menu-modal, .btn-submit').css({'background-image': reverse});
-    }, 16.7);
-}
 
 function GetRGBFromLinearGradient(element) {
     let css = $(element).css('background-image');

@@ -12,7 +12,7 @@ function initDb(db) {
 
     CleanupEndedTimers();
     changed = true;
-    FluxV2(new Date().getTime());
+    FluxV2(new Date().getHours());
 }
 
 function CleanupEndedTimers() {
@@ -233,39 +233,4 @@ function GetPreviousTimer() {
 
 function GetTimerByID(id) {
     return allTimers.find(t => t.ref.id === id);
-}
-
-function SaveCurrentGradientToDB() {
-    let rgb = GetRGBFromLinearGradient('body');
-    let col1 = GetHSLValues(RGBToHSL(rgb.col1)),
-        col2 = GetHSLValues(RGBToHSL(rgb.col1));
-    db.collection('users').doc(auth.currentUser.uid).update({
-        'colors.col1': col1,
-        'colors.col2': col2
-    });
-}
-
-function GetCurrentGradientFromDB() {
-    if (!auth.currentUser) {
-        setTimeout(500);
-    }
-    let user = db.collection('users').doc(auth.currentUser.uid);
-    if (user) {
-        user.get().then(a => {
-            return a.data().colors
-        });
-    } else {
-        return {
-            col1: {
-                h: 311,
-                s: 65,
-                l: 55
-            },
-            col2: {
-                h: 194,
-                s: 65,
-                l: 55
-            }
-        };
-    }
 }

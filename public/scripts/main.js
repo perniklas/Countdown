@@ -80,14 +80,8 @@ $(() => {
         }
     });
 
-    let shift = null;
     $('#enableShift').on('click', function() {
-        if (shift) {
-            shift = clearInterval(shift);
-            SaveCurrentGradientToDB();
-        } else {
-            shift = StartGradientShift();
-        }
+        colors.StartGradientShift();
     });
 
     $('#newtimer-form').on('submit', function() {
