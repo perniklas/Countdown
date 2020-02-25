@@ -81,6 +81,11 @@ $(() => {
     });
 
     $('#enableShift').on('click', function() {
+        if ($(this).hasClass('shift')) {
+            $(this).removeClass('shift');
+        } else {
+            $(this).addClass('shift');
+        }
         colors.StartGradientShift();
     });
 
@@ -94,7 +99,6 @@ $(() => {
     // });
 
     $(document).on('click', '.timer-element', function() {
-        console.log($(this));
         $('.button-active').removeClass('button-active');
         countdown = startCountdown(allTimers.find(timer => timer.ref.id == $(this).attr("data-timerid")));
         DisplayMainContent('#countdown');
@@ -171,7 +175,7 @@ function LoadingComplete(interval) {
 }
 
 function CheckForTimerLength(seconds) {
-    if (seconds % 1 == 0) console.log(`Loading for ${seconds} seconds`);
+    if (seconds % 1 == 0) console.log(`[Info]: Loading for ${seconds} seconds`);
     if (seconds > 5 || allTimers.length > 0) {
         if (allTimers.length > 0) {
             return 1;

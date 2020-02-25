@@ -86,7 +86,7 @@ body {
 }
 
 #menu > * {
-    transition: ease 0.1s;
+    transition: ease 0.4s;
     margin: 25px auto 0 auto;
     color: white;
     font-weight: bold;
@@ -208,6 +208,14 @@ body {
     top: 10px;
     right: 10px;
     color: white;
+    transition: ease 0.6s;
+}
+
+.shift {
+    color: green !important;
+    text-shadow: darkblue 0 10px 15px;
+    font-size: 1.3em;
+    transition: ease 0.6s;
 }
 
 @media screen and (min-width: 600px) {

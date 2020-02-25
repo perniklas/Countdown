@@ -40,10 +40,14 @@ var colors = {
     SetBGColors: function() {
         let gradient = 'linear-gradient(to bottom right, hsl(' + colors.col1.h + ',' + colors.col1.s + '%,' + colors.light + '%),' + 
                         'hsl(' + colors.col2.h + ',' + colors.col2.s + '%,' + colors.light + '%))',
-            reverse = 'linear-gradient(to top left, hsl(' + colors.col1.h + ',' + colors.col1.s + '%,' + colors.light + '%),' +
-                        'hsl(' + colors.col2.h + ',' + colors.col2.s + '%,' + colors.light + '%))';
+            reverse = 'linear-gradient(to top left, hsl(' + colors.col1.h + ',' + (colors.col1.s / 2).toFixed() + '%,' + colors.light + '%),' +
+                        'hsl(' + colors.col2.h + ',' + (colors.col2.s / 2).toFixed() + '%,' + colors.light + '%))',
+            title = 'hsl(' + ((colors.col1.h + colors.col2.h) / 2) + ', 100%, 30%)',
+            subtitle = 'hsl(' + ((colors.col1.h + colors.col2.h) / 2) + ', 60%, 30%)';
         $('body, .timer-element').css({'background-image': gradient});
         $('#menu-modal, .btn-submit').css({'background-image': reverse});
+        $('#countdown-title, #counters').css({'color': title});
+        $('#countdown-end-datetime').css({'color': subtitle});
     },
     StartGradientShift: function() {
         if (colors.shiftInterval) {
@@ -69,11 +73,6 @@ var colors = {
         }, 16.7);
     }
 };
-
-var originalColors,
-    ogh1,
-    ogh2,
-    changed = false;
 
 function DefaultColors() {
     return {
@@ -113,21 +112,6 @@ function LoginOrSignup(signup = false) {
         $('#login, #loginform').slideDown();
     }
 }
-
-// function SetBGColors(colors = null) {
-//     if (!changed) {
-//         originalColors = (colors == null) ? GetRGBFromLinearGradient('body') : colors;
-//         ogh1 = GetHSLValues(RGBToHSL(originalColors.col1));
-//         ogh2 = GetHSLValues(RGBToHSL(originalColors.col2));
-//     } else {
-//         let colors = GetRGBFromLinearGradient('body');
-//         ogh1 = GetHSLValues(RGBToHSL(colors.col1));
-//         ogh2 = GetHSLValues(RGBToHSL(colors.col2));
-//     }
-
-//     let gradient = 'linear-gradient(to bottom right, hsl(' + ogh1.h + ',' + ogh1.s + '%,' + light + '%), hsl(' + ogh2.h + ',' + ogh2.s + '%,' + light + '%))';
-//     $('body, .timer-element').css({'background-image': gradient});
-// }
 
 /**
  * Hides everything except the desired container.

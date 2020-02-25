@@ -4,14 +4,12 @@
 
 function initDb(db) {
     if (db) {
-        console.log('Firestore connection established.');
-        // call func
+        console.log('[Info]: Firestore connection established.');
     } else {
         console.log('[ERROR]: Could not connect to Firestore.');
     }
 
     CleanupEndedTimers();
-    changed = true;
     FluxV2(new Date().getHours());
 }
 
@@ -78,7 +76,7 @@ function fetchAllTimers(user) {
             timer.ref = doc.ref;
             timers.push(timer);
         });
-        console.log("Fetched " + timers.length + " records from firestore");
+        console.log("[Info]: Fetched " + timers.length + " records from firestore");
         convertEndToMillis(timers);
         timers = sortTimersBySoonest(timers);
         addTimersToAllTimersList(timers);
@@ -138,7 +136,7 @@ function convertEndToMillis(timers) {
  * @param {snapshot?} snapshot firestore snapshot
  */
 function migrateEndedTimers(snapshot) {
-    console.log('Migrating ended timers...');
+    console.log('[Info]: Migrating ended timers...');
     let counter = 0;
     snapshot.forEach((doc) => {
         if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
@@ -149,9 +147,9 @@ function migrateEndedTimers(snapshot) {
     });
 
     if (counter == 0) {
-        console.log('No timers migrated');
+        console.log('[Info]: No timers migrated');
     } else {
-        console.log("Migrated " + counter + " expired timers.");
+        console.log("[Info]: Migrated " + counter + " expired timers.");
     }
 }
 
@@ -188,9 +186,9 @@ function addOrUpdateUserCollecton(user) {
         userDb.set({
             updated: user.updated
         }, { merge: true }).then(() => {
-            console.log('Updated user ' + auth.currentUser.email + ' with new login date: ' + user.updated);
+            console.log('[Info]: Updated user ' + auth.currentUser.email + ' with new login date: ' + user.updated);
         }).catch(error => {
-            console.log('Error: ' + error.message);
+            console.log('[ERROR]: ' + error.message);
         });
     } else {
         userDb.set({
@@ -199,9 +197,9 @@ function addOrUpdateUserCollecton(user) {
             joined: user.joined,
             updated: user.updated
         }, { merge: true }).then(() => {
-            console.log('Added new user ' + user.username + ' to user list.');
+            console.log('[Info]: Added new user ' + user.username + ' to user list.');
         }).catch(error => {
-            console.log('Error: ' + error.message);
+            console.log('[ERROR]: ' + error.message);
         });
     }
 }

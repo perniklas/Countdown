@@ -26,9 +26,9 @@ function initAuth(auth) {
         auth.signInWithEmailAndPassword(username, password).then((cred) => {
             $('#loginform').trigger('reset');
             $('#loginform .error').hide();
-            console.log('Signed in user ' + cred.user.email);
+            console.log('[Info]: Signed in user ' + cred.user.email);
         }).catch(err => {
-            console.log(err);
+            console.log('[ERROR]: ' + err);
             $('#loginform .error').text(err.message).slideDown();   
         });
     });
@@ -45,9 +45,9 @@ function initAuth(auth) {
             auth.createUserWithEmailAndPassword(userLog.username, $('#signup-password').val()).then((cred) => {
                 $('#signupform').trigger('reset');
                 $('#signupform .error').hide();
-                console.log('Created account: ' + cred.User.email);
+                console.log('[Info]: Created account: ' + cred.User.email);
             }).catch((err) => {
-                console.log(err);
+                console.log('[ERROR]: ' +err);
                 $('#signupform .error').text(err.message).slideDown();   
             })
         }
@@ -67,7 +67,7 @@ function initAuth(auth) {
 function logout() {
     auth.signOut().then(() => {
         stopListening();
-        console.log("Signed out");
+        console.log("[Info]: User signed out");
     }).catch(error => {
         alert(error.message);
     });
