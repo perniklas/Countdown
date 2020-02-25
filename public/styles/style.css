@@ -212,9 +212,8 @@ body {
 }
 
 .shift {
-    color: green !important;
-    text-shadow: darkblue 0 10px 15px;
-    font-size: 1.3em;
+    text-shadow: green 0 10px 15px;
+    font-size: 1.5em;
     transition: ease 0.6s;
 }
 
