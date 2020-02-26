@@ -22,7 +22,7 @@ var colors = {
             if (c.data().colors) {
                 colors.col1 = c.data().colors.col1;
                 colors.col2 = c.data().colors.col2;
-                if (setbackground) colors.SetBGColors(); //colors.GentlySetBackgroundColor();
+                if (setbackground) colors.GentlySetBackgroundColor();
             }
         });
     },
@@ -37,13 +37,15 @@ var colors = {
         col1 = GetHSLValues(RGBToHSL(bg.col1));
         col2 = GetHSLValues(RGBToHSL(bg.col2));
     },
-    SetBGColors: function() {
-        let gradient = 'linear-gradient(to bottom right, hsl(' + colors.col1.h + ',' + colors.col1.s + '%,' + colors.light + '%),' + 
-                        'hsl(' + colors.col2.h + ',' + colors.col2.s + '%,' + colors.light + '%))',
-            reverse = 'linear-gradient(to top left, hsl(' + colors.col1.h + ',' + (colors.col1.s / 2).toFixed() + '%,' + colors.light + '%),' +
-                        'hsl(' + colors.col2.h + ',' + (colors.col2.s / 2).toFixed() + '%,' + colors.light + '%))',
-            title = 'hsl(' + ((colors.col1.h + colors.col2.h) / 2) + ', 100%, 30%)',
-            subtitle = 'hsl(' + ((colors.col1.h + colors.col2.h) / 2) + ', 60%, 30%)';
+    SetBGColors: function(color = null) {
+        let c = colors;
+        if (color) c = color;
+        let gradient = 'linear-gradient(to bottom right, hsl(' + c.col1.h + ',' + c.col1.s + '%,' + c.light + '%),' + 
+                        'hsl(' + c.col2.h + ',' + c.col2.s + '%,' + c.light + '%))',
+            reverse = 'linear-gradient(to top left, hsl(' + c.col1.h + ',' + (c.col1.s / 2).toFixed() + '%,' + c.light + '%),' +
+                        'hsl(' + c.col2.h + ',' + (c.col2.s / 2).toFixed() + '%,' + c.light + '%))',
+            title = 'hsl(' + ((c.col1.h + c.col2.h) / 2) + ', 100%, 30%)',
+            subtitle = 'hsl(' + ((c.col1.h + c.col2.h) / 2) + ', 60%, 30%)';
         $('body, .timer-element').css({'background-image': gradient});
         $('#menu-modal, .btn-submit').css({'background-image': reverse});
         $('#countdown-title, #counters').css({'color': title});
@@ -63,14 +65,32 @@ var colors = {
         }
     },
     GentlySetBackgroundColor: function() {
-        let templight = colors.light;
-        //colors.original = { col1: colors.col1, col2 = colors.col2 }; // Fix this!
-        let dark = setInterval(function() {
-            templight = templight - 0.3;
-            if (templight < 0.3) {
-                clearInterval(dark);
-            }
-        }, 16.7);
+        let tempcol = {
+            col1: DefaultColors().col1,
+            col2: DefaultColors().col2,
+            light: colors.light
+        };
+        let now = new Date().getHours();
+
+        if (tempcol.col1.h != colors.col1.h && tempcol.col2.h != colors.col2.h) {
+            let down = true;
+            let dark = setInterval(function() {
+                if (down) tempcol.light = tempcol.light / 1.047;
+                else tempcol.light = tempcol.light + (0.125 / ((2 / tempcol.light) > 1 ? 0.173 : (2 / tempcol.light)));
+
+                colors.SetBGColors(tempcol);
+                if (tempcol.light < 1.3) {
+                    down = false;
+                    tempcol.col1 = colors.col1;
+                    tempcol.col2 = colors.col2;
+                }
+                if (tempcol.light >= GetFluxV2Value(now)) {
+                    clearInterval(dark);
+                }
+            }, 16.7);
+        } else {
+            FluxV2(now);
+        }
     }
 };
 
@@ -97,6 +117,18 @@ function FluxV2(now) {
     }
 
     colors.SetBGColors();
+}
+
+function GetFluxV2Value(now) {
+    let light = 55;
+    if (now < 12) {
+        light = 55 - ((12 - now) * 2.5);
+    }
+    else if (now > 17) {
+        let n = ((now / 2) / 2.5);
+        light = 55 - (n * n);
+    }
+    return light;
 }
 
 function LoginOrSignup(signup = false) {

@@ -201,7 +201,8 @@ function startCountdown(timer) {
     if (time > 0) {
         UpdateTimer(time);
         return setInterval(() => {
-            time -= 1000;
+            time = timer.end.milliseconds - new Date().getTime();
+            //time -= 1000;
             UpdateTimer(time);
         }, 1000);
     } else {
@@ -237,7 +238,9 @@ function UpdateTimer(time) {
     if (time <= 0) {
         DisplayEndedTimer()
     } else {
-        confetti.stop();
+        if (confetti.isRunning()) {
+            confetti.pause();
+        }
         let days = Math.floor(time / (1000 * 60 * 60 * 24)),
             hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
             minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)),

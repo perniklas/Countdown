@@ -26,11 +26,17 @@ function CleanupEndedTimers() {
 }
 
 function SaveTimer(timer) {
-    db.collection('timers').doc(timer.ref.id).set(timer);
-    allTimers = fetchAllTimers(auth.currentUser);
-    setTimeout(() => {
-        countdown = startCountdown(GetTimerByID(timer.ref.id));
-    }, 200);
+    db.collection('timers').doc(timer.ref.id).set(timer)
+        .then(function() {
+            allTimers = fetchAllTimers(auth.currentUser);
+            setTimeout(() => {
+                countdown = startCountdown(GetTimerByID(timer.ref.id));
+            }, 200);
+            $('#newtimer-form').trigger('reset');
+        })
+        .catch(function(error) {
+            console.log('[ERROR]: ' + error);
+        });
 }
 
 function AddNewTimer() {
