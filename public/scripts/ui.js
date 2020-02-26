@@ -44,7 +44,7 @@ var colors = {
                         'hsl(' + c.col2.h + ',' + c.col2.s + '%,' + c.light + '%))',
             reverse = 'linear-gradient(to top left, hsl(' + c.col1.h + ',' + (c.col1.s / 2).toFixed() + '%,' + c.light + '%),' +
                         'hsl(' + c.col2.h + ',' + (c.col2.s / 2).toFixed() + '%,' + c.light + '%))';
-        let diff = c.col1.h > c.col2.h ? (c.col1.h - c.col2.h) / 2 : (c.col2.h - c.col1.h) / 2,
+        let diff = c.col1.h > c.col2.h ? (c.col1.h - c.col2.h) / 2 : ((c.col1.h + 360) - c.col2.h) / 2,
             title = 'hsl(' + diff + ', 100%, 30%)',
             subtitle = 'hsl(' + diff + ', 60%, 30%)';
         $('body, .timer-element').css({'background-image': gradient});
