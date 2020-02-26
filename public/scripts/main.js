@@ -174,7 +174,7 @@ function LoadingComplete(interval) {
     countdown = startCountdown(findSoonestTimer());
 }
 
-function CheckForTimerLength(seconds) {
+function CheckForTimerLength(seconds = 0) {
     if (seconds % 1 == 0) console.log(`[Info]: Loading for ${seconds} seconds`);
     if (seconds > 5 || allTimers.length > 0) {
         if (allTimers.length > 0) {
@@ -257,5 +257,7 @@ function DisplayEndedTimer() {
     $('#hours').text("0");
     $('#minutes').text("0");
     $('#seconds').text("0");
-    confetti.start();
+    if (CheckForTimerLength() == 1) {
+        confetti.start();
+    }
 }
