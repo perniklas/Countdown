@@ -44,8 +44,8 @@ var colors = {
                         'hsl(' + c.col2.h + ',' + c.col2.s + '%,' + c.light + '%))',
             reverse = 'linear-gradient(to top left, hsl(' + c.col1.h + ',' + (c.col1.s / 2).toFixed() + '%,' + c.light + '%),' +
                         'hsl(' + c.col2.h + ',' + (c.col2.s / 2).toFixed() + '%,' + c.light + '%))',
-            title = 'hsl(' + Math.abs(c.col1.h - c.col2.h) + ', 100%, 30%)',
-            subtitle = 'hsl(' + Math.abs(c.col1.h - c.col2.h) + ', 60%, 30%)';
+            title = 'hsl(' + (Math.abs(c.col1.h - (c.col1.h - c.col2.h) / 2)) + ', 100%, 30%)',
+            subtitle = 'hsl(' + (Math.abs(c.col1.h - (c.col1.h - c.col2.h) / 2)) + ', 60%, 30%)';
         $('body, .timer-element').css({'background-image': gradient});
         $('#menu-modal, .btn-submit').css({'background-image': reverse});
         $('#countdown-title, #counters').css({'color': title});
