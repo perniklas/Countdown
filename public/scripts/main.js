@@ -7,6 +7,7 @@ var db,
     auth,
     func,
     allTimers,
+    expiredTimers,
     countdown,
     currentTimer = {};
 /*      GLOBAL VARS       */

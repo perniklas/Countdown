@@ -87,6 +87,19 @@ function fetchAllTimers(user) {
         timers = sortTimersBySoonest(timers);
         addTimersToAllTimersList(timers);
     });
+
+    let expiredListener = db.collection('expired').where('userId', '==', user.uid).onSnapshot(snapshot => {
+        let exp = [];
+        snapshot.forEach((doc) => {
+            let timer = doc.data();
+            timer.ref = doc.ref;
+            exp.push(timer);
+        });
+        convertEndToMillis(exp);
+        exp = sortTimersBySoonest(exp);
+        AddTimersToExpiredTimersList(exp);
+    });
+    expiredListener();
     return timers;
 }
 
@@ -219,7 +232,16 @@ function addTimersToAllTimersList(timers = allTimers) {
     $.each(timers, (index, timer) => {
         $('#alltimers-timers').append(
             '<div class="timer-element" data-timerid="' + timer.ref.id + '"><p>' + timer.name + '</p><p>' + formatEndDateTimeToString(timer.end) + '</p></div>'
-        )
+        );
+    });
+}
+
+function AddTimersToExpiredTimersList(timers = expiredTimers) {
+    $('#alltimers-expired').empty();
+    $.each(timers, (index, timer) => {
+        $('#alltimers-expired').append(
+            '<div class="timer-element" data-timerid="' + timer.ref.id + '"><p>' + timer.name + '</p><p>' + formatEndDateTimeToString(timer.end) + '</p></div>'
+        );
     });
 }
 
