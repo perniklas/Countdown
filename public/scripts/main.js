@@ -123,7 +123,7 @@ function validateNewTimer(edit = false) {
 
 function UpdateEditFields() {
     $('#edittimer-name').val(currentTimer.name);
-    let dt = new Date(currentTimer.end.milliseconds);
+    let dt = new Date(currentTimer.end._milliseconds);
     let date = dt.getFullYear() + "-" 
         + (dt.getMonth() < 10 ? ("0" + (dt.getMonth() + 1)) : (dt.getMonth() + 1)) + "-"
         + (dt.getDate() < 10 ? ("0" + dt.getDate()) : dt.getDate());
@@ -144,26 +144,21 @@ function displayNextTimer() {
  * Horrible name. Takes care of loading the page after users log in (waiting for timers to load etc).
  * Does too many things, should be split up at some point.
  */
-function loadPage() {
+async function loadPage() {
     if(auth.currentUser) {
         DisplayMainContent('#countdown');
-        allTimers = fetchAllTimers(auth.currentUser);
-        hasTimersLoadedYet();
+        allTimers = await fetchAllTimers(auth.currentUser, hasTimersLoadedYet);
     } else {
         // render "no timers for you"
     }
 }
 
+var timersLoaded;
 function hasTimersLoadedYet() {
     let seconds = 0;
-    var timersLoaded = setInterval(() => {
-        if (CheckForTimerLength(seconds) == 1) {
+    timersLoaded = setInterval(() => {
+        if (CheckForTimerLength(seconds) == 1 || CheckForTimerLength(seconds) == -1) {
             LoadingComplete(timersLoaded);
-        } else if (CheckForTimerLength(seconds) == -1) {
-            countdown = startCountdown({name: 'No timers found', end: {
-                milliseconds: new Date().getTime()}
-            });
-            clearInterval(timersLoaded);
         }
         seconds += 0.25;
     }, 250);
@@ -172,12 +167,17 @@ function hasTimersLoadedYet() {
 
 function LoadingComplete(interval) {
     clearInterval(interval);
-    countdown = startCountdown(findSoonestTimer());
+    if (allTimers.length < 1) {
+        countdown = startCountdown({ name: 'No timers found', end: { _milliseconds: new Date().getTime() }});
+        return;
+    } else {
+        countdown = startCountdown(findSoonestTimer());
+    }
 }
 
 function CheckForTimerLength(seconds = 0) {
     if (seconds % 1 == 0) console.log(`[Info]: Loading for ${seconds} seconds`);
-    if (seconds > 5 || allTimers.length > 0) {
+    if (seconds > 10 || allTimers.length > 0) {
         if (allTimers.length > 0) {
             return 1;
         } else {
@@ -198,11 +198,11 @@ function startCountdown(timer) {
     if (countdown) clearInterval(countdown);
     DisplayTimerInfo(timer);
     currentTimer = timer;
-    let time = timer.end.milliseconds - new Date().getTime();
+    let time = timer.end._milliseconds - new Date().getTime();
     if (time > 0) {
         UpdateTimer(time);
         return setInterval(() => {
-            time = timer.end.milliseconds - new Date().getTime();
+            time = timer.end._milliseconds - new Date().getTime();
             //time -= 1000;
             UpdateTimer(time);
         }, 1000);
@@ -213,7 +213,7 @@ function startCountdown(timer) {
 
 function DisplayTimerInfo(timer) {
     $('#countdown-title').empty().text(timer.name);
-    if (timer.end.milliseconds) $('#countdown-end-datetime').empty().text(formatEndDateTimeToString(timer.end));
+    if (timer.end._milliseconds) $('#countdown-end-datetime').empty().text(formatEndDateTimeToString(timer.end));
 }
 
 /**
@@ -221,7 +221,7 @@ function DisplayTimerInfo(timer) {
  * @param {object} end 
  */
 function formatEndDateTimeToString(end) {
-    let e = new Date(end.milliseconds);
+    let e = new Date(end._milliseconds);
     let date = (e.getDate() < 10 ? "0" + e.getDate() : e.getDate()) + "." +
         (e.getMonth() < 10 ? "0" + (e.getMonth() + 1) : (e.getMonth() + 1)) + "." +
         e.getFullYear() + ", " +

@@ -4,34 +4,58 @@ admin.initializeApp();
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
 
-// exports.cleanupEndedTimers = functions.https.onCall((data, context) => {
-//     var db = admin.firestore();
-//     var count = 0;
-//     db.collection('timers').get().then((snapshot) => {
-//         snapshot.forEach((doc) => {
-//             if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
-//                 count += 1;
-//                 db.collection('expired').add(doc.data());
-//                 doc.ref.delete();
-//             }
-//         });
-//     });
-//     return count;
-// });
+exports.saveTimer = functions.https.onCall((data, context) => {
+    const timer = data;
+    const userId = context.auth.uid;
+    timer.end = new Date(timer.end);
+    timer.created = new Date(timer.created);
+    timer['userId'] = userId;
 
-// exports.cleanupEndedTimers = functions.https.onRequest((req, res) => {
-//     var db = admin.firestore();
-//     db.collection('timers').get().then((snapshot) => {
-//         snapshot.forEach((doc) => {
-//             if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
-//                 db.collection('expired').add(doc.data());
-//                 doc.ref.delete();
-//             }
-//         });
-//     });
-// });
+    timer.ref.id = userId + "---" + timer.name + "---" + timer.created.toISOString();
+
+    return admin.firestore().collection('timers').doc(timer.ref.id)
+        .set(timer).then(() => {
+            timer['test'] = timer.end.getTime();
+            return timer;
+        }).catch(error => {
+            return error;
+        });
+});
+
+exports.migrateEndedTimers = functions.https.onCall(() => {
+    var counter = 0;
+    const db = admin.firestore();
+    db.collection('timers').get().then(snap => {
+        snap.forEach(function(doc) {
+            if (new Date((doc.data().end.seconds * 1000) + doc.data().end.nanoseconds) < new Date()) {
+                db.collection('expired').add(doc.data());
+                counter += 1;
+                doc.ref.delete();
+            }
+        });
+    });
+    console.log('Migrated ' + counter + ' timers.');
+    return counter;
+});
+
+exports.deleteTimer = functions.https.onCall((data, context) => {
+    
+});
+
+exports.updateUserInfo = functions.https.onCall((data, context) => {
+    
+});
+
+exports.getTimersForCurrentUser = functions.https.onCall((id, context) => {
+    let timers = [];
+    return admin.firestore().collection('timers').where('userId', '==', id).get().then(snap => {
+        snap.forEach(function(doc) {
+            let timer = doc.data();
+            timer.ref = doc.ref;
+            timer.id = doc.ref.id;
+            timers.push(timer);
+        });
+        return timers;
+    });
+});

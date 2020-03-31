@@ -9,48 +9,29 @@ function initDb(db) {
         console.log('[ERROR]: Could not connect to Firestore.');
     }
 
-    CleanupEndedTimers();
     FluxV2(new Date().getHours());
 }
 
-function CleanupEndedTimers() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-        // Typical action to be performed when the document is ready:
-        document.getElementById("demo").innerHTML = xhttp.responseText;
-        }
-    };
-    xhttp.open("GET", "filename", true);
-    xhttp.send();
-}
-
 function SaveTimer(timer) {
-    db.collection('timers').doc(timer.ref.id).set(timer)
-        .then(function() {
-            allTimers = fetchAllTimers(auth.currentUser);
-            setTimeout(() => {
-                countdown = startCountdown(GetTimerByID(timer.ref.id));
-            }, 200);
-            $('#newtimer-form').trigger('reset');
-        })
-        .catch(function(error) {
-            console.log('[ERROR]: ' + error);
-        });
+    console.log(timer);
+
+    var save = firebase.functions().httpsCallable('saveTimer');
+    save(timer).then(function(result) {
+        console.log(result);
+            // ...
+    });
 }
 
 function AddNewTimer() {
     let endDateTime = concatDateAndTime($('#newtimer-end-date').val(), $('#newtimer-end-time').val());
     let newTimer = {
         name: $('#newtimer-name').val(),
-        end: endDateTime,
-        created: new Date(),
-        userId: auth.currentUser.uid,
+        end: endDateTime.getTime(),
+        created: new Date().getTime(),
         ref: {
             id: null
         }
     };
-    newTimer.ref.id = newTimer.userId + "---" + newTimer.name + "---" + newTimer.created.toISOString();
     SaveTimer(newTimer);
 }
 
@@ -73,34 +54,33 @@ function concatDateAndTime(date, time) {
     }
 };
 
-function fetchAllTimers(user) {
+async function fetchAllTimers(user, callback = null) {
+    let fetch = firebase.functions().httpsCallable('getTimersForCurrentUser');
     let timers = [];
-    timersListener = db.collection("timers").where('userId', '==', user.uid).onSnapshot(snapshot => {
-        migrateEndedTimers(snapshot);
-        snapshot.forEach((doc) => {
-            let timer = doc.data();
-            timer.ref = doc.ref;
-            timers.push(timer);
-        });
+    await fetch(user.uid).then(result => {
+        console.log(result.data);
+        if (timersLoaded) LoadingComplete(timersLoaded);
+        timers = result.data;
+        console.log(timers);
         console.log("[Info]: Fetched " + timers.length + " records from firestore");
         convertEndToMillis(timers);
         timers = sortTimersBySoonest(timers);
-        addTimersToAllTimersList(timers);
+        addTimersToAllTimersList(timers);;
+        if (callback) callback();
     });
-
-    let expiredListener = db.collection('expired').where('userId', '==', user.uid).onSnapshot(snapshot => {
-        let exp = [];
-        snapshot.forEach((doc) => {
-            let timer = doc.data();
-            timer.ref = doc.ref;
-            exp.push(timer);
-        });
-        convertEndToMillis(exp);
-        exp = sortTimersBySoonest(exp);
-        AddTimersToExpiredTimersList(exp);
-    });
-    expiredListener();
     return timers;
+    // let expiredListener = db.collection('expired').where('userId', '==', user.uid).onSnapshot(snapshot => {
+    //     let exp = [];
+    //     snapshot.forEach((doc) => {
+    //         let timer = doc.data();
+    //         timer.ref = doc.ref;
+    //         exp.push(timer);
+    //     });
+    //     convertEndToMillis(exp);
+    //     exp = sortTimersBySoonest(exp);
+    //     AddTimersToExpiredTimersList(exp);
+    // });
+    // expiredListener();
 }
 
 /**
@@ -142,8 +122,8 @@ function sortTimersByLatest(timers) {
  * @param {allTimers[]} timers 
  */
 function convertEndToMillis(timers) {
-    timers.forEach(timer => {
-        timer.end.milliseconds = timer.end.toMillis();
+    $.each(timers, function(i, timer) {
+        timer.end._milliseconds = (timer.end._seconds * 1000) + timer.end._nanoseconds;
     });
 }
 
@@ -156,20 +136,15 @@ function convertEndToMillis(timers) {
  */
 function migrateEndedTimers(snapshot) {
     console.log('[Info]: Migrating ended timers...');
-    let counter = 0;
-    snapshot.forEach((doc) => {
-        if (new Date(doc.data().end.seconds * 1000 + doc.data().end.nanoseconds) < new Date()) {
-            db.collection('expired').add(doc.data());
-            counter += 1;
-            doc.ref.delete();
+
+    let migrate = firebase.functions().httpsCallable('migrateEndedTimers');
+    migrate().then(function(result) {
+        if (result > 0) {
+            console.log("[Info]: Migrated " + result + " timers.");
+        } else {
+            console.log("[Info]: No timers migrated.");
         }
     });
-
-    if (counter == 0) {
-        console.log('[Info]: No timers migrated');
-    } else {
-        console.log("[Info]: Migrated " + counter + " expired timers.");
-    }
 }
 
 /**
@@ -185,12 +160,12 @@ function deleteCurrentTimer() {
     ShowTimer();
 }
 
-/** 
- * Kills the DB listener (when logging out).
- */
-function stopListening() {
-    timersListener();
-}
+// /** 
+//  * Kills the DB listener (when logging out).
+//  */
+// function stopListening() {
+//     timersListener();
+// }
 
 /**
  * Adds users to a Users collection in Firestore. This lets me see when the user was created and when the user last logged in,
