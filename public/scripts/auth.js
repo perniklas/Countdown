@@ -1,18 +1,16 @@
 /*
     Authentication handling.
 */
-var userLog = {};
 
 function initAuth(auth) {
     auth.onAuthStateChanged((user) => {
         if (user) {
             if (user.email) {
-                addOrUpdateUserCollecton(userLog);
                 loadPage();
             }
         } else {
             /* User logs out */
-            DisplayMainContent('login');
+            DisplayMainContent('login'); 
             LoginOrSignup();
         }
     });
@@ -21,7 +19,6 @@ function initAuth(auth) {
         e.preventDefault();
         let username = $('#login-username').val(),
             password = $('#login-password').val();
-        userLog.updated = new Date();
 
         auth.signInWithEmailAndPassword(username, password).then((cred) => {
             $('#loginform').trigger('reset');
@@ -36,13 +33,8 @@ function initAuth(auth) {
     $('#signupform').on('submit', (e) => {
         $('#signupform .error').slideUp();
         if (verifyPasswords()) {
-            e.preventDefault();
-            userLog.displayname = $('#signup-displayname').val(),
-            userLog.username = $('#signup-username').val(),
-            userLog.joined = new Date(),
-            userLog.updated = new Date();
-            
-            auth.createUserWithEmailAndPassword(userLog.username, $('#signup-password').val()).then((cred) => {
+            e.preventDefault();            
+            auth.createUserWithEmailAndPassword($('#signup-username').val(), $('#signup-password').val()).then((cred) => {
                 $('#signupform').trigger('reset');
                 $('#signupform .error').hide();
                 console.log('[Info]: Created account: ' + cred.User.email);
@@ -66,7 +58,6 @@ function initAuth(auth) {
 
 function logout() {
     auth.signOut().then(() => {
-        //stopListening();
         console.log("[Info]: User signed out");
     }).catch(error => {
         alert(error.message);

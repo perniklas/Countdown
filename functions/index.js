@@ -5,18 +5,21 @@ admin.initializeApp();
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 
-exports.saveTimer = functions.https.onCall((data, context) => {
-    const timer = data;
+exports.saveTimer = functions.https.onCall((timer, context) => {
+
     const userId = context.auth.uid;
     timer.end = new Date(timer.end);
+    timer.end.milliseconds = timer.end.getTime();
     timer.created = new Date(timer.created);
+    timer.created.milliseconds = timer.created.getTime();
     timer['userId'] = userId;
 
     timer.ref.id = userId + "---" + timer.name + "---" + timer.created.toISOString();
 
+    console.log(timer);
+
     return admin.firestore().collection('timers').doc(timer.ref.id)
         .set(timer).then(() => {
-            timer['test'] = timer.end.getTime();
             return timer;
         }).catch(error => {
             return error;
@@ -25,11 +28,10 @@ exports.saveTimer = functions.https.onCall((data, context) => {
 
 exports.migrateEndedTimers = functions.https.onCall(() => {
     var counter = 0;
-    const db = admin.firestore();
-    db.collection('timers').get().then(snap => {
+    admin.firestore().collection('timers').get().then(snap => { 
         snap.forEach(function(doc) {
             if (new Date((doc.data().end.seconds * 1000) + doc.data().end.nanoseconds) < new Date()) {
-                db.collection('expired').add(doc.data());
+                fs.collection('expired').add(doc.data());
                 counter += 1;
                 doc.ref.delete();
             }
@@ -39,12 +41,15 @@ exports.migrateEndedTimers = functions.https.onCall(() => {
     return counter;
 });
 
-exports.deleteTimer = functions.https.onCall((data, context) => {
-    
-});
-
-exports.updateUserInfo = functions.https.onCall((data, context) => {
-    
+exports.deleteTimer = functions.https.onCall((timer, context) => {
+    let deleted = '';    
+    return admin.firestore().collection('timers').doc(timer.id).delete().then(function() {
+        console.log("Document " + timer.id + " successfully deleted!");
+        return deleted = 'ok';
+    }).catch(function(error) {
+        console.error("Error removing document: ", error);
+        return deleted = error;
+    });
 });
 
 exports.getTimersForCurrentUser = functions.https.onCall((id, context) => {

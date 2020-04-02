@@ -22,6 +22,12 @@ body {
     z-index: 2;
 }
 
+#loading img {
+    margin: auto;
+    display: block;
+    width: 50%;
+}
+
 #login, #newtimer, #edittimer {
     padding: 15px;
     margin: auto;

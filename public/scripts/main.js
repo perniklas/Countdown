@@ -1,25 +1,23 @@
 /* 
     Mostly global variables and some countdown logic.
+    Handles input events.
 */ 
 
-/*      GLOBAL VARS       */
-var db,
+var fs,
     auth,
     func,
     allTimers,
     expiredTimers,
     countdown,
     currentTimer = {};
-/*      GLOBAL VARS       */
-
 
 $(() => {
     FluxV2(new Date().getHours());
     auth = firebase.auth();
     initAuth(auth);
 
-    db = firebase.firestore();
-    initDb(db);
+    fs = firebase.firestore();
+    initFireStore(fs);
 
     $('#menu-extra').on('click', function() {
         ToggleMenuModal(true);
@@ -38,22 +36,22 @@ $(() => {
     $('#menu-extra-delete').on('click', function() {
         if(confirm("Are you sure you want to delete this timer?")) {
             ToggleMenuModal();
-            deleteCurrentTimer();
+            db.DeleteTimer(currentTimer);
         }
     });
 
     $('#menu-extra-edit').on('click', function() {
         UpdateEditFields();
-        DisplayMainContent('#edittimer');
+        ui.Main.DisplayMainContent('#edittimer');
     });
 
     $('#menu-newtimer').on('click', function() {
         if ($(this).hasClass('button-active')) {
             $(this).removeClass('button-active');
-            DisplayMainContent('#countdown');
+            ui.Main.DisplayMainContent('#countdown');
         } else {
             SetMenuButtonActive($(this));
-            DisplayMainContent('#newtimer');
+            ui.Main.DisplayMainContent('#newtimer');
         }
     });
 
@@ -63,7 +61,7 @@ $(() => {
     });
 
     $('#edittimer-cancel').on('click', function () {
-        DisplayMainContent('#countdown');
+        ui.Main.DisplayMainContent('#countdown');
     });
 
     $('#menu-nexttimer').on('click', function() {
@@ -74,10 +72,10 @@ $(() => {
     $('#menu-alltimers').on('click', function() {
         if ($(this).hasClass('button-active')) {
             $(this).removeClass('button-active');
-            DisplayMainContent('#countdown');
+            ui.Main.DisplayMainContent('#countdown');
         } else {
             SetMenuButtonActive($(this));
-            DisplayMainContent('#alltimers');
+            ui.Main.DisplayMainContent('#alltimers');
         }
     });
 
@@ -95,14 +93,10 @@ $(() => {
         return false;
     });
 
-    // $('#signupform-save').on('click', function() {
-    //     validateNewTimer();
-    // });
-
     $(document).on('click', '.timer-element', function() {
         $('.button-active').removeClass('button-active');
-        countdown = startCountdown(allTimers.find(timer => timer.ref.id == $(this).attr("data-timerid")));
-        DisplayMainContent('#countdown');
+        countdown = startCountdown(allTimers.find(timer => timer.id == $(this).attr("data-timerid")));
+        ui.Main.DisplayMainContent('#countdown');
     });
 });
 
@@ -115,7 +109,7 @@ function validateNewTimer(edit = false) {
             AddNewTimer();
         }
         $('.button-active').removeClass('button-active');
-        DisplayMainContent('#countdown');
+        ui.Main.DisplayMainContent('#countdown');
     } else {
         alert("A countdown needs at least a name and an end date.");
     }
@@ -133,45 +127,53 @@ function UpdateEditFields() {
     $('#edittimer-end-time').val(time);
 }
 
-/**
- * Displays the timer that is after the currentTimer in allTimers array (whichever way the array has been ordered).
- */
+/* BELOW SECTION IS A MESS */
 function displayNextTimer() {
-    HideTimer(true);
+    HideTimer();
 }
 
-/**
- * Horrible name. Takes care of loading the page after users log in (waiting for timers to load etc).
- * Does too many things, should be split up at some point.
- */
-async function loadPage() {
+function HideTimer() {
+    $('#content').addClass('slidefix');
+    $('#countdown-content').slideUp("swing", () => {
+        StartNext();
+    });
+}
+
+function StartNext() {
+    countdown = startCountdown(GetNextTimer());
+    ui.Main.DisplayMainContent('#countdown');
+    ShowTimer();
+}
+
+function ShowTimer() {
+    $('#content').removeClass('slidefix')
+    $('#countdown-content').slideDown();
+}
+/* ABOVE SECTION IS A MESS */
+
+function loadPage() {
     if(auth.currentUser) {
-        DisplayMainContent('#countdown');
-        allTimers = await fetchAllTimers(auth.currentUser, hasTimersLoadedYet);
-    } else {
-        // render "no timers for you"
+        colors.GetColorsFromFS(true);
+        StartLoadingTimers();
     }
 }
 
-var timersLoaded;
-function hasTimersLoadedYet() {
-    let seconds = 0;
-    timersLoaded = setInterval(() => {
-        if (CheckForTimerLength(seconds) == 1 || CheckForTimerLength(seconds) == -1) {
-            LoadingComplete(timersLoaded);
-        }
-        seconds += 0.25;
-    }, 250);
-    setTimeout(TimersAreLoaded, 1000);
+async function StartLoadingTimers() {
+    ui.Loading.Start();
+    await db.GetAllTimers(auth.currentUser, MigrateEndedTimers);
+    LoadingComplete();
 }
 
-function LoadingComplete(interval) {
-    clearInterval(interval);
+function LoadingComplete(timer = null) {
+    ui.Main.DisplayMainContent('#countdown');
     if (allTimers.length < 1) {
         countdown = startCountdown({ name: 'No timers found', end: { _milliseconds: new Date().getTime() }});
-        return;
     } else {
-        countdown = startCountdown(findSoonestTimer());
+        if (timer) {
+            countdown = startCountdown(timer);
+        } else {
+            countdown = startCountdown(findSoonestTimer());
+        }
     }
 }
 
@@ -240,7 +242,7 @@ function UpdateTimer(time) {
         DisplayEndedTimer()
     } else {
         if (confetti.isRunning()) {
-            confetti.pause();
+            confetti.stop();
         }
         let days = Math.floor(time / (1000 * 60 * 60 * 24)),
             hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),

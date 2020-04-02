@@ -16,9 +16,10 @@ var colors = {
     col2: DefaultColors().col2,
     light: 55,
     shiftInterval: null,
-    GetColorsFromDB: function(setbackground = false) {
+    GetColorsFromFS: function(setbackground = false) {
         if (!auth.currentUser) setTimeout(500);
-        db.collection('users').doc(auth.currentUser.uid).get().then(c => {
+        fs.collection('userscolors').doc(auth.currentUser.uid).get().then(c => {
+            console.log(c.data());
             if (c.data().colors) {
                 colors.col1 = c.data().colors.col1;
                 colors.col2 = c.data().colors.col2;
@@ -26,10 +27,12 @@ var colors = {
             }
         });
     },
-    SaveColorsToDB: function() {
-        db.collection('users').doc(auth.currentUser.uid).update({
-            'colors.col1': colors.col1,
-            'colors.col2': colors.col2
+    SaveColorsToFS: function() { 
+        fs.collection('userscolors').doc(auth.currentUser.uid).set({
+            'colors': {
+                'col1': colors.col1,
+                'col2': colors.col2
+            }
         });
     },
     GetColorsFromCurrentBG: function() {
@@ -57,7 +60,7 @@ var colors = {
         if (colors.shiftInterval) {
             clearInterval(colors.shiftInterval);
             colors.shiftInterval = null;
-            colors.SaveColorsToDB();
+            colors.SaveColorsToFS();
         } else {
             colors.shiftInterval = setInterval(function() {
                 colors.col1.h = (colors.col1.h + 0.25 > 360) ? 0 : colors.col1.h + 0.25;
@@ -92,6 +95,22 @@ var colors = {
             }, 16.7);
         } else {
             FluxV2(now);
+        }
+    }
+};
+
+var ui = {
+    Loading: {
+        Start: function() {
+            ui.Main.DisplayMainContent('#loading');
+            $('#menu').slideUp();
+        }
+    },
+    Main: {
+        DisplayMainContent: function(container) {
+            $('#content > div').not(container + ', #menu').slideUp();
+            $(container).slideDown();
+            $('#menu').slideDown();
         }
     }
 };
@@ -136,53 +155,22 @@ function GetFluxV2Value(now) {
 function LoginOrSignup(signup = false) {
     if (signup) {
         $('#content > *, #menu').hide();
-        DisplayMainContent('#login');
+        ui.Main.DisplayMainContent('#login');
         $('#loginform').slideUp();
         $('#signupform').slideDown();
     } else {
         $('#content > *, #menu').hide();
-        DisplayMainContent('#login');
+        ui.Main.DisplayMainContent('#login');
         $('#signupform').hide();
         $('#login, #loginform').slideDown();
     }
-}
-
-/**
- * Hides everything except the desired container.
- * Intentional use is to pass ID of container to display.
- * 
- * @param {string} container 
- */
-function DisplayMainContent(container) {
-    $('#content > div').not(container + ', #menu').slideUp();
-    $(container).slideDown();
 }
 
 function TimersAreLoaded() {
     $('#content').addClass('slidefix');
     $('#countdown-header, #countdown-content, #counters-text, #menu').slideDown();
     $('#content').removeClass('slidefix');
-    colors.GetColorsFromDB(true);
-}
-
-function HideTimer(next = false) {
-    $('#content').addClass('slidefix');
-    $('#countdown-content').slideUp("swing", () => {
-        if (next) {
-            StartNext();
-        }
-    });
-}
-
-function StartNext() {
-    countdown = startCountdown(GetNextTimer());
-    DisplayMainContent('#countdown');
-    ShowTimer();
-}
-
-function ShowTimer() {
-    $('#content').removeClass('slidefix')
-    $('#countdown-content').slideDown();
+    colors.GetColorsFromfs(true);
 }
 
 function ToggleMenuModal(show = false) {
