@@ -1,15 +1,15 @@
 /**
  * UI functionality based on states.
- * States:
- * - Login
- *      - Sign up
- * 
- * - Loading timers
- * - Display timer
- * - Show all timers
- * - Add new timer
- * - Show menu modal
  */
+
+let vh = window.innerHeight * 0.01;
+document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+window.addEventListener('resize', () => {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+});
+
 var colors = {
     original: {},
     col1: DefaultColors().col1,
@@ -19,7 +19,6 @@ var colors = {
     GetColorsFromFS: function(setbackground = false) {
         if (!auth.currentUser) setTimeout(500);
         fs.collection('userscolors').doc(auth.currentUser.uid).get().then(c => {
-            console.log(c.data());
             if (c.data().colors) {
                 colors.col1 = c.data().colors.col1;
                 colors.col2 = c.data().colors.col2;
@@ -43,18 +42,25 @@ var colors = {
     SetBGColors: function(color = null) {
         let c = colors;
         if (color) c = color;
-        let gradient = 'linear-gradient(to bottom right, hsl(' + c.col1.h + ',' + c.col1.s + '%,' + c.light + '%),' + 
-                        'hsl(' + c.col2.h + ',' + c.col2.s + '%,' + c.light + '%))',
-            reverse = 'linear-gradient(to top left, hsl(' + c.col1.h + ',' + (c.col1.s / 2).toFixed() + '%,' + c.light + '%),' +
-                        'hsl(' + c.col2.h + ',' + (c.col2.s / 2).toFixed() + '%,' + c.light + '%))';
+        let gradient = colors.GenerateGradientString(c),
+            reverse = colors.GenerateGradientString(c, true);
         let diff = c.col1.h > c.col2.h ? (c.col1.h - c.col2.h) / 2 : ((c.col1.h + 360) - c.col2.h) / 2,
             hue = (c.col1.h - diff) < 0 ? 360 - Math.abs(c.col1 - diff) : c.col1.h - diff;
             title = 'hsl(' + hue + ', 100%, 30%)',
             subtitle = 'hsl(' + hue + ', 60%, 30%)';
-        $('body, .timer-element').css({'background-image': gradient});
-        $('#menu-modal, .btn-submit').css({'background-image': reverse});
+        colors.SetElementBGImageColors('body, .timer-element', gradient);
+        colors.SetElementBGImageColors('#menu-modal, .btn-submit', reverse);
         $('#countdown-title, #counters').css({'color': title});
         $('#countdown-end-datetime').css({'color': subtitle});
+    },
+    GenerateGradientString: function(pColors, reverse = false) {
+        let direction = 'to bottom right';
+        if (reverse) direction = 'to top left';
+        return 'linear-gradient(' + direction + ', hsl(' + pColors.col1.h + ',' + (pColors.col1.s / 2).toFixed() + '%,' + pColors.light + '%),' +
+            'hsl(' + pColors.col2.h + ',' + (pColors.col2.s / 2).toFixed() + '%,' + pColors.light + '%))';
+    },
+    SetElementBGImageColors: function(element, gradient) {
+        $(element).css({'background-image': gradient});
     },
     StartGradientShift: function() {
         if (colors.shiftInterval) {
@@ -100,17 +106,62 @@ var colors = {
 };
 
 var ui = {
-    Loading: {
-        Start: function() {
-            ui.Main.DisplayMainContent('#loading');
-            $('#menu').slideUp();
-        }
-    },
     Main: {
-        DisplayMainContent: function(container) {
+        DisplayMainContent: function(container, callback = null) {
             $('#content > div').not(container + ', #menu').slideUp();
             $(container).slideDown();
             $('#menu').slideDown();
+            if (callback) callback();
+        },
+        ToggleMenuModal: function(show = false) {
+            if (show) {
+                $('#menu-modal').fadeIn();
+            } else {
+                $('#menu-modal').fadeOut();
+            }
+        },
+        SetMenuButtonActive: function(button) {
+            $('.button-active').removeClass('button-active');
+            button.addClass('button-active');
+        }
+    },
+    States: {
+        Login: {
+            LoginSignUp: function(signup = false) {
+                $('#content > *, #menu').hide();
+                ui.Main.DisplayMainContent('#login');
+                if (signup) {
+                    $('#loginform').slideUp();
+                    $('#signupform').slideDown();
+                } else {
+                    $('#signupform').slideUp();
+                    $('#login, #loginform').slideDown();
+                }
+            }
+        },
+        Loading: {
+            Start: function() {
+                ui.Main.DisplayMainContent('#loading');
+                $('#menu').slideUp();
+            },
+            End: function(success = true) {
+                if (success) {
+                    $('#content').addClass('slidefix');
+                    $('#countdown-header, #countdown-content, #counters-text, #menu').slideDown();
+                    $('#content').removeClass('slidefix');
+                    colors.GetColorsFromfs(true);
+                } else {
+                    ui.States.Empty.DisplayNoTimersFound();
+                }
+            }
+        },
+        Empty: {
+            // create empty state func
+            DisplayNoTimersFound: function() {
+                $('#countdown-end-datetime').text('');
+                ui.Main.DisplayMainContent('#countdown');
+                $('#countdown > div:not(#countdown-header)').hide();
+            }
         }
     }
 };
@@ -151,48 +202,6 @@ function GetFluxV2Value(now) {
     }
     return light;
 }
-
-function LoginOrSignup(signup = false) {
-    if (signup) {
-        $('#content > *, #menu').hide();
-        ui.Main.DisplayMainContent('#login');
-        $('#loginform').slideUp();
-        $('#signupform').slideDown();
-    } else {
-        $('#content > *, #menu').hide();
-        ui.Main.DisplayMainContent('#login');
-        $('#signupform').hide();
-        $('#login, #loginform').slideDown();
-    }
-}
-
-function TimersAreLoaded() {
-    $('#content').addClass('slidefix');
-    $('#countdown-header, #countdown-content, #counters-text, #menu').slideDown();
-    $('#content').removeClass('slidefix');
-    colors.GetColorsFromfs(true);
-}
-
-function ToggleMenuModal(show = false) {
-    if (show) {
-        $('#menu-modal').fadeIn();
-    } else {
-        $('#menu-modal').fadeOut();
-    }
-}
-
-function SetMenuButtonActive(button) {
-    $('.button-active').removeClass('button-active');
-    button.addClass('button-active');
-}
-
-let vh = window.innerHeight * 0.01;
-document.documentElement.style.setProperty('--vh', `${vh}px`);
-
-window.addEventListener('resize', () => {
-    let vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-});
 
 function GetRGBFromLinearGradient(element) {
     let css = $(element).css('background-image');

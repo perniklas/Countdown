@@ -4,36 +4,46 @@
 
 var db = {
     SaveTimer: async function(timer) {
-        ui.Loading.Start();
-        let save = firebase.functions().httpsCallable('saveTimer');
+        ui.States.Loading.Start();
+        let save = functions.httpsCallable('saveTimer');
         await save(timer).then(result => {
             console.log('[Info]: Saved timer ', result.data);
             LoadingComplete(result.data);
         });
     },
     GetAllTimers: async function(user, callback = null) {
-        let fetch = firebase.functions().httpsCallable('getTimersForCurrentUser');
+        let fetch = functions.httpsCallable('getTimersForCurrentUser');
         await fetch(user.uid).then(result => {
-            allTimers = result.data;
+            unfilteredTimers = result.data;
+            let allTimers = [];
             console.log("[Info]: Fetched " + allTimers.length + " records from firestore");
             convertEndToMillis(allTimers);
             allTimers = sortTimersBySoonest(allTimers);
             addTimersToAllTimersList(allTimers);;
+            colors.SetElementBGImageColors('',)
             if (callback) callback();
         });
     },
-    DeleteTimer: async function(timer) {
+    DeleteTimer: async function(timer, callback = null) {
         ui.Loading.Start();
         let next = GetNextTimer();
-        let deleteFunction = firebase.functions().httpsCallable('deleteTimer');
-        await deleteFunction(timer).then(result => {
+        let deleteFunction = functions.httpsCallable('deleteTimer');
+        let markForDeletionFunction = functions.httpsCallable('markTimerForDeletion');
+        await markForDeletionFunction(timer).then(result => {
+            console.log(result.data);
+            StartLoadingTimers(next);
+        });
+
+        let del = await deleteFunction(timer).then(result => {
             if (result.data == 'ok') {
                 console.log('Timer was deleted');
             } else {
                 console.log('[ERROR]: ', result.data);
             }
+            if (callback) callback();
         });
-        LoadingComplete(next);
+
+        return del;
     }
 };
 
@@ -126,7 +136,7 @@ function convertEndToMillis(timers) {
  */
 function MigrateEndedTimers() {
     console.log('[Info]: Migrating ended timers...');
-    let migrate = firebase.functions().httpsCallable('migrateEndedTimers');
+    let migrate = functions.httpsCallable('migrateEndedTimers');
     migrate().then(function(result) {
         if (result > 0) {
             console.log("[Info]: Migrated " + result + " timers.");
@@ -142,34 +152,44 @@ function MigrateEndedTimers() {
  */
 function addTimersToAllTimersList(timers = allTimers) {
     $('#alltimers-timers').empty();
+    if (!timers) return;
     $.each(timers, (index, timer) => {
         $('#alltimers-timers').append(
-            '<div class="timer-element" data-timerid="' + timer.id + '"><p>' + timer.name + '</p><p>' + formatEndDateTimeToString(timer.end) + '</p></div>'
+            GenerateTimerListElement(timer)
         );
     });
 }
 
 function AddTimersToExpiredTimersList(timers = expiredTimers) {
     $('#alltimers-expired').empty();
+    if (!timers) return;
     $.each(timers, (index, timer) => {
         $('#alltimers-expired').append(
-            '<div class="timer-element" data-timerid="' + timer.id + '"><p>' + timer.name + '</p><p>' + formatEndDateTimeToString(timer.end) + '</p></div>'
+            GenerateTimerListElement(timer)
         );
     });
 }
 
+function GenerateTimerListElement(timer) {
+    if (!timer) return;
+    return '<div class="timer-element" data-timerid="' + timer.id + '"><p>' + timer.name + '</p><p>' + formatEndDateTimeToString(timer.end) + '</p></div>'
+}
+
 function GetNextTimer() {
+    if (!allTimers) return;
     let index = allTimers.findIndex(t => t.id == currentTimer.id) + 1;
     if (index >= allTimers.length) index = 0;
     return allTimers[index];
 }
 
 function GetPreviousTimer() {
+    if (!allTimers) return;
     let index = allTimers.findIndex(t => t.ref.id == currentTimer.ref.id) - 1;
     if (index < 0) index = allTimers.length - 1;
     return allTimers[index];
 }
 
 function GetTimerByID(id) {
+    if (!allTimers) return;
     return allTimers.find(t => t.ref.id === id);
 }

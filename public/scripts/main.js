@@ -5,7 +5,7 @@
 
 var fs,
     auth,
-    func,
+    functions,
     allTimers,
     expiredTimers,
     countdown,
@@ -15,17 +15,20 @@ $(() => {
     FluxV2(new Date().getHours());
     auth = firebase.auth();
     initAuth(auth);
+    
+    functions = firebase.app().functions('europe-west2');
 
     fs = firebase.firestore();
     initFireStore(fs);
 
+
     $('#menu-extra').on('click', function() {
-        ToggleMenuModal(true);
+        ui.Main.ToggleMenuModal(true);
     });
     
     $(document).on('click', function(event) {
         if (!$(event.target).closest('#menu-modal, #menu-extra').length) {
-            ToggleMenuModal();
+            ui.Main.ToggleMenuModal();
         }
     });
 
@@ -35,7 +38,7 @@ $(() => {
 
     $('#menu-extra-delete').on('click', function() {
         if(confirm("Are you sure you want to delete this timer?")) {
-            ToggleMenuModal();
+            ui.Main.ToggleMenuModal();
             db.DeleteTimer(currentTimer);
         }
     });
@@ -50,7 +53,7 @@ $(() => {
             $(this).removeClass('button-active');
             ui.Main.DisplayMainContent('#countdown');
         } else {
-            SetMenuButtonActive($(this));
+            ui.Main.SetMenuButtonActive($(this));
             ui.Main.DisplayMainContent('#newtimer');
         }
     });
@@ -74,7 +77,7 @@ $(() => {
             $(this).removeClass('button-active');
             ui.Main.DisplayMainContent('#countdown');
         } else {
-            SetMenuButtonActive($(this));
+            ui.Main.SetMenuButtonActive($(this));
             ui.Main.DisplayMainContent('#alltimers');
         }
     });
@@ -129,27 +132,23 @@ function UpdateEditFields() {
 
 /* BELOW SECTION IS A MESS */
 function displayNextTimer() {
-    HideTimer();
+    if (!allTimers) return;
+    HideTimer(StartNext);
 }
 
-function HideTimer() {
+function HideTimer(callback = null) {
     $('#content').addClass('slidefix');
     $('#countdown-content').slideUp("swing", () => {
-        StartNext();
+        if (callback) callback();
     });
 }
 
 function StartNext() {
     countdown = startCountdown(GetNextTimer());
     ui.Main.DisplayMainContent('#countdown');
-    ShowTimer();
-}
-
-function ShowTimer() {
     $('#content').removeClass('slidefix')
     $('#countdown-content').slideDown();
 }
-/* ABOVE SECTION IS A MESS */
 
 function loadPage() {
     if(auth.currentUser) {
@@ -158,16 +157,18 @@ function loadPage() {
     }
 }
 
-async function StartLoadingTimers() {
-    ui.Loading.Start();
-    await db.GetAllTimers(auth.currentUser, MigrateEndedTimers);
-    LoadingComplete();
+async function StartLoadingTimers(displayTimer = null) {
+    ui.States.Loading.Start();
+    await db.GetAllTimers(auth.currentUser, MigrateEndedTimers).then(() => {
+        LoadingComplete(displayTimer);
+    });
 }
 
 function LoadingComplete(timer = null) {
     ui.Main.DisplayMainContent('#countdown');
-    if (allTimers.length < 1) {
-        countdown = startCountdown({ name: 'No timers found', end: { _milliseconds: new Date().getTime() }});
+    if (!allTimers) StartEmptyCountdown();
+    else if (allTimers.length < 1) {
+        StartEmptyCountdown();
     } else {
         if (timer) {
             countdown = startCountdown(timer);
@@ -177,7 +178,17 @@ function LoadingComplete(timer = null) {
     }
 }
 
+/* ABOVE SECTION IS A MESS */
+
+function StartEmptyCountdown() {
+    countdown = startCountdown({ name: 'No timers found', end: { _milliseconds: new Date().getTime() }});
+    ui.States.Empty.DisplayNoTimersFound();
+}
+
 function CheckForTimerLength(seconds = 0) {
+    if (!allTimers) {
+        return 0;
+    }
     if (seconds % 1 == 0) console.log(`[Info]: Loading for ${seconds} seconds`);
     if (seconds > 10 || allTimers.length > 0) {
         if (allTimers.length > 0) {

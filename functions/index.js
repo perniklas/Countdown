@@ -5,7 +5,7 @@ admin.initializeApp();
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 
-exports.saveTimer = functions.https.onCall((timer, context) => {
+exports.saveTimer = functions.region('europe-west2').https.onCall((timer, context) => {
 
     const userId = context.auth.uid;
     timer.end = new Date(timer.end);
@@ -13,6 +13,7 @@ exports.saveTimer = functions.https.onCall((timer, context) => {
     timer.created = new Date(timer.created);
     timer.created.milliseconds = timer.created.getTime();
     timer['userId'] = userId;
+    timer.toBeDeleted = false;
 
     timer.ref.id = userId + "---" + timer.name + "---" + timer.created.toISOString();
 
@@ -26,7 +27,7 @@ exports.saveTimer = functions.https.onCall((timer, context) => {
         });
 });
 
-exports.migrateEndedTimers = functions.https.onCall(() => {
+exports.migrateEndedTimers = functions.region('europe-west2').https.onCall(() => {
     var counter = 0;
     admin.firestore().collection('timers').get().then(snap => { 
         snap.forEach(function(doc) {
@@ -41,7 +42,19 @@ exports.migrateEndedTimers = functions.https.onCall(() => {
     return counter;
 });
 
-exports.deleteTimer = functions.https.onCall((timer, context) => {
+exports.markTimerForDeletion = functions.region('europe-west2').https.onCall((timer, context) => {
+    return admin.firestore().collection('timers').doc(timer.id)
+        .update({
+            toBeDeleted: true
+        }
+    ).then(() => {
+        return 'good';
+    }).catch(bad => {
+        return bad;
+    });
+});
+
+exports.deleteTimer = functions.region('europe-west2').https.onCall((timer, context) => {
     let deleted = '';    
     return admin.firestore().collection('timers').doc(timer.id).delete().then(function() {
         console.log("Document " + timer.id + " successfully deleted!");
@@ -52,7 +65,7 @@ exports.deleteTimer = functions.https.onCall((timer, context) => {
     });
 });
 
-exports.getTimersForCurrentUser = functions.https.onCall((id, context) => {
+exports.getTimersForCurrentUser = functions.region('europe-west2').https.onCall((id, context) => {
     let timers = [];
     return admin.firestore().collection('timers').where('userId', '==', id).get().then(snap => {
         snap.forEach(function(doc) {
