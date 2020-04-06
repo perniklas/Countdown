@@ -28,18 +28,23 @@ exports.saveTimer = functions.region('europe-west2').https.onCall((timer, contex
 });
 
 exports.migrateEndedTimers = functions.region('europe-west2').https.onCall(() => {
-    var counter = 0;
-    admin.firestore().collection('timers').get().then(snap => { 
+    return admin.firestore().collection('timers').get().then(snap => { 
+        let counter = 0;
         snap.forEach(function(doc) {
+            console.log(doc.data());
             if (new Date((doc.data().end.seconds * 1000) + doc.data().end.nanoseconds) < new Date()) {
-                fs.collection('expired').add(doc.data());
+                admin.firestore().collection('expired').add(doc.data());
                 counter += 1;
                 doc.ref.delete();
             }
         });
+        if (counter > 0) {
+            console.log('[Info]: Migrated ' + counter + ' ended countdowns.');
+        } else {
+            console.log('[Info]: No countdowns migrated.');
+        }
+        return counter;
     });
-    console.log('Migrated ' + counter + ' timers.');
-    return counter;
 });
 
 exports.markTimerForDeletion = functions.region('europe-west2').https.onCall((timer, context) => {

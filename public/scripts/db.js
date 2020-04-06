@@ -6,44 +6,59 @@ var db = {
     SaveTimer: async function(timer) {
         ui.States.Loading.Start();
         let save = functions.httpsCallable('saveTimer');
-        await save(timer).then(result => {
-            console.log('[Info]: Saved timer ', result.data);
-            LoadingComplete(result.data);
-        });
+        let result = await save(timer);
+        return result.data;
     },
     GetAllTimers: async function(user, callback = null) {
-        let fetch = functions.httpsCallable('getTimersForCurrentUser');
-        await fetch(user.uid).then(result => {
-            unfilteredTimers = result.data;
-            let allTimers = [];
-            console.log("[Info]: Fetched " + allTimers.length + " records from firestore");
-            convertEndToMillis(allTimers);
-            allTimers = sortTimersBySoonest(allTimers);
-            addTimersToAllTimersList(allTimers);;
-            colors.SetElementBGImageColors('',)
-            if (callback) callback();
+        let fetchTimers = functions.httpsCallable('getTimersForCurrentUser');
+        let unfiltered = await fetchTimers(user.uid);
+        let timers = [];
+        $.each(unfiltered.data, (i, timer) => {
+            if (!timer.toBeDeleted) timers.push(timer); 
+            else {
+                if (timer.toBeDeleted === false) timers.push(timer);
+            }
         });
+        console.log(timers);
+        allTimers = timers;
+        console.log("[Info]: Fetched " + allTimers.length + " records from firestore");
+        convertEndToMillis(allTimers);
+        allTimers = sortTimersBySoonest(allTimers);
+        AddTimersToAllTimersList(allTimers);
+        if (callback) callback;
     },
     DeleteTimer: async function(timer, callback = null) {
-        ui.Loading.Start();
+        ui.States.Loading.Start();
         let next = GetNextTimer();
         let deleteFunction = functions.httpsCallable('deleteTimer');
         let markForDeletionFunction = functions.httpsCallable('markTimerForDeletion');
-        await markForDeletionFunction(timer).then(result => {
-            console.log(result.data);
-            StartLoadingTimers(next);
-        });
 
-        let del = await deleteFunction(timer).then(result => {
-            if (result.data == 'ok') {
-                console.log('Timer was deleted');
-            } else {
-                console.log('[ERROR]: ', result.data);
-            }
-            if (callback) callback();
-        });
+        console.log('[Info]: Marking countdown for deletion');
+        let mark = await markForDeletionFunction(timer);
+        console.log(mark.data);
+        StartLoadingTimers(next);
 
-        return del;
+        console.log('[Info]: Deleting countdown');
+        let del = await deleteFunction(timer);
+        if (del.data == 'ok') {
+            console.log('Timer was deleted');
+        } else {
+            console.log('[ERROR]: ', result.data);
+        }
+        if (callback) callback();
+    },
+    /**
+     * Migrate ended countdowns from the Timers collection to the Expired collection.
+     */
+    MigrateEndedTimers: async function() {
+        console.log('[Info]: Migrating ended timers...');
+        let migrate = functions.httpsCallable('migrateEndedTimers');
+        let count = await migrate();
+        if (count.data > 0) {
+            console.log('[Info]: Migrated ' + count.data + ' ended countdowns.');
+        } else {
+            console.log('[Info]: No countdowns migrated.');
+        }
     }
 };
 
@@ -67,14 +82,22 @@ async function AddNewTimer() {
             id: null
         }
     };
-    await db.SaveTimer(newTimer);
+    let savedTimer = await db.SaveTimer(newTimer);
+    if (savedTimer) {
+        console.log('[Info]: Saved timer ', savedTimer);
+        StartLoadingTimers(savedTimer);
+    }
 }
 
 async function EditTimer() {
     currentTimer.name = $('#edittimer-name').val();
     currentTimer.end._milliseconds = new Date(concatDateAndTime($('#edittimer-end-date').val(), $('#edittimer-end-time').val())).getTime();
     currentTimer.edited = new Date().getTime();
-    await db.SaveTimer(currentTimer);
+    let savedTimer = await db.SaveTimer(currentTimer);
+    if (savedTimer) {
+        console.log('[Info]: Edited timer ', savedTimer);
+        StartLoadingTimers(savedTimer);
+    }
 }
 
 function concatDateAndTime(date, time) {
@@ -130,27 +153,10 @@ function convertEndToMillis(timers) {
 }
 
 /**
- * Takes the current snapshot of Firestore and pilfers through each record to check if they have ended.
- * If they have indeed ended they are first copied to the 'expired' collection before being removed from 
- * the 'timers' collection. Helps clean up the mess without actually deleting the timers.
- */
-function MigrateEndedTimers() {
-    console.log('[Info]: Migrating ended timers...');
-    let migrate = functions.httpsCallable('migrateEndedTimers');
-    migrate().then(function(result) {
-        if (result > 0) {
-            console.log("[Info]: Migrated " + result + " timers.");
-        } else {
-            console.log("[Info]: No timers migrated.");
-        }
-    });
-}
-
-/**
  * Adds all elements in allTimers array (found in db.GetAllTimers) to the alltimers-timers HTML element.
  * The timers' identity is provided as a data attribute for ease of use when element is clicked.
  */
-function addTimersToAllTimersList(timers = allTimers) {
+function AddTimersToAllTimersList(timers = allTimers) {
     $('#alltimers-timers').empty();
     if (!timers) return;
     $.each(timers, (index, timer) => {
@@ -158,6 +164,9 @@ function addTimersToAllTimersList(timers = allTimers) {
             GenerateTimerListElement(timer)
         );
     });
+    setTimeout(() => {
+        colors.SetElementBGImageColors('.timer-element', colors.GenerateGradientString(colors, true));
+    }, 150);
 }
 
 function AddTimersToExpiredTimersList(timers = expiredTimers) {

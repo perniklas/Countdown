@@ -21,21 +21,34 @@ $(() => {
     fs = firebase.firestore();
     initFireStore(fs);
 
+    /******* EVENT LISTENERS *******/
 
+    /**
+     * Open extra menu modal
+     */
     $('#menu-extra').on('click', function() {
         ui.Main.ToggleMenuModal(true);
     });
     
+    /**
+     * Close extra menu modal if user clicks outside of it
+     */
     $(document).on('click', function(event) {
         if (!$(event.target).closest('#menu-modal, #menu-extra').length) {
             ui.Main.ToggleMenuModal();
         }
     });
 
+    /**
+     * Log out
+     */
     $('#menu-extra-logout').on('click', function() {
         logout();
     });
 
+    /**
+     * Delete current timer
+     */
     $('#menu-extra-delete').on('click', function() {
         if(confirm("Are you sure you want to delete this timer?")) {
             ui.Main.ToggleMenuModal();
@@ -43,11 +56,9 @@ $(() => {
         }
     });
 
-    $('#menu-extra-edit').on('click', function() {
-        UpdateEditFields();
-        ui.Main.DisplayMainContent('#edittimer');
-    });
-
+    /**
+     * Display new timer form
+     */
     $('#menu-newtimer').on('click', function() {
         if ($(this).hasClass('button-active')) {
             $(this).removeClass('button-active');
@@ -58,20 +69,57 @@ $(() => {
         }
     });
 
-    $('#edittimer-form').on('submit', function() {
-        validateNewTimer();
+    /**
+     * Save new timer
+     */
+    $('#newtimer-form').on('submit', async function(e) {
+        e.preventDefault();
+        if (ValidateNewTimer()) {
+            ui.States.Loading.Start();
+            $('.button-active').removeClass('button-active');
+            await AddNewTimer();
+        }
+    });
+
+    /**
+     * Display edit timer form
+     */
+    $('#menu-extra-edit').on('click', function() {
+        UpdateEditFields();
+        ui.Main.DisplayMainContent('#edittimer');
+    });
+
+    /**
+     * Save edited timer
+     */
+    $('#edittimer-form').on('submit', async function(e) {
+        e.preventDefault();
+        if (ValidateNewTimer()) {
+            ui.States.Loading.Start();
+            $('.button-active').removeClass('button-active');
+            await EditTimer();
+        }
         return false;
     });
 
+    /**
+     * Cancel editing timer
+     */
     $('#edittimer-cancel').on('click', function () {
         ui.Main.DisplayMainContent('#countdown');
     });
 
+    /**
+     * Display next timer
+     */
     $('#menu-nexttimer').on('click', function() {
         $('.button-active').removeClass('button-active');
         displayNextTimer();
     });
 
+    /** 
+     * Display all timers
+     */
     $('#menu-alltimers').on('click', function() {
         if ($(this).hasClass('button-active')) {
             $(this).removeClass('button-active');
@@ -81,43 +129,47 @@ $(() => {
             ui.Main.DisplayMainContent('#alltimers');
         }
     });
-
-    $('#enableShift').on('click', function() {
-        if ($(this).hasClass('shift')) {
-            $(this).removeClass('shift');
-        } else {
-            $(this).addClass('shift');
-        }
-        colors.StartGradientShift();
-    });
-
-    $('#newtimer-form').on('submit', function() {
-        validateNewTimer();
-        return false;
-    });
-
+    
+    /**
+     * Display selected timer from list of all timers
+     */
     $(document).on('click', '.timer-element', function() {
         $('.button-active').removeClass('button-active');
         countdown = startCountdown(allTimers.find(timer => timer.id == $(this).attr("data-timerid")));
         ui.Main.DisplayMainContent('#countdown');
     });
+
+    /**
+     * Start/stop background gradient shift
+     */
+    $('#enableShift').on('click', function() {
+        if ($(this).hasClass('shift')) {
+            $(this).html('start <i class="fas fa-palette"></i>');
+            $(this).removeClass('shift');
+        } else {
+            $(this).html('end <i class="fas fa-palette"></i>');
+            $(this).addClass('shift');
+        }
+        colors.StartGradientShift();
+    });
 });
 
-function validateNewTimer(edit = false) {
+/**
+ * Check if input has legit values
+ */
+function ValidateNewTimer() {
     if (($('#newtimer-end-date').val() && $('#newtimer-name').val()) 
         || ($('#edittimer-end-date').val() && $('#edittimer-name').val())) {
-        if (edit) {
-            EditTimer();
-        } else {
-            AddNewTimer();
-        }
-        $('.button-active').removeClass('button-active');
-        ui.Main.DisplayMainContent('#countdown');
+        return true;
     } else {
         alert("A countdown needs at least a name and an end date.");
+        return false;
     }
 }
 
+/**
+ * Use current timer data to update values of input form for editing timer
+ */
 function UpdateEditFields() {
     $('#edittimer-name').val(currentTimer.name);
     let dt = new Date(currentTimer.end._milliseconds);
@@ -133,13 +185,9 @@ function UpdateEditFields() {
 /* BELOW SECTION IS A MESS */
 function displayNextTimer() {
     if (!allTimers) return;
-    HideTimer(StartNext);
-}
-
-function HideTimer(callback = null) {
     $('#content').addClass('slidefix');
     $('#countdown-content').slideUp("swing", () => {
-        if (callback) callback();
+        StartNext();
     });
 }
 
@@ -159,8 +207,10 @@ function loadPage() {
 
 async function StartLoadingTimers(displayTimer = null) {
     ui.States.Loading.Start();
-    await db.GetAllTimers(auth.currentUser, MigrateEndedTimers).then(() => {
+    // await db.GetAllTimers(auth.currentUser, db.MigrateEndedTimers).then(() => {
+    await db.GetAllTimers(auth.currentUser).then(() => {
         LoadingComplete(displayTimer);
+        db.MigrateEndedTimers();
     });
 }
 
@@ -226,7 +276,7 @@ function startCountdown(timer) {
 
 function DisplayTimerInfo(timer) {
     $('#countdown-title').empty().text(timer.name);
-    if (timer.end._milliseconds) $('#countdown-end-datetime').empty().text(formatEndDateTimeToString(timer.end));
+    if (timer.end._milliseconds || timer.end.milliseconds) $('#countdown-end-datetime').empty().text(formatEndDateTimeToString(timer.end));
 }
 
 /**
@@ -234,7 +284,12 @@ function DisplayTimerInfo(timer) {
  * @param {object} end 
  */
 function formatEndDateTimeToString(end) {
-    let e = new Date(end._milliseconds);
+    let e;
+    if (end.milliseconds) {
+        e = new Date(end.milliseconds);
+    } else {
+        e = new Date(end._milliseconds);
+    }
     let date = (e.getDate() < 10 ? "0" + e.getDate() : e.getDate()) + "." +
         (e.getMonth() < 10 ? "0" + (e.getMonth() + 1) : (e.getMonth() + 1)) + "." +
         e.getFullYear() + ", " +

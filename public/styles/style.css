@@ -65,20 +65,6 @@ body {
     justify-content: space-evenly;
 }
 
-.actionbutton {
-    font-size: 4em;
-    color: white;
-    text-shadow: 0 5px 10px rgba(0, 0, 0, 0.55);
-    transition: ease 0.3s;
-}
-
-.actionbutton:active {
-    font-weight: bold;
-    cursor: pointer;
-    text-shadow: 0 15px 15px rgba(0, 0, 0, 0.85);
-    transition: ease 0.3s;
-}
-
 #menu {
     position: absolute;
     bottom: 5%;
@@ -218,7 +204,7 @@ body {
 }
 
 .shift {
-    text-shadow: green 0 10px 15px;
+    text-shadow: black 0 10px 15px;
     font-size: 1.5em;
     transition: ease 0.6s;
 }
@@ -234,13 +220,6 @@ body {
         width: 50%;
         max-width: 515px;
         margin: 0 auto;
-    }
-
-    .actionbutton:hover {
-        font-weight: bold;
-        cursor: pointer;
-        text-shadow: 0 15px 15px rgba(0, 0, 0, 0.85);
-        transition: ease 0.3s;
     }
 
     .timer-element {
@@ -267,46 +246,3 @@ body {
         cursor: pointer;
     }
 }
-
-/* @media screen and (max-width: 600px) and (min-height: 800px) {
-    #content {
-        margin: auto;
-        transform: translateY(25%);
-    }
-} */
-/*
-@media screen and (min-width: 900px) {
-    #countdown-content {
-        display: flex;
-    }
-
-    #counters {
-        padding: 0;
-        justify-content: space-around;
-        margin: 20px 20px 0 20px;
-    }
-
-    #counters-text {
-        line-height: auto;
-        margin-bottom: 30px;
-        justify-content: space-evenly;
-    }
-}
-
-@media screen and (orientation: landscape) {
-    #countdown-content {
-        display: flex;
-    }
-
-    #counters {
-        padding: 0;
-        justify-content: space-around;
-        margin: 20px 20px 0 20px;
-    }
-
-    #counters-text {
-        line-height: auto;
-        margin-bottom: 30px;
-        justify-content: space-evenly;
-    }
-}*/

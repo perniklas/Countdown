@@ -169,10 +169,10 @@ var ui = {
 function DefaultColors() {
     return {
         col1: {
-            h: 311, s: 65, l: 55
+            h: 311, s: 100, l: 55
         },
         col2: {
-            h: 194, s: 65, l: 55
+            h: 174, s: 100, l: 55
         }
     };
 }
