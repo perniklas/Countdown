@@ -6,26 +6,52 @@ admin.initializeApp();
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 
 exports.saveTimer = functions.region('europe-west2').https.onCall((timer, context) => {
-
     const userId = context.auth.uid;
-    timer.end = new Date(timer.end);
-    timer.end.milliseconds = timer.end.getTime();
-    timer.created = new Date(timer.created);
-    timer.created.milliseconds = timer.created.getTime();
-    timer['userId'] = userId;
-    timer.toBeDeleted = false;
+    //timer = GenerateDateData(timer);
 
-    timer.ref.id = userId + "---" + timer.name + "---" + timer.created.toISOString();
+    timer.end = new Date(timer.end);
+    timer.end.milliseconds = GenerateMillisecondsFromDate(timer.end);
+    if (!timer.created) timer.created = new Date();
+    if (!timer.created.milliseconds) timer.created.milliseconds = GenerateMillisecondsFromDate(timer.created);
+    timer.updated = new Date();
+    timer.updated.milliseconds = GenerateMillisecondsFromDate(timer.updated);
 
     console.log(timer);
+    timer['userId'] = userId;
+    timer.toBeDeleted = false;
+    timer.ref.id = userId + "---" + timer.name + "---" + timer.created.toISOString();
 
     return admin.firestore().collection('timers').doc(timer.ref.id)
         .set(timer).then(() => {
             return timer;
         }).catch(error => {
+            console.log(error);
             return error;
         });
 });
+
+function GenerateDateData(timer) {
+    let processedTimer = timer;
+    processedTimer.end = new Date(timer.end);
+    processedTimer.end.milliseconds = GenerateMillisecondsFromDate(processedTimer.end);
+    if (!processedTimer.created) processedTimer.created = new Date();
+    if (!processedTimer.created.milliseconds) processedTimer.created.milliseconds = GenerateMillisecondsFromDate(processedTimer.created);
+    processedTimer.updated = new Date();
+    processedTimer.updated.milliseconds = GenerateMillisecondsFromDate(processedTimer.updated);
+    return processedTimer;
+}
+
+function GenerateMillisecondsFromDate(date) {
+    if (date.seconds || date.nanoseconds) {
+        let seconds = (date.seconds) ? date.seconds * 1000 : 0;
+        let nanoseconds = (date.nanoseconds) ? date.nanoseconds : 0;
+        return seconds + nanoseconds;
+    } else return 0;
+}
+
+function GenerateDateTimeISOString(date) {
+
+}
 
 exports.migrateEndedTimers = functions.region('europe-west2').https.onCall(() => {
     return admin.firestore().collection('timers').get().then(snap => { 
@@ -55,6 +81,7 @@ exports.markTimerForDeletion = functions.region('europe-west2').https.onCall((ti
     ).then(() => {
         return 'good';
     }).catch(bad => {
+        console.log(bad);
         return bad;
     });
 });

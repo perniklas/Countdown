@@ -99,7 +99,6 @@ $(() => {
             $('.button-active').removeClass('button-active');
             await EditTimer();
         }
-        return false;
     });
 
     /**

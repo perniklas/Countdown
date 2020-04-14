@@ -77,7 +77,6 @@ async function AddNewTimer() {
     let newTimer = {
         name: $('#newtimer-name').val(),
         end: endDateTime.getTime(),
-        created: new Date().getTime(),
         ref: {
             id: null
         }
@@ -86,17 +85,24 @@ async function AddNewTimer() {
     if (savedTimer) {
         console.log('[Info]: Saved timer ', savedTimer);
         StartLoadingTimers(savedTimer);
+    } else {
+        console.log('[ERROR]: Could not save timer');
+        ui.Main.DisplayMainContent('#countdown');
     }
 }
 
 async function EditTimer() {
+    let newEndDateTime = concatDateAndTime($('#edittimer-end-date').val(), $('#edittimer-end-time').val());
     currentTimer.name = $('#edittimer-name').val();
-    currentTimer.end._milliseconds = new Date(concatDateAndTime($('#edittimer-end-date').val(), $('#edittimer-end-time').val())).getTime();
-    currentTimer.edited = new Date().getTime();
+    currentTimer.end._milliseconds = new Date(newEndDateTime).getTime();
+    currentTimer.end.milliseconds = new Date(newEndDateTime).getTime();
     let savedTimer = await db.SaveTimer(currentTimer);
     if (savedTimer) {
         console.log('[Info]: Edited timer ', savedTimer);
         StartLoadingTimers(savedTimer);
+    } else {
+        console.log('[ERROR]: Could not save timer');
+        ui.Main.DisplayMainContent('#countdown');
     }
 }
 
