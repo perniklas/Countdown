@@ -4,7 +4,7 @@
 
 var db = {
     SaveTimer: async function(timer) {
-        ui.States.Loading.Start();
+        ui.States.Loading.Start('Saving timer...');
         let save = functions.httpsCallable('saveTimer');
         let result = await save(timer);
         return result.data;
@@ -76,7 +76,7 @@ async function AddNewTimer() {
     let endDateTime = concatDateAndTime($('#newtimer-end-date').val(), $('#newtimer-end-time').val());
     let newTimer = {
         name: $('#newtimer-name').val(),
-        end: endDateTime.getTime(),
+        endMS: endDateTime.getTime(),
         ref: {
             id: null
         }

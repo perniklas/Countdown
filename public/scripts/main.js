@@ -205,8 +205,7 @@ function loadPage() {
 }
 
 async function StartLoadingTimers(displayTimer = null) {
-    ui.States.Loading.Start();
-    // await db.GetAllTimers(auth.currentUser, db.MigrateEndedTimers).then(() => {
+    ui.States.Loading.Start('Getting countdowns...');
     await db.GetAllTimers(auth.currentUser).then(() => {
         LoadingComplete(displayTimer);
         db.MigrateEndedTimers();
@@ -220,6 +219,7 @@ function LoadingComplete(timer = null) {
         StartEmptyCountdown();
     } else {
         if (timer) {
+            console.log('Starting timer: ' + timer);
             countdown = startCountdown(timer);
         } else {
             countdown = startCountdown(findSoonestTimer());
@@ -260,7 +260,8 @@ function startCountdown(timer) {
     if (countdown) clearInterval(countdown);
     DisplayTimerInfo(timer);
     currentTimer = timer;
-    let time = timer.end._milliseconds - new Date().getTime();
+    let milliseconds = (timer.end._milliseconds) ? timer.end._milliseconds : (timer.end.milliseconds) ? timer.end.milliseconds : 0;
+    let time = milliseconds - new Date().getTime();
     if (time > 0) {
         UpdateTimer(time);
         return setInterval(() => {

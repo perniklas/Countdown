@@ -140,7 +140,12 @@ var ui = {
             }
         },
         Loading: {
-            Start: function() {
+            Start: function(message = null) {
+                if (message) {
+                    $('#loading h1').text(message);
+                } else {
+                    $('#loading h1').text('Loading...');
+                }
                 ui.Main.DisplayMainContent('#loading');
                 $('#menu').slideUp();
             },

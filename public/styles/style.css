@@ -28,7 +28,7 @@ body {
     width: 50%;
 }
 
-#login, #newtimer, #edittimer {
+.content-context {
     padding: 15px;
     margin: auto;
 }
@@ -57,13 +57,6 @@ body {
 }
 
 /*        END       */
-.menu-container {
-    height: fit-content;
-    padding: 10px;
-    position: absolute;
-    width: 93%;
-    justify-content: space-evenly;
-}
 
 #menu {
     position: absolute;
@@ -117,6 +110,11 @@ body {
     font-size: 2em;
     margin: 0;
     color: #4f0099;
+}
+
+.content-context-header {
+    color: purple;
+    margin: 0.6em 4%;
 }
 
 #countdown-header h1 {

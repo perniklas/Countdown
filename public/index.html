@@ -37,7 +37,7 @@
     <div id="content">
       <div id="login">
           <form id="loginform">
-              <h1>Sign in</h1>
+              <h1 class="content-context-header">Sign in</h1>
               <hr class="sep" />
               <h3 class="error"></h3>
               <div class="input-group">
@@ -53,7 +53,7 @@
               </div>
           </form>
           <form id="signupform" class="hidden">
-              <h1>Sign up</h1>
+              <h1 class="content-context-header">Sign up</h1>
               <h3 class="error"></h3>
               <div>
                 <label for="signup-displayname">Username</label>
@@ -76,11 +76,12 @@
           <a href="#" id="signup"><h5>or sign up</h5></a>
       </div>
       
-      <div id="loading" class="container hidden">
+      <div id="loading" class="content-context hidden">
+        <h1 class="content-context-header">Loading...</h1>
         <img src="img/loading.svg"/>
       </div>
 
-      <div id="countdown" class="container hidden">
+      <div id="countdown" class="content-context hidden">
         <div id="countdown-header">
           <h1>Countdown to</h1>
           <h2 id="countdown-title">Loading countdowns...</h2>
@@ -102,8 +103,8 @@
         </div>
       </div>
       
-      <div id="newtimer" class="hidden">
-        <h1>Start a countdown</h1>
+      <div id="newtimer" class="hidden content-context">
+        <h1 class="content-context-header">Start a countdown</h1>
         <hr class="sep" />
         <form id="newtimer-form">
           <div class="input-group">
@@ -126,8 +127,8 @@
         </form>
       </div>
 
-      <div id="edittimer" class="hidden">
-        <h1>Edit countdown</h1>
+      <div id="edittimer" class="hidden content-context">
+        <h1 class="content-context-header">Edit countdown</h1>
         <hr class="sep" />
         <form id="edittimer-form">
           <div class="input-group">
@@ -151,8 +152,8 @@
         </form>
       </div>
 
-      <div id="alltimers" class="hidden">
-        <h1>Your countdowns</h1>
+      <div id="alltimers" class="hidden content-context">
+        <h1 class="content-context-header">Your countdowns</h1>
         <hr class="sep" />
         <div id="alltimers-expired" class="hidden"></div>
         <hr class="sep hidden" />
