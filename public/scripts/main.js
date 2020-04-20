@@ -265,8 +265,7 @@ function startCountdown(timer) {
     if (time > 0) {
         UpdateTimer(time);
         return setInterval(() => {
-            time = timer.end._milliseconds - new Date().getTime();
-            //time -= 1000;
+            time = milliseconds - new Date().getTime();
             UpdateTimer(time);
         }, 1000);
     } else {
