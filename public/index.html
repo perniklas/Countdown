@@ -14,6 +14,7 @@
     <script src="scripts/db.js"></script>
     <script src="scripts/main.js"></script>
     <script src="scripts/ui.js"></script>
+    <script src="scripts/swipe.js"></script>
     <script src="scripts/confetti.js"></script>
     <script src="https://kit.fontawesome.com/a5e06967b6.js" crossorigin="anonymous"></script>
     <link rel="shortcut icon" type="image/png" href="img/icon.png"/>
@@ -37,7 +38,7 @@
     <div id="content">
       <div id="login">
           <form id="loginform">
-              <h1 class="content-context-header">Sign in</h1>
+              <h1 class="content-context-header color-main">Sign in</h1>
               <hr class="sep" />
               <h3 class="error"></h3>
               <div class="input-group">
@@ -53,7 +54,8 @@
               </div>
           </form>
           <form id="signupform" class="hidden">
-              <h1 class="content-context-header">Sign up</h1>
+              <h1 class="content-context-header color-main">Sign up</h1>
+              <hr class="sep" />
               <h3 class="error"></h3>
               <div>
                 <label for="signup-displayname">Username</label>
@@ -77,15 +79,15 @@
       </div>
       
       <div id="loading" class="content-context hidden">
-        <h1 class="content-context-header">Loading...</h1>
+        <h1 class="content-context-header color-main">Loading...</h1>
         <img src="img/loading.svg"/>
       </div>
 
       <div id="countdown" class="content-context hidden">
         <div id="countdown-header">
           <h1>Countdown to</h1>
-          <h2 id="countdown-title">Loading countdowns...</h2>
-          <h3 id="countdown-end-datetime"></h3>
+          <h2 id="countdown-title" class="color-main">Loading countdowns...</h2>
+          <h3 id="countdown-end-datetime" class="color-sub"></h3>
         </div>
         <div id="countdown-content">
           <div id="counters">
@@ -104,7 +106,7 @@
       </div>
       
       <div id="newtimer" class="hidden content-context">
-        <h1 class="content-context-header">Start a countdown</h1>
+        <h1 class="content-context-header color-main">Start a countdown</h1>
         <hr class="sep" />
         <form id="newtimer-form">
           <div class="input-group">
@@ -128,7 +130,7 @@
       </div>
 
       <div id="edittimer" class="hidden content-context">
-        <h1 class="content-context-header">Edit countdown</h1>
+        <h1 class="content-context-header color-main">Edit countdown</h1>
         <hr class="sep" />
         <form id="edittimer-form">
           <div class="input-group">
@@ -146,14 +148,14 @@
             </div>
           </div>
           <div class="btn-box">
-            <!-- <button class="btn btn-submit" id="edittimer-cancel">cancel</button> -->
+            <button class="btn hover" id="edittimer-cancel">cancel</button>
             <button class="btn btn-submit hover" id="edittimer-save">save</button>
           </div>
         </form>
       </div>
 
       <div id="alltimers" class="hidden content-context">
-        <h1 class="content-context-header">Your countdowns</h1>
+        <h1 class="content-context-header color-main">Your countdowns</h1>
         <hr class="sep" />
         <div id="alltimers-expired" class="hidden"></div>
         <hr class="sep hidden" />

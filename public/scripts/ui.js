@@ -50,8 +50,8 @@ var colors = {
             subtitle = 'hsl(' + hue + ', 60%, 30%)';
         colors.SetElementBGImageColors('body, .timer-element', gradient);
         colors.SetElementBGImageColors('#menu-modal, .btn-submit', reverse);
-        $('#countdown-title, #counters').css({'color': title});
-        $('#countdown-end-datetime').css({'color': subtitle});
+        $('.color-main, #counters').css({'color': title});
+        $('.color-sub').css({'color': subtitle});
     },
     GenerateGradientString: function(pColors, reverse = false) {
         let direction = 'to bottom right';

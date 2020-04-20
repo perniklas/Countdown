@@ -33,7 +33,7 @@ var db = {
         let deleteFunction = functions.httpsCallable('deleteTimer');
         let markForDeletionFunction = functions.httpsCallable('markTimerForDeletion');
 
-        console.log('[Info]: Marking countdown for deletion');
+        console.log('[Info]: Marking countdown for deletion: ' + timer);
         let mark = await markForDeletionFunction(timer);
         console.log(mark.data);
         StartLoadingTimers(next);
@@ -187,12 +187,12 @@ function AddTimersToExpiredTimersList(timers = expiredTimers) {
 
 function GenerateTimerListElement(timer) {
     if (!timer) return;
-    return '<div class="timer-element" data-timerid="' + timer.id + '"><p>' + timer.name + '</p><p>' + formatEndDateTimeToString(timer.end) + '</p></div>'
+    return '<div class="timer-element" data-timerid="' + timer.ref.id + '"><p>' + timer.name + '</p><p>' + formatEndDateTimeToString(timer.end) + '</p></div>'
 }
 
 function GetNextTimer() {
     if (!allTimers) return;
-    let index = allTimers.findIndex(t => t.id == currentTimer.id) + 1;
+    let index = allTimers.findIndex(t => t.ref.id == currentTimer.ref.id) + 1;
     if (index >= allTimers.length) index = 0;
     return allTimers[index];
 }

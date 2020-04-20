@@ -36,14 +36,6 @@ exports.saveTimer = functions.region('europe-west2').https.onCall((timer, contex
         });
 });
 
-function GenerateMillisecondsFromDate(date) {
-    if (date.seconds || date.nanoseconds) {
-        let seconds = (date.seconds) ? date.seconds * 1000 : 0;
-        let nanoseconds = (date.nanoseconds) ? date.nanoseconds : 0;
-        return seconds + nanoseconds;
-    } else return 0;
-};
-
 exports.migrateEndedTimers = functions.region('europe-west2').https.onCall(() => {
     return admin.firestore().collection('timers').get().then(snap => { 
         let counter = 0;
@@ -65,7 +57,7 @@ exports.migrateEndedTimers = functions.region('europe-west2').https.onCall(() =>
 });
 
 exports.markTimerForDeletion = functions.region('europe-west2').https.onCall((timer, context) => {
-    return admin.firestore().collection('timers').doc(timer.id)
+    return admin.firestore().collection('timers').doc(timer.ref.id)
         .update({
             toBeDeleted: true
         }
@@ -79,8 +71,8 @@ exports.markTimerForDeletion = functions.region('europe-west2').https.onCall((ti
 
 exports.deleteTimer = functions.region('europe-west2').https.onCall((timer, context) => {
     let deleted = '';    
-    return admin.firestore().collection('timers').doc(timer.id).delete().then(function() {
-        console.log("Document " + timer.id + " successfully deleted!");
+    return admin.firestore().collection('timers').doc(timer.ref.id).delete().then(function() {
+        console.log("Document " + timer.ref.id + " successfully deleted!");
         return deleted = 'ok';
     }).catch(function(error) {
         console.error("Error removing document: ", error);

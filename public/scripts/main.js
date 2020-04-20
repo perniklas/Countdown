@@ -105,6 +105,7 @@ $(() => {
      * Cancel editing timer
      */
     $('#edittimer-cancel').on('click', function () {
+        $('#edittimer-form')[0].reset();
         ui.Main.DisplayMainContent('#countdown');
     });
 
@@ -134,7 +135,7 @@ $(() => {
      */
     $(document).on('click', '.timer-element', function() {
         $('.button-active').removeClass('button-active');
-        countdown = startCountdown(allTimers.find(timer => timer.id == $(this).attr("data-timerid")));
+        countdown = startCountdown(allTimers.find(timer => timer.ref.id == $(this).attr("data-timerid")));
         ui.Main.DisplayMainContent('#countdown');
     });
 
@@ -150,6 +151,21 @@ $(() => {
             $(this).addClass('shift');
         }
         colors.StartGradientShift();
+    });
+
+    /**
+     * Swipe gesture detection
+     */
+    var el = document.getElementById('countdown');
+    swipedetect(el, function(swipedir){
+        // swipedir contains either "none", "left", "right", "top", or "down"
+        if (swipedir === 'left') {
+            $('.button-active').removeClass('button-active');
+            displayNextTimer();
+        } else if (swipedir === 'right') {
+            $('.button-active').removeClass('button-active');
+            displayNextTimer(false);
+        }
     });
 });
 
@@ -182,16 +198,27 @@ function UpdateEditFields() {
 }
 
 /* BELOW SECTION IS A MESS */
-function displayNextTimer() {
+function displayNextTimer(next = true) {
     if (!allTimers) return;
     $('#content').addClass('slidefix');
     $('#countdown-content').slideUp("swing", () => {
-        StartNext();
+        if (next) {
+            StartNext();
+        } else {
+            StartPrevious();
+        }
     });
 }
 
 function StartNext() {
     countdown = startCountdown(GetNextTimer());
+    ui.Main.DisplayMainContent('#countdown');
+    $('#content').removeClass('slidefix')
+    $('#countdown-content').slideDown();
+}
+
+function StartPrevious() {
+    countdown = startCountdown(GetPreviousTimer());
     ui.Main.DisplayMainContent('#countdown');
     $('#content').removeClass('slidefix')
     $('#countdown-content').slideDown();
