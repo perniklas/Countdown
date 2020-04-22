@@ -95,7 +95,7 @@ $(() => {
     $('#edittimer-form').on('submit', async function(e) {
         e.preventDefault();
         if (ValidateNewTimer()) {
-            ui.States.Loading.Start();
+            ui.States.Loading.Start('Saving edit');
             $('.button-active').removeClass('button-active');
             await EditTimer();
         }
@@ -232,7 +232,7 @@ function loadPage() {
 }
 
 async function StartLoadingTimers(displayTimer = null) {
-    ui.States.Loading.Start('Getting countdowns...');
+    ui.States.Loading.Start('Fetching your things');
     await db.GetAllTimers(auth.currentUser).then(() => {
         LoadingComplete(displayTimer);
         db.MigrateEndedTimers();

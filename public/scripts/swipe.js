@@ -7,7 +7,7 @@ function swipedetect(el, callback){
     startY,
     distX,
     distY,
-    threshold = 150, //required min distance traveled to be considered swipe
+    threshold = 75, //required min distance traveled to be considered swipe
     restraint = 100, // maximum distance allowed at the same time in perpendicular direction
     allowedTime = 300, // maximum time allowed to travel that distance
     elapsedTime,
@@ -15,6 +15,9 @@ function swipedetect(el, callback){
     handleswipe = callback || function(swipedir){}
   
     touchsurface.addEventListener('touchstart', function(e){
+        if (!$(e.target).closest('#menu-modal, #menu-extra').length) {
+            ui.Main.ToggleMenuModal();
+        }
         var touchobj = e.changedTouches[0]
         swipedir = 'none'
         dist = 0

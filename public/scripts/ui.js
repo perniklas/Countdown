@@ -107,10 +107,14 @@ var colors = {
 
 var ui = {
     Main: {
-        DisplayMainContent: function(container, callback = null) {
+        DisplayMainContent: function(container, displayMenu = true, callback = null) {
             $('#content > div').not(container + ', #menu').slideUp();
             $(container).slideDown();
-            $('#menu').slideDown();
+            if (displayMenu) {
+                ui.Components.Menu.Show();
+            } else {
+                ui.Components.Menu.Hide();
+            }
             if (callback) callback();
         },
         ToggleMenuModal: function(show = false) {
@@ -129,7 +133,7 @@ var ui = {
         Login: {
             LoginSignUp: function(signup = false) {
                 $('#content > *, #menu').hide();
-                ui.Main.DisplayMainContent('#login');
+                ui.Main.DisplayMainContent('#login', false);
                 if (signup) {
                     $('#loginform').slideUp();
                     $('#signupform').slideDown();
@@ -146,7 +150,7 @@ var ui = {
                 } else {
                     $('#loading h1').text('Loading...');
                 }
-                ui.Main.DisplayMainContent('#loading');
+                ui.Main.DisplayMainContent('#loading', false);
                 $('#menu').slideUp();
             },
             End: function(success = true) {
@@ -166,6 +170,20 @@ var ui = {
                 $('#countdown-end-datetime').text('');
                 ui.Main.DisplayMainContent('#countdown');
                 $('#countdown > div:not(#countdown-header)').hide();
+            }
+        }
+    },
+    Components: {
+        Menu: {
+            Show: function() {
+                if ($('#menu').is(':hidden')) {
+                    $('#menu').slideDown();
+                }
+            },
+            Hide: function() {
+                if ($('#menu').is(':visible')) {
+                    $('#menu').slideUp();
+                }
             }
         }
     }

@@ -4,7 +4,7 @@
 
 var db = {
     SaveTimer: async function(timer) {
-        ui.States.Loading.Start('Saving timer...');
+        ui.States.Loading.Start('Saving countdown');
         let save = functions.httpsCallable('saveTimer');
         let result = await save(timer);
         return result.data;
@@ -28,7 +28,7 @@ var db = {
         if (callback) callback;
     },
     DeleteTimer: async function(timer, callback = null) {
-        ui.States.Loading.Start();
+        ui.States.Loading.Start('Deleting');
         let next = GetNextTimer();
         let deleteFunction = functions.httpsCallable('deleteTimer');
         let markForDeletionFunction = functions.httpsCallable('markTimerForDeletion');
@@ -94,14 +94,13 @@ async function AddNewTimer() {
 async function EditTimer() {
     let newEndDateTime = concatDateAndTime($('#edittimer-end-date').val(), $('#edittimer-end-time').val());
     currentTimer.name = $('#edittimer-name').val();
-    currentTimer.end._milliseconds = new Date(newEndDateTime).getTime();
-    currentTimer.end.milliseconds = new Date(newEndDateTime).getTime();
+    currentTimer.endMS = new Date(newEndDateTime).getTime();
     let savedTimer = await db.SaveTimer(currentTimer);
     if (savedTimer) {
-        console.log('[Info]: Edited timer ', savedTimer);
+        console.log('[Info]: Edited countdown ', savedTimer);
         StartLoadingTimers(savedTimer);
     } else {
-        console.log('[ERROR]: Could not save timer');
+        console.log('[ERROR]: Could not save countdown');
         ui.Main.DisplayMainContent('#countdown');
     }
 }

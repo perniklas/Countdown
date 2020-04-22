@@ -10,8 +10,7 @@ function initAuth(auth) {
             }
         } else {
             /* User logs out */
-            ui.Main.DisplayMainContent('login'); 
-            ui.States.Login.LoginOrSignup();
+            ui.States.Login.LoginSignUp();
         }
     });
 

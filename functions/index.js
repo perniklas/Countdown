@@ -8,23 +8,26 @@ admin.initializeApp();
 exports.saveTimer = functions.region('europe-west2').https.onCall((timer, context) => {
     console.log(timer);
 
-    const userId = context.auth.uid;
+    // If timer lacks Created, it is a new timer.
+    if (!timer.created) {
+        console.log('Adding new timer');
+        timer.created = new Date();
+        timer.created.milliseconds = timer.created.getTime();
+
+        const userId = context.auth.uid;
+        timer['userId'] = userId;
+        timer.ref.id = userId + "---" + timer.name + "---" + timer.created.toISOString();
+        timer.toBeDeleted = false;
+    } else {
+        console.log('Editing existing timer');
+    }
 
     timer.end = new Date(timer.endMS);
     timer.end.milliseconds = timer.endMS;
     delete timer.endMS;
 
-    if (!timer.created) {
-        timer.created = new Date();
-        timer.created.milliseconds = timer.created.getTime();
-    }
-
     timer.updated = new Date();
     timer.updated.milliseconds = timer.updated.getTime();
-
-    timer['userId'] = userId;
-    timer.toBeDeleted = false;
-    timer.ref.id = userId + "---" + timer.name + "---" + timer.created.toISOString();
     console.log(timer);
     
     return admin.firestore().collection('timers').doc(timer.ref.id)
