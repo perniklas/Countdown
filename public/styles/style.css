@@ -66,9 +66,9 @@ body {
     transform: translateX(-50%);
     width: 100%;
     max-width: 500px;
-    display: flex;
     justify-content: space-evenly;
     z-index: 200;
+    display: none;
 }
 
 #menu > * {
@@ -125,7 +125,7 @@ body {
 }
 
 #countdown-header h1 {
-    font-size: 1.6em;
+    font-size: 1.4em;
 }
 
 #countdown-end-datetime {

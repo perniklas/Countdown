@@ -108,9 +108,14 @@ var colors = {
 var ui = {
     Main: {
         DisplayMainContent: function(container, displayMenu = true, callback = null) {
+            if (container == '#countdown') {
+                $('.button-active').removeClass('button-active');
+            }
+
             $('#content > div').not(container + ', #menu').slideUp();
             ui.Components.Menu.Modal.Hide();
             $(container).slideDown();
+            
             if (displayMenu) {
                 ui.Components.Menu.Show();
             } else {
@@ -171,7 +176,7 @@ var ui = {
         Menu: {
             Show: function() {
                 if ($('#menu').is(':hidden')) {
-                    $('#menu').slideDown();
+                    $('#menu').css({display: 'flex'}).slideDown();
                 }
             },
             Hide: function() {
@@ -184,8 +189,9 @@ var ui = {
                     let modal = $('#menu-modal'),
                         modalButtons = $('#menu-modal > a');
                     if (modal.css('height') == '0px') {
+                        let modalHeight = 13 + ($('#menu-modal > a').length * 31);
                         modal.show().animate({
-                            height: "150px"
+                            height: modalHeight + 'px'
                         }, 1);
                         modalButtons.animate({
                             fontSize: '16px'

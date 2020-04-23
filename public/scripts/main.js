@@ -61,7 +61,6 @@ $(() => {
      */
     $('#menu-newtimer').on('click', function() {
         if ($(this).hasClass('button-active')) {
-            $(this).removeClass('button-active');
             ui.Main.DisplayMainContent('#countdown');
         } else {
             ui.Main.SetMenuButtonActive($(this));
@@ -78,6 +77,7 @@ $(() => {
             ui.States.Loading.Start();
             $('.button-active').removeClass('button-active');
             await AddNewTimer();
+            $('#newtimer-form')[0].reset();
         }
     });
 
@@ -85,8 +85,13 @@ $(() => {
      * Display edit timer form
      */
     $('#menu-extra-edit').on('click', function() {
-        UpdateEditFields();
-        ui.Main.DisplayMainContent('#edittimer');
+        if ($(this).hasClass('button-active')) {
+            ui.Main.DisplayMainContent('#countdown');
+        } else {
+            UpdateEditFields();
+            ui.Main.SetMenuButtonActive($(this));
+            ui.Main.DisplayMainContent('#edittimer');
+        }
     });
 
     /**
@@ -96,8 +101,8 @@ $(() => {
         e.preventDefault();
         if (ValidateNewTimer()) {
             ui.States.Loading.Start('Saving edit');
-            $('.button-active').removeClass('button-active');
             await EditTimer();
+            $('#edittimer-form')[0].reset();
         }
     });
 
@@ -113,7 +118,6 @@ $(() => {
      * Display next timer
      */
     $('#menu-nexttimer').on('click', function() {
-        $('.button-active').removeClass('button-active');
         displayNextTimer();
     });
 
@@ -121,7 +125,6 @@ $(() => {
      * Display previous timer
      */
     $('#menu-previoustimer').on('click', function() {
-        $('.button-active').removeClass('button-active');
         displayNextTimer(false);
     })
 
@@ -130,7 +133,6 @@ $(() => {
      */
     $('#menu-alltimers').on('click', function() {
         if ($(this).hasClass('button-active')) {
-            $(this).removeClass('button-active');
             ui.Main.DisplayMainContent('#countdown');
         } else {
             ui.Main.SetMenuButtonActive($(this));
@@ -142,7 +144,6 @@ $(() => {
      * Display selected timer from list of all timers
      */
     $(document).on('click', '.timer-element', function() {
-        $('.button-active').removeClass('button-active');
         countdown = startCountdown(allTimers.find(timer => timer.ref.id == $(this).attr("data-timerid")));
         ui.Main.DisplayMainContent('#countdown');
     });
@@ -162,7 +163,12 @@ $(() => {
     });
 
     $('#menu-extra-about').on('click', function() {
-        ui.Main.DisplayMainContent('#about');
+        if ($(this).hasClass('button-active')) {
+            ui.Main.DisplayMainContent('#countdown');
+        } else {
+            ui.Main.SetMenuButtonActive($(this));
+            ui.Main.DisplayMainContent('#about');
+        }
     });
 
     /**
