@@ -27,7 +27,7 @@ $(() => {
      * Open extra menu modal
      */
     $('#menu-extra').on('click', function() {
-        ui.Main.ToggleMenuModal(true);
+        ui.Components.Menu.Modal.Show();
     });
     
     /**
@@ -35,7 +35,7 @@ $(() => {
      */
     $(document).on('click', function(event) {
         if (!$(event.target).closest('#menu-modal, #menu-extra').length) {
-            ui.Main.ToggleMenuModal();
+            ui.Components.Menu.Modal.Hide();
         }
     });
 
@@ -51,7 +51,7 @@ $(() => {
      */
     $('#menu-extra-delete').on('click', function() {
         if(confirm("Are you sure you want to delete this timer?")) {
-            ui.Main.ToggleMenuModal();
+            ui.Components.Menu.Modal.Hide();
             db.DeleteTimer(currentTimer);
         }
     });
@@ -117,6 +117,14 @@ $(() => {
         displayNextTimer();
     });
 
+    /**
+     * Display previous timer
+     */
+    $('#menu-previoustimer').on('click', function() {
+        $('.button-active').removeClass('button-active');
+        displayNextTimer(false);
+    })
+
     /** 
      * Display all timers
      */
@@ -151,6 +159,29 @@ $(() => {
             $(this).addClass('shift');
         }
         colors.StartGradientShift();
+    });
+
+    $('#menu-extra-about').on('click', function() {
+        ui.Main.DisplayMainContent('#about');
+    });
+
+    /**
+     * Open the "About" section with a bunch of info that probably no one cares about.
+     */
+    $('.close').on('click', function() {
+        $('.button-active').removeClass('button-active');
+        if (auth.currentUser) {
+            ui.Main.DisplayMainContent('#countdown');
+        } else {
+            ui.States.Login.LoginSignUp();
+        }
+    });
+
+    /**
+     * Used when users forget their passwords
+     */
+    $('#login-password-forgot').on('click', function() {
+        ResetPassword()
     });
 
     /**
@@ -254,13 +285,19 @@ function LoadingComplete(timer = null) {
     }
 }
 
-/* ABOVE SECTION IS A MESS */
-
+/**
+ * Starts an empty countdown telling user there were no countdowns (maybe delete func)
+ */
 function StartEmptyCountdown() {
     countdown = startCountdown({ name: 'No timers found', end: { _milliseconds: new Date().getTime() }});
     ui.States.Empty.DisplayNoTimersFound();
 }
 
+/**
+ * Checks if the length of allTimers is larger than 0
+ * 
+ * @param {number} seconds 
+ */
 function CheckForTimerLength(seconds = 0) {
     if (!allTimers) {
         return 0;

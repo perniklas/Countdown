@@ -31,7 +31,7 @@ function initAuth(auth) {
     
     $('#signupform').on('submit', (e) => {
         $('#signupform .error').slideUp();
-        if (verifyPasswords()) {
+        if (verifyPasswords($('#signup-password').val(), $('#signup-password-verify').val())) {
             e.preventDefault();            
             auth.createUserWithEmailAndPassword($('#signup-username').val(), $('#signup-password').val()).then((cred) => {
                 $('#signupform').trigger('reset');
@@ -39,7 +39,7 @@ function initAuth(auth) {
                 console.log('[Info]: Created account: ' + cred.User.email);
             }).catch((err) => {
                 console.log('[ERROR]: ' +err);
-                $('#signupform .error').text(err.message).slideDown();   
+                $('#signupform .error').text(err.message).slideDown();
             })
         }
     }); 
@@ -63,18 +63,43 @@ function logout() {
     });
 }
 
-function verifyPasswords() {
-    let pass1 = $('#signup-password').val(),
-        pass2 = $('#signup-password-verify').val();
-    
+function VerifyEmail(email) {
+    if (typeof email === 'string' || email instanceof String) {
+        return /\S+@\S+\.\S+/.test(email);
+    }
+    return false;
+}
+
+function verifyPasswords(pass1, pass2) {
     if (pass1 == pass2 && pass1.length >= 6) {
         return true;
     } else {
         if (pass1 != pass2) {
             $('#signupform .error').text("Passwords don't match").slideDown();
         } else if (pass1 == pass2 && pass1.length < 6) {
-            $('#signupform .error').text("Password isn't strong enough").slideDown();
+            $('#signupform .error').text("Password isn't long enough").slideDown();
         }
         return false;
+    }
+}
+
+/**
+ * Sends an email to the given user, letting them change their password.
+ * 
+ * @param {string} user 
+ */
+function ResetPassword() {
+    let user = $('#login-username').val();
+    // verify email address?
+    if (user && VerifyEmail(user)) {
+        auth.sendPasswordResetEmail(user).then(function() {
+            // Email sent.
+            $('#loginform .error').text('An email has been sent to you with instructions on how to reset the password.').slideDown();
+          }).catch(function(error) {
+            // An error happened.
+            $('#loginform .error').text(error.message).slideDown();
+          });
+    } else {
+        $('#loginform .error').text('Please provide an email address').slideDown();
     }
 }

@@ -16,7 +16,7 @@ function swipedetect(el, callback){
   
     touchsurface.addEventListener('touchstart', function(e){
         if (!$(e.target).closest('#menu-modal, #menu-extra').length) {
-            ui.Main.ToggleMenuModal();
+            ui.Components.Menu.Modal.Hide();
         }
         var touchobj = e.changedTouches[0]
         swipedir = 'none'

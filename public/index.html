@@ -26,9 +26,11 @@
     <div id="menu" class="hidden">
       <a class="hover" id="menu-alltimers">Countdowns</a>
       <a class="hover" id="menu-newtimer">New</a>
-      <a class="hover" id="menu-nexttimer">Next</a>
+      <a class="hover hide-mobile" id="menu-previoustimer">Previous</a>
+      <a class="hover hide-mobile" id="menu-nexttimer">Next</a>
       <a class="hover fas fa-bars" id="menu-extra"></a>
       <div id="menu-modal" class="hidden">
+        <a class="hover" id="menu-extra-about">About</a>
         <a class="hover" id="menu-extra-edit">Edit</a>
         <a class="hover" id="menu-extra-delete">Delete</a>
         <a class="hover" id="menu-extra-logout">Log out</a>
@@ -48,6 +50,7 @@
               <div class="input-group">
                 <label for="login-password">Password</label>
                 <input id="login-password" type="password" required="required" />
+                <a href="#" id="login-password-forgot" title="oh no, so embarassing">I forgot my password</a>
               </div>
               <div class="btn-box">
                 <button class="btn btn-submit hover" type="submit">go</button>
@@ -106,6 +109,7 @@
       </div>
       
       <div id="newtimer" class="hidden content-context">
+        <span class="close"><i class="fas fa-times"></i></span>
         <h1 class="content-context-header color-main">Start a countdown</h1>
         <hr class="sep" />
         <form id="newtimer-form">
@@ -130,6 +134,7 @@
       </div>
 
       <div id="edittimer" class="hidden content-context">
+        <span class="close"><i class="fas fa-times"></i></span>
         <h1 class="content-context-header color-main">Edit countdown</h1>
         <hr class="sep" />
         <form id="edittimer-form">
@@ -155,13 +160,37 @@
       </div>
 
       <div id="alltimers" class="hidden content-context">
+        <span class="close"><i class="fas fa-times"></i></span>
         <h1 class="content-context-header color-main">Your countdowns</h1>
         <hr class="sep" />
         <div id="alltimers-expired" class="hidden"></div>
         <hr class="sep hidden" />
         <div id="alltimers-timers"></div>
       </div>
+
+      <div id="about" class="hidden content-context">
+        <span class="close"><i class="fas fa-times"></i></span>
+        <h1 class="content-context-header color-main">About this website</h1>
+        <hr class="sep" />
+        <p>
+          My name is Per-Niklas Longberg and I made this website as a personal project. I have a 
+          <a href="https://www.linkedin.com/perniklas">LinkedIn</a> and a 
+          <a href="https://www.github.com/perniklas">Github</a>.<br><br>
+          I made this web app because I wanted a countdown-clock on my second monitor that
+          could tell me the time until I got to visit a very special person that I really 
+          wanted to see. All the existing web applications that I could find either looked like 
+          something out of a design horror book or were riddled with ads and cluttered with 
+          additional features, so I made my own. I now use this app when I want to see how long 
+          it is until something I look forward to (like finishing the payments on my student loan, 
+          or the next D&D session) is going to happen.<br><br>
+          It's a single-page application hosted in Firebase, using Firestore as a database 
+          and Functions to communicate between the app and its database. Users register with 
+          whatever email they want (although real emails are recommended, in case you forget 
+          your password), enabling user-specific countdowns for privacy. <br><br>
+          While the Firebase portion of this app requires its own dependencies, this app is made 
+          from JavaScript, jQuery, HTML and CSS and is dependent on FontAwesome for icons.
+        </p>
+      </div>
     </div>
-    
   </body>
 </html>

@@ -7,8 +7,6 @@ body {
     background-image: linear-gradient(to bottom right, hsl(311, 65%, 55%), hsl(194, 65%, 52%));
 }
 
-/* LOGIN AND SIGNUP */
-
 #content {
     position: relative; 
     width: 90%;
@@ -33,7 +31,7 @@ body {
     margin: auto;
 }
 
-#alltimers {
+#alltimers, #about {
     overflow: scroll;
     max-height: calc(var(--vh, 1vh) * 75);
     padding: 15px;
@@ -45,6 +43,8 @@ body {
     width: fit-content;
 }
 
+
+/******************* LOGIN START ******************/
 #login form, #signupform {
     width: fit-content;
     margin: 20px auto;
@@ -55,9 +55,10 @@ body {
     width: 100%;
     text-align: center;
 }
+/******************* LOGIN END *********************/
 
-/*        END       */
 
+/******************* MENU START ********************/
 #menu {
     position: absolute;
     bottom: 5%;
@@ -91,15 +92,21 @@ body {
     z-index: 99999;
     border-radius: 1.2em;
     box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.35);
-    padding: 10px;
+/*     padding: 10px; */
+    height: 0;
+    display: none;
 }
 
 #menu-modal > a {
     display: block;
     margin: 13px 25px;
     transition: ease 0.1s;
+    font-size: 0px;
 }
+/******************* MENU END ********************/
 
+
+/*************** COUNTDOWN START *****************/
 #countdown-header {
     padding: 15px 23px;
     text-align: center;
@@ -156,12 +163,14 @@ body {
     font-weight: bold;
 }
 
-.hidden {
-    display: none;
-}
-
 .slidefix {
     transition: ease 0.4s; 
+}
+/*************** COUNTDOWN END *****************/
+
+
+.hidden {
+    display: none;
 }
 
 .button-active {
@@ -183,13 +192,21 @@ body {
     padding: 3px 10px;
 }
 
+a {
+    text-decoration: none;
+}
+
+#about p {
+    padding: 30px;
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
-#alltimers::-webkit-scrollbar {
+#alltimers::-webkit-scrollbar, #about::-webkit-scrollbar {
     display: none;
 }
 
 /* Hide scrollbar for IE and Edge */
-#alltimers {
+#alltimers, #about {
     -ms-overflow-style: none;
 }
 
@@ -201,16 +218,32 @@ body {
     transition: ease 0.6s;
 }
 
+.close {
+    position: absolute;
+    right: 13px;
+    top: 18px;
+    color: gray;
+    padding: 5px 10px;
+}
+
 .shift {
     text-shadow: black 0 10px 15px;
     font-size: 1.5em;
     transition: ease 0.6s;
 }
 
+.hide-mobile {
+    display: none;
+}
+
 @media screen and (min-width: 600px) {
     body {
         height: 100vh;
         margin: 0;
+    }
+
+    .hide-mobile {
+        display: block;
     }
 
     #content {
@@ -225,7 +258,7 @@ body {
         justify-content: space-between;
     }
 
-    #menu a:hover, #menu img:hover, #enableShift:hover {
+    #menu a:hover, #menu img:hover, #enableShift:hover, .close:hover {
         transition: ease 0.7s;
         color: purple;
         cursor: pointer;

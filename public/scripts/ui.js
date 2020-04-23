@@ -109,6 +109,7 @@ var ui = {
     Main: {
         DisplayMainContent: function(container, displayMenu = true, callback = null) {
             $('#content > div').not(container + ', #menu').slideUp();
+            ui.Components.Menu.Modal.Hide();
             $(container).slideDown();
             if (displayMenu) {
                 ui.Components.Menu.Show();
@@ -116,13 +117,6 @@ var ui = {
                 ui.Components.Menu.Hide();
             }
             if (callback) callback();
-        },
-        ToggleMenuModal: function(show = false) {
-            if (show) {
-                $('#menu-modal').fadeIn();
-            } else {
-                $('#menu-modal').fadeOut();
-            }
         },
         SetMenuButtonActive: function(button) {
             $('.button-active').removeClass('button-active');
@@ -183,6 +177,32 @@ var ui = {
             Hide: function() {
                 if ($('#menu').is(':visible')) {
                     $('#menu').slideUp();
+                }
+            },
+            Modal: {
+                Show: function() {
+                    let modal = $('#menu-modal'),
+                        modalButtons = $('#menu-modal > a');
+                    if (modal.css('height') == '0px') {
+                        modal.show().animate({
+                            height: "150px"
+                        }, 1);
+                        modalButtons.animate({
+                            fontSize: '16px'
+                        }, 120);
+                    }
+                },
+                Hide: function() {
+                  let modal = $('#menu-modal'),
+                        modalButtons = $('#menu-modal > a');
+                    if (modal.css('height') != '0px') {
+                        modal.animate({
+                            height: "0px"
+                        }, 1);
+                        modalButtons.animate({
+                            fontSize: '0px'
+                        }, 1);
+                    }
                 }
             }
         }
