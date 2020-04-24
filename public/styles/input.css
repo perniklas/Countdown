@@ -62,6 +62,6 @@
     margin: auto;
 }
 
-#newtimer-name {
+#newtimer-name, #edittimer-name {
     width: 88%;
 }

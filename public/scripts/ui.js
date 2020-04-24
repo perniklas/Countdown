@@ -49,11 +49,12 @@ var colors = {
             title = 'hsl(' + hue + ', 100%, 30%)',
             subtitle = 'hsl(' + hue + ', 60%, 30%)';
         colors.SetElementBGImageColors('body, .timer-element', gradient);
-        colors.SetElementBGImageColors('#menu-modal, .btn-submit', reverse);
+        colors.SetElementBGImageColors('#menu-modal, .btn-submit', reverse, 65);
         $('.color-main, #counters').css({'color': title});
         $('.color-sub').css({'color': subtitle});
     },
-    GenerateGradientString: function(pColors, reverse = false) {
+    GenerateGradientString: function(pColors, reverse = false, light = null) {
+        if (!light) light = colors.light;
         let direction = 'to bottom right';
         if (reverse) direction = 'to top left';
         return 'linear-gradient(' + direction + ', hsl(' + pColors.col1.h + ',' + (pColors.col1.s / 2).toFixed() + '%,' + pColors.light + '%),' +
@@ -115,7 +116,7 @@ var ui = {
             $('#content > div').not(container + ', #menu').slideUp();
             ui.Components.Menu.Modal.Hide();
             $(container).slideDown();
-            
+
             if (displayMenu) {
                 ui.Components.Menu.Show();
             } else {
