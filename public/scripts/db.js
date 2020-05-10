@@ -59,6 +59,23 @@ var db = {
         } else {
             console.log('[Info]: No countdowns migrated.');
         }
+    },
+    DeleteAllDataForCurrentUser: async function() {
+        let deleteAllActiveTimers = functions.httpsCallable('deleteAllActiveTimersForUser');
+        await deleteAllActiveTimers('yes');
+
+        let deleteAllExpiredTimers = functions.httpsCallable('deleteAllExpiredTimersForUser');
+        await deleteAllExpiredTimers('maybe');
+
+        let deleteColors = functions.httpsCallable('deleteColorsForUser');
+        await deleteColors('yes');
+        
+        let deleteUserLog = functions.httpsCallable('deleteUserLogs');
+        await deleteUserLog('yes');
+    },
+    ResetColorsForCurrentUser: async function() {
+        let deleteColors = functions.httpsCallable('deleteColorsForUser');
+        await deleteColors('yes');
     }
 };
 

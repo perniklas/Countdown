@@ -103,3 +103,14 @@ function ResetPassword() {
         $('#loginform .error').text('Please provide an email address').slideDown();
     }
 }
+
+async function DeleteCurrentUser() {
+    await db.DeleteAllDataForCurrentUser();
+        
+    auth.currentUser.delete().then(function() {
+        console.log('Successfully deleted user and data.');
+      }).catch(function(error) {
+        // An error happened.
+        console.log(error.message);
+      });
+}

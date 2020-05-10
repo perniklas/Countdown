@@ -12,42 +12,42 @@ window.addEventListener('resize', () => {
 
 var colors = {
     original: {},
-    col1: DefaultColors().col1,
-    col2: DefaultColors().col2,
+    col: DefaultColors().col,
+    gradient: DefaultColors().gradient,
     light: 55,
     shiftInterval: null,
     GetColorsFromFS: function(setbackground = false) {
         if (!auth.currentUser) setTimeout(500);
         fs.collection('userscolors').doc(auth.currentUser.uid).get().then(c => {
-            if (c.data().colors) {
-                colors.col1 = c.data().colors.col1;
-                colors.col2 = c.data().colors.col2;
-                if (setbackground) colors.GentlySetBackgroundColor();
+            if (c) {
+                if (c.data().colors) {
+                    colors.col = (c.data().colors.col) ? c.data().colors.col : DefaultColors().col;
+                    colors.gradient = (c.data().colors.gradient) ? c.data().colors.gradient : DefaultColors().gradient;
+                    if (setbackground) colors.GentlySetBackgroundColor();
+                }
             }
         });
     },
     SaveColorsToFS: function() { 
         fs.collection('userscolors').doc(auth.currentUser.uid).set({
             'colors': {
-                'col1': colors.col1,
-                'col2': colors.col2
+                'col': colors.col,
+                'gradient': colors.gradient
             }
         });
     },
     GetColorsFromCurrentBG: function() {
         let bg = GetRGBFromLinearGradient('body');
-        col1 = GetHSLValues(RGBToHSL(bg.col1));
-        col2 = GetHSLValues(RGBToHSL(bg.col2));
+        colors.col = GetHSLValues(RGBToHSL(bg.col));
     },
     SetBGColors: function(color = null) {
         let c = colors;
         if (color) c = color;
         let gradient = colors.GenerateGradientString(c),
             reverse = colors.GenerateGradientString(c, true);
-        let diff = c.col1.h > c.col2.h ? (c.col1.h - c.col2.h) / 2 : ((c.col1.h + 360) - c.col2.h) / 2,
-            hue = (c.col1.h - diff) < 0 ? 360 - Math.abs(c.col1 - diff) : c.col1.h - diff;
-            title = 'hsl(' + hue + ', 100%, 30%)',
-            subtitle = 'hsl(' + hue + ', 60%, 30%)';
+        let midHue = colors.CalculateSecondaryHue(true);
+            title = 'hsl(' + midHue + ', 100%, 30%)',
+            subtitle = 'hsl(' + midHue + ', 60%, 30%)';
         colors.SetElementBGImageColors('body, .timer-element', gradient);
         colors.SetElementBGImageColors('#menu-modal, .btn-submit', reverse, 65);
         $('.color-main, #counters').css({'color': title});
@@ -57,8 +57,11 @@ var colors = {
         if (!light) light = colors.light;
         let direction = 'to bottom right';
         if (reverse) direction = 'to top left';
-        return 'linear-gradient(' + direction + ', hsl(' + pColors.col1.h + ',' + (pColors.col1.s / 2).toFixed() + '%,' + pColors.light + '%),' +
-            'hsl(' + pColors.col2.h + ',' + (pColors.col2.s / 2).toFixed() + '%,' + pColors.light + '%))';
+        let hue2 = colors.CalculateSecondaryHue();
+
+        return 'linear-gradient(' + direction + ', ' + 
+            'hsl(' + pColors.col.h + ',' + (pColors.col.s / 2).toFixed() + '%,' + pColors.light + '%),' +
+            'hsl(' + hue2 + ',' + (pColors.col.s / 2).toFixed() + '%,' + pColors.light + '%))';
     },
     SetElementBGImageColors: function(element, gradient) {
         $(element).css({'background-image': gradient});
@@ -70,21 +73,20 @@ var colors = {
             colors.SaveColorsToFS();
         } else {
             colors.shiftInterval = setInterval(function() {
-                colors.col1.h = (colors.col1.h + 0.25 > 360) ? 0 : colors.col1.h + 0.25;
-                colors.col2.h = (colors.col2.h + 0.25 > 360) ? 0 : colors.col2.h + 0.25;
+                colors.col.h = (colors.col.h + 0.25 > 360) ? 0 : colors.col.h + 0.25;
                 colors.SetBGColors();
             }, 16.7);
         }
     },
     GentlySetBackgroundColor: function() {
         let tempcol = {
-            col1: DefaultColors().col1,
-            col2: DefaultColors().col2,
+            col: DefaultColors().col,
+            gradient: DefaultColors().gradient,
             light: colors.light
         };
         let now = new Date().getHours();
 
-        if (tempcol.col1.h != colors.col1.h && tempcol.col2.h != colors.col2.h) {
+        if (tempcol.col.h != colors.col.h || tempcol.gradient != colors.gradient) {
             let down = true;
             let dark = setInterval(function() {
                 if (down) tempcol.light = tempcol.light / 1.047;
@@ -93,8 +95,8 @@ var colors = {
                 colors.SetBGColors(tempcol);
                 if (tempcol.light < 1.3) {
                     down = false;
-                    tempcol.col1 = colors.col1;
-                    tempcol.col2 = colors.col2;
+                    tempcol.col = colors.col;
+                    tempcol.gradient = colors.gradient;
                 }
                 if (tempcol.light >= GetFluxV2Value(now)) {
                     clearInterval(dark);
@@ -103,6 +105,10 @@ var colors = {
         } else {
             FluxV2(now);
         }
+    },
+    CalculateSecondaryHue: function(betweenTwoHues = false) {
+        if (betweenTwoHues) return (colors.col.h - (colors.gradient / 2)) < 0 ? (360 + colors.col.h) - (colors.gradient / 2) : colors.col.h - (colors.gradient / 2);
+        return (colors.col.h - colors.gradient) < 0 ? ((360 + colors.col.h) - colors.gradient) : colors.col.h - colors.gradient;
     }
 };
 
@@ -190,13 +196,13 @@ var ui = {
                     let modal = $('#menu-modal'),
                         modalButtons = $('#menu-modal > a');
                     if (modal.css('height') == '0px') {
-                        let modalHeight = 13 + ($('#menu-modal > a').length * 31);
+                        let modalHeight = 16 + ($('#menu-modal > a').length * 31);
                         modal.show().animate({
                             height: modalHeight + 'px'
                         }, 1);
                         modalButtons.animate({
                             fontSize: '16px'
-                        }, 120);
+                        }, 240);
                     }
                 },
                 Hide: function() {
@@ -218,12 +224,8 @@ var ui = {
 
 function DefaultColors() {
     return {
-        col1: {
-            h: 311, s: 100, l: 55
-        },
-        col2: {
-            h: 174, s: 100, l: 55
-        }
+        col: { h: 311, s: 100, l: 55 },
+        gradient: 117
     };
 }
     

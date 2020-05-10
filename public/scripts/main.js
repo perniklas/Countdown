@@ -49,7 +49,7 @@ $(() => {
     /**
      * Delete current timer
      */
-    $('#menu-extra-delete').on('click', function() {
+    $('#countdown-delete').on('click tap touchstart', function() {
         if(confirm("Are you sure you want to delete this timer?")) {
             ui.Components.Menu.Modal.Hide();
             db.DeleteTimer(currentTimer);
@@ -84,7 +84,7 @@ $(() => {
     /**
      * Display edit timer form
      */
-    $('#menu-extra-edit').on('click', function() {
+    $('#countdown-edit').on('click tap touchstart', function() {
         if ($(this).hasClass('button-active')) {
             ui.Main.DisplayMainContent('#countdown');
         } else {
@@ -139,6 +139,13 @@ $(() => {
             ui.Main.DisplayMainContent('#alltimers');
         }
     });
+
+    /**
+     * Degree of gradient shift listener
+     */
+    $(document).on('change', '#gradientInput', () => {
+        colors.gradient = parseInt($('#gradientInput').val()) * 2.34;
+    });
     
     /**
      * Display selected timer from list of all timers
@@ -151,18 +158,20 @@ $(() => {
     /**
      * Start/stop background gradient shift
      */
-    $('#enableShift').on('click', function() {
-        if ($(this).hasClass('shift')) {
+    $('#enableShift > span').on('click', function() {
+        if ($(this).parent().hasClass('shift')) {
             $(this).html('start <i class="fas fa-palette"></i>');
-            $(this).removeClass('shift');
+            $(this).parent().removeClass('shift');
+            $('.input-color-gradient').slideUp();
         } else {
             $(this).html('end <i class="fas fa-palette"></i>');
-            $(this).addClass('shift');
+            $(this).parent().addClass('shift');
+            $('.input-color-gradient').slideDown();
         }
         colors.StartGradientShift();
     });
 
-    $('#menu-extra-about').on('click', function() {
+    $('#menu-extra-about').on('click tap touchstart', function() {
         if ($(this).hasClass('button-active')) {
             ui.Main.DisplayMainContent('#countdown');
         } else {
@@ -174,12 +183,23 @@ $(() => {
     /**
      * Open the "About" section with a bunch of info that probably no one cares about.
      */
-    $('.close').on('click', function() {
+    $('.close').on('click tap touchstart', function() {
         $('.button-active').removeClass('button-active');
         if (auth.currentUser) {
             ui.Main.DisplayMainContent('#countdown');
         } else {
             ui.States.Login.LoginSignUp();
+        }
+    });
+
+    /**
+     * Delete me functionality (GPDR)
+     */
+    $('#menu-extra-delete').on('click', async function() {
+        if(confirm("This will delete your user from this service, as well as all its " + 
+            "data (countdowns, color schemes)")) {
+            ui.Components.Menu.Modal.Hide();
+            await DeleteCurrentUser();
         }
     });
 
@@ -236,7 +256,7 @@ function UpdateEditFields() {
 
 /* BELOW SECTION IS A MESS */
 function displayNextTimer(next = true) {
-    if (!allTimers) return;
+    if (!allTimers || allTimers.length < 1) return;
     $('#content').addClass('slidefix');
     $('#countdown-content').slideUp("swing", () => {
         if (next) {
@@ -360,7 +380,7 @@ function formatEndDateTimeToString(end) {
         e = new Date(end._milliseconds);
     }
     let date = (e.getDate() < 10 ? "0" + e.getDate() : e.getDate()) + "." +
-        (e.getMonth() < 10 ? "0" + (e.getMonth() + 1) : (e.getMonth() + 1)) + "." +
+        (e.getMonth() < 9 ? "0" + (e.getMonth() + 1) : (e.getMonth() + 1)) + "." +
         e.getFullYear() + ", " +
         (e.getHours() < 10 ? "0" + e.getHours() : e.getHours()) + ":" +
         (e.getMinutes() < 10 ? "0" + e.getMinutes() : e.getMinutes());

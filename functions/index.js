@@ -34,7 +34,7 @@ exports.saveTimer = functions.region('europe-west2').https.onCall((timer, contex
         .set(timer).then(() => {
             return timer;
         }).catch(error => {
-            console.log(error);
+            console.log('Error saving timer: ' + error.message);
             return error;
         });
 });
@@ -67,7 +67,7 @@ exports.markTimerForDeletion = functions.region('europe-west2').https.onCall((ti
     ).then(() => {
         return 'good';
     }).catch(bad => {
-        console.log(bad);
+        console.log('Error marking timer for deletion: ' + bad.message);
         return bad;
     });
 });
@@ -78,7 +78,7 @@ exports.deleteTimer = functions.region('europe-west2').https.onCall((timer, cont
         console.log("Document " + timer.ref.id + " successfully deleted!");
         return deleted = 'ok';
     }).catch(function(error) {
-        console.error("Error removing document: ", error);
+        console.error("Error removing document: ", error.message);
         return deleted = error;
     });
 });
@@ -90,7 +90,69 @@ exports.getTimersForCurrentUser = functions.region('europe-west2').https.onCall(
         snap.forEach(function(doc) {
             timers.push(doc.data());
         });
-        console.log('Fetch complete');
+        console.log('Fetch completed. ' + timers.length + ' timers fetched.');
         return timers;
+    }).catch(error => {
+        console.log('Error fetching timers: ' + error.message);
+    });
+});
+
+exports.deleteAllTimersForUser = functions.region('europe-west2').https.onCall((garbage, context) => {
+    let id = context.auth.uid;
+    return admin.firestore().collection('timers').where('userId', '==', id).get()
+        .then(function(querySnapshot) {
+            // Once we get the results, begin a batch
+            var batch = db.batch();
+    
+            querySnapshot.forEach(function(doc) {
+                // For each doc, add a delete operation to the batch
+                batch.delete(doc.ref);
+            });
+    
+            // Commit the batch
+            return batch.commit();
+        }).then(function() {
+            console.log('All active timers for user ' + id + ' deleted');
+        }).catch(error => {
+            console.log('Error deleting active timers: ' + error.message);
+        });
+});
+
+exports.deleteAllExpiredTimersForUser = functions.region('europe-west2').https.onCall((garbage, context) => {
+    let id = context.auth.uid;
+    return admin.firestore().collection('expired').where('userId', '==', id).get()
+        .then(function(querySnapshot) {
+            // Once we get the results, begin a batch
+            var batch = db.batch();
+    
+            querySnapshot.forEach(function(doc) {
+                // For each doc, add a delete operation to the batch
+                batch.delete(doc.ref);
+            });
+    
+            // Commit the batch
+            return batch.commit();
+        }).then(function() {
+            console.log('All expired timers for user ' + id + ' deleted');
+        }).catch(error => {
+            console.log('Error deleting expired timers: ' + error.message);
+    });
+});
+
+exports.deleteColorsForUser = functions.region('europe-west2').https.onCall((garbage, context) => {
+    let id = context.auth.uid;
+    return admin.firestore().collection('userscolors').doc(id).delete().then(function() {
+        console.log("Colors for user " + id + " deleted.");
+    }).catch(error => {
+        console.log('Error deleting colors: ' + error.message);
+    });
+});
+
+exports.deleteUserLogs = functions.region('europe-west2').https.onCall((garbage, context) => {
+    let id = context.auth.uid;
+    return admin.firestore().collection('users').doc(id).delete().then(function() {
+        console.log('All logs for user ' + id + ' deleted.');
+    }).catch(error => {
+        console.log('Error deleting logs: ' + error.message);
     });
 });
