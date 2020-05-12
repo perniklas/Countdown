@@ -61,20 +61,20 @@ var db = {
         }
     },
     DeleteAllDataForCurrentUser: async function() {
-        let deleteAllActiveTimers = functions.httpsCallable('deleteAllActiveTimersForUser');
+        let deleteAllActiveTimers = functions.httpsCallable('deleteAllTimers');
         await deleteAllActiveTimers('yes');
 
-        let deleteAllExpiredTimers = functions.httpsCallable('deleteAllExpiredTimersForUser');
+        let deleteAllExpiredTimers = functions.httpsCallable('deleteAllExpired');
         await deleteAllExpiredTimers('maybe');
 
-        let deleteColors = functions.httpsCallable('deleteColorsForUser');
+        let deleteColors = functions.httpsCallable('deleteColors');
         await deleteColors('yes');
         
         let deleteUserLog = functions.httpsCallable('deleteUserLogs');
         await deleteUserLog('yes');
     },
     ResetColorsForCurrentUser: async function() {
-        let deleteColors = functions.httpsCallable('deleteColorsForUser');
+        let deleteColors = functions.httpsCallable('deleteColors');
         await deleteColors('yes');
     }
 };

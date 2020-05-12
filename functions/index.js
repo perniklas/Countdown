@@ -97,7 +97,7 @@ exports.getTimersForCurrentUser = functions.region('europe-west2').https.onCall(
     });
 });
 
-exports.deleteAllTimersForUser = functions.region('europe-west2').https.onCall((garbage, context) => {
+exports.deleteAllTimers = functions.region('europe-west2').https.onCall((garbage, context) => {
     let id = context.auth.uid;
     return admin.firestore().collection('timers').where('userId', '==', id).get()
         .then(function(querySnapshot) {
@@ -118,7 +118,7 @@ exports.deleteAllTimersForUser = functions.region('europe-west2').https.onCall((
         });
 });
 
-exports.deleteAllExpiredTimersForUser = functions.region('europe-west2').https.onCall((garbage, context) => {
+exports.deleteAllExpired = functions.region('europe-west2').https.onCall((garbage, context) => {
     let id = context.auth.uid;
     return admin.firestore().collection('expired').where('userId', '==', id).get()
         .then(function(querySnapshot) {
@@ -136,10 +136,10 @@ exports.deleteAllExpiredTimersForUser = functions.region('europe-west2').https.o
             console.log('All expired timers for user ' + id + ' deleted');
         }).catch(error => {
             console.log('Error deleting expired timers: ' + error.message);
-    });
+        });
 });
 
-exports.deleteColorsForUser = functions.region('europe-west2').https.onCall((garbage, context) => {
+exports.deleteColors = functions.region('europe-west2').https.onCall((garbage, context) => {
     let id = context.auth.uid;
     return admin.firestore().collection('userscolors').doc(id).delete().then(function() {
         console.log("Colors for user " + id + " deleted.");
