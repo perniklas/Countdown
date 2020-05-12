@@ -102,7 +102,7 @@ exports.deleteAllTimers = functions.region('europe-west2').https.onCall((garbage
     return admin.firestore().collection('timers').where('userId', '==', id).get()
         .then(function(querySnapshot) {
             // Once we get the results, begin a batch
-            var batch = db.batch();
+            var batch = admin.firestore().batch();
     
             querySnapshot.forEach(function(doc) {
                 // For each doc, add a delete operation to the batch
@@ -123,7 +123,7 @@ exports.deleteAllExpired = functions.region('europe-west2').https.onCall((garbag
     return admin.firestore().collection('expired').where('userId', '==', id).get()
         .then(function(querySnapshot) {
             // Once we get the results, begin a batch
-            var batch = db.batch();
+            var batch = admin.firestore().batch();
     
             querySnapshot.forEach(function(doc) {
                 // For each doc, add a delete operation to the batch

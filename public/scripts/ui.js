@@ -123,6 +123,10 @@ var ui = {
             ui.Components.Menu.Modal.Hide();
             $(container).slideDown();
 
+            if ($('#countdown > div:not(#countdown-header)').is(':hidden')) {
+                $('#countdown > div:not(#countdown-header)').slideDown();
+            }
+
             if (displayMenu) {
                 ui.Components.Menu.Show();
             } else {

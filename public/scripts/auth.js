@@ -105,8 +105,9 @@ function ResetPassword() {
 }
 
 async function DeleteCurrentUser() {
+    ui.States.Loading.Start('Deleting user and content...');
     await db.DeleteAllDataForCurrentUser();
-        
+    
     auth.currentUser.delete().then(function() {
         console.log('Successfully deleted user and data.');
       }).catch(function(error) {
