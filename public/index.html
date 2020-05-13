@@ -40,49 +40,68 @@
         <a class="hover" id="menu-extra-logout">Log out</a>
       </div>
     </div>
-    
+
     <div id="content">
       <div id="login" class="content-context">
-          <form id="loginform">
-              <h1 class="content-context-header color-main">Sign in</h1>
-              <hr class="sep" />
-              <h3 class="error"></h3>
-              <div class="input-group">
-                <label for="login-username">Email</label>
-                <input id="login-username" type="email" required="required" />
-              </div>
-              <div class="input-group">
-                <label for="login-password">Password</label>
-                <input id="login-password" type="password" required="required" />
-                <a href="#" id="login-password-forgot" title="oh no, so embarassing">I forgot my password</a>
-              </div>
-              <div class="btn-box">
-                <button class="btn btn-submit hover" type="submit">go</button>
-              </div>
-          </form>
-          <form id="signupform" class="hidden">
-              <h1 class="content-context-header color-main">Sign up</h1>
-              <hr class="sep" />
-              <h3 class="error"></h3>
-              <div>
-                <label for="signup-displayname">Username</label>
-                <input id="signup-displayname" type="text" required="required" />
-              </div>
-              <div>
-                <label for="signup-username">Email</label>
-                <input id="signup-username" type="email" required="required" />
-              </div>
-              <div>
-                <label for="signup-password">Password</label>
-                <input id="signup-password" type="password" required="required" />
-                <label for="signup-password-verify">Verify password</label>
-                <input id="signup-password-verify" type="password" required="required">
-              </div>
-              <div class="btn-box">
-                <button class="btn btn-submit hover">go</button>
-              </div>
-          </form>
-          <a href="#" id="signup"><h5>or sign up</h5></a>
+        <i id="login-help" class="close hover fas fa-question"></i>
+        <form id="loginform">
+          <h1 class="content-context-header color-main">Sign in</h1>
+          <hr class="sep" />
+          <h3 class="error"></h3>
+          <div class="input-group">
+            <label for="login-username">Email</label>
+            <input id="login-username" type="email" required="required" />
+          </div>
+          <div class="input-group">
+            <label for="login-password">Password</label>
+            <input id="login-password" type="password" required="required" />
+            <a href="#" id="login-password-forgot" title="oh no, so embarassing">I forgot my password</a>
+          </div>
+          <div class="btn-box">
+            <button class="btn btn-submit hover" type="submit">go</button>
+          </div>
+        </form>
+        <form id="signupform" class="hidden">
+          <h1 class="content-context-header color-main">Sign up</h1>
+          <hr class="sep" />
+          <h3 class="error"></h3>
+          <div>
+            <label for="signup-displayname">Username</label>
+            <input id="signup-displayname" type="text" required="required" />
+          </div>
+          <div>
+            <label for="signup-username">Email</label>
+            <input id="signup-username" type="email" required="required" />
+          </div>
+          <div>
+            <label for="signup-password">Password</label>
+            <input id="signup-password" type="password" required="required" />
+            <label for="signup-password-verify">Verify password</label>
+            <input id="signup-password-verify" type="password" required="required">
+          </div>
+          <div class="btn-box">
+            <button class="btn btn-submit hover">go</button>
+          </div>
+        </form>
+        <a href="#" id="signup"><h5>or sign up</h5></a>
+      </div>
+
+      <div id="login-help-text" class="hidden">
+        <span class="close hover"><i class="fas fa-times"></i></span>
+        <h4 class="color-sub">Why do we need an account?</h4>
+        <p>
+          Accounts are great when you want your users to be able to have their own stuff, 
+          stuff that only they can access. I want your email in order to do exactly this. 
+          We store your email for authentication and from this authentication you are given an ID 
+          that looks like a cat with five broken legs fell over the keyboard. This ID is used 
+          to refer to your stuff - your countdowns and whatever color you've settled on for the 
+          background. It is also used for resetting your password, should you forget it.
+        </p>
+        <p>
+          I don't use your email for anything other than this, but I cannot guarantee that 
+          Google does something with it or not. Probably not. For now. If you don't like the idea 
+          of Google knowing your email, you can always log in and delete your account from the menu.
+        </p>
       </div>
       
       <div id="loading" class="content-context hidden">

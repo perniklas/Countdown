@@ -140,6 +140,10 @@ $(() => {
         }
     });
 
+    $('#login-help').on('click', function() {
+        ui.Main.DisplayMainContent('#login-help-text', false);
+    });
+
     /**
      * Degree of gradient shift listener
      */
@@ -184,11 +188,15 @@ $(() => {
      * Open the "About" section with a bunch of info that probably no one cares about.
      */
     $('.close').on('click tap touchstart', function() {
-        $('.button-active').removeClass('button-active');
-        if (auth.currentUser) {
-            ui.Main.DisplayMainContent('#countdown');
+        if ($(this).is('#login-help')) {
+            console.log(':)');
         } else {
-            ui.States.Login.LoginSignUp();
+            $('.button-active').removeClass('button-active');
+            if (auth.currentUser) {
+                ui.Main.DisplayMainContent('#countdown');
+            } else {
+                ui.States.Login.LoginSignUp();
+            }
         }
     });
 

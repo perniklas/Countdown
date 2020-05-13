@@ -224,6 +224,15 @@ a {
     padding: 0 20px;
 }
 
+#login-help-text p {
+    padding: 25px;
+    margin: 0;
+}
+
+#login-help-text p:last-child {
+    margin-bottom: 40px;
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 #alltimers::-webkit-scrollbar, #about::-webkit-scrollbar {
     display: none;
