@@ -3,29 +3,42 @@
 */
 
 var db = {
-    SaveTimer: async function(timer) {
+    SaveTimer: function(timer) {
         ui.States.Loading.Start('Saving countdown');
-        let save = functions.httpsCallable('saveTimer');
-        let result = await save(timer);
-        return result.data;
+        // let save = functions.httpsCallable('saveTimer');
+        // let result = await save(timer);
+        // return result.data;
+
+        db.fs.collection('timers').doc(timer.ref.id).set(timer)
+            .then(function() {
+                db.GetAllTimers(auth.currentUser, startCountdown(GetTimerByID(timer.ref.id)));
+                $('#newtimer-form').trigger('reset');
+            })
+            .catch(function(error) {
+                console.log('[ERROR]: ' + error);
+            });
     },
-    GetAllTimers: async function(user, callback = null) {
-        let fetchTimers = functions.httpsCallable('getTimersForCurrentUser');
-        let unfiltered = await fetchTimers(user.uid);
+    GetAllTimers: function(user, callback = null) {
         let timers = [];
-        $.each(unfiltered.data, (i, timer) => {
-            if (!timer.toBeDeleted) timers.push(timer); 
-            else {
-                if (timer.toBeDeleted === false) timers.push(timer);
-            }
+        db.timersListener = db.fs.collection("timers").where('userId', '==', user.uid).onSnapshot(snapshot => {
+            snapshot.forEach((doc) => {
+                let add = () => {
+                    let timer = doc.data();
+                    timer.ref = doc.ref;
+                    timers.push(timer);
+                }
+                if (!timer.toBeDeleted) add();
+                else {
+                    if (timer.toBeDeleted === false) add();
+                }
+            });
+            allTimers = timers;
+            console.log("[Info]: Fetched " + allTimers.length + " records from firestore");
+            convertEndToMillis(allTimers);
+            allTimers = sortTimersBySoonest(allTimers);
+            AddTimersToAllTimersList(allTimers);
+            if (callback) callback;
         });
-        console.log(timers);
-        allTimers = timers;
-        console.log("[Info]: Fetched " + allTimers.length + " records from firestore");
-        convertEndToMillis(allTimers);
-        allTimers = sortTimersBySoonest(allTimers);
-        AddTimersToAllTimersList(allTimers);
-        if (callback) callback;
     },
     DeleteTimer: async function(timer, callback = null) {
         ui.States.Loading.Start('Deleting');
@@ -76,7 +89,10 @@ var db = {
     ResetColorsForCurrentUser: async function() {
         let deleteColors = functions.httpsCallable('deleteColors');
         await deleteColors('yes');
-    }
+    },
+    fs: firebase.firestore(),
+    timersListener: null,
+    expiredListener: null
 };
 
 function initFireStore(fs) {
@@ -89,7 +105,7 @@ function initFireStore(fs) {
     FluxV2(new Date().getHours());
 }
 
-async function AddNewTimer() {
+function AddNewTimer() {
     let endDateTime = concatDateAndTime($('#newtimer-end-date').val(), $('#newtimer-end-time').val());
     let newTimer = {
         name: $('#newtimer-name').val(),
@@ -98,7 +114,7 @@ async function AddNewTimer() {
             id: null
         }
     };
-    let savedTimer = await db.SaveTimer(newTimer);
+    let saved = db.SaveTimer(newTimer);
     if (savedTimer) {
         console.log('[Info]: Saved timer ', savedTimer);
         StartLoadingTimers(savedTimer);
@@ -108,7 +124,7 @@ async function AddNewTimer() {
     }
 }
 
-async function EditTimer() {
+function EditTimer() {
     let newEndDateTime = concatDateAndTime($('#edittimer-end-date').val(), $('#edittimer-end-time').val());
     currentTimer.name = $('#edittimer-name').val();
     currentTimer.endMS = new Date(newEndDateTime).getTime();

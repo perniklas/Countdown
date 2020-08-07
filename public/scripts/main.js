@@ -296,9 +296,9 @@ function loadPage() {
     }
 }
 
-async function StartLoadingTimers(displayTimer = null) {
+function StartLoadingTimers(displayTimer = null) {
     ui.States.Loading.Start('Fetching your things');
-    await db.GetAllTimers(auth.currentUser).then(() => {
+    db.GetAllTimers(auth.currentUser).then(() => {
         LoadingComplete(displayTimer);
         db.MigrateEndedTimers();
     });
