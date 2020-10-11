@@ -2,6 +2,15 @@
     Authentication handling.
 */
 
+// class Authentication {
+
+
+//     Authentication() {
+        
+//         this.userID = firebase.auth().getUid()
+//     }
+// }
+
 function initAuth(auth) {
     auth.onAuthStateChanged((user) => {
         if (user) {
@@ -10,7 +19,7 @@ function initAuth(auth) {
             }
         } else {
             /* User logs out */
-            ui.States.Login.LoginSignUp();
+            ui.LoginSignUp();
         }
     });
 
@@ -104,14 +113,16 @@ function ResetPassword() {
     }
 }
 
-async function DeleteCurrentUser() {
-    ui.States.Loading.Start('Deleting user and content...');
-    await db.DeleteAllDataForCurrentUser();
+function DeleteCurrentUser() {
+    ui.StartLoading('Deleting user and content...');
+    db.DeleteAllDataForCurrentUser();
     
     auth.currentUser.delete().then(function() {
         console.log('Successfully deleted user and data.');
+        alert("Your account and all its data has successfully been deleted.");
       }).catch(function(error) {
         // An error happened.
         console.log(error.message);
+        alert("Something went wrong, please contact me at perniklaslongberg@gmail.com to ensure that your data is deleted or try again.");
       });
 }
