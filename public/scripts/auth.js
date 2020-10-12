@@ -11,18 +11,7 @@
 //     }
 // }
 
-function initAuth(auth) {
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            if (user.email) {
-                loadPage();
-            }
-        } else {
-            /* User logs out */
-            ui.LoginSignUp();
-        }
-    });
-
+function InitAuthListeners(auth) {
     $('#loginform').on('submit', (e) => {
         e.preventDefault();
         let username = $('#login-username').val(),

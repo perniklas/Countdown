@@ -7,14 +7,34 @@ var db,
     colors,
     ui,
     auth,
-    countdown,
-    currentTimer = {};
+    countdown;
 
 $(() => {
     colors  = new Colors();
     ui      = new UserInterface();
     auth    = firebase.auth();
-    initAuth(auth);
+    InitAuthListeners(auth);
+
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            if (user.email) {
+                if (!db || db == null || db == undefined) {
+                    ui.StartLoading();
+                    db = new DatabaseHandler(auth.getUid());
+                    colors.GetColorsFromFS(true);
+                    let loadingInterval = setInterval(function() {
+                        if (!db.isLoadingRightNow) {
+                            clearInterval(loadingInterval);
+                            LoadingComplete();
+                        }
+                    }, 1500);
+                }
+            }
+        } else {
+            /* User logs out */
+            ui.LoginSignUp();
+        }
+    });
     
     /******* EVENT LISTENERS *******/
 
@@ -47,7 +67,7 @@ $(() => {
     $('#countdown-delete').on('click tap touchstart', function() {
         if(confirm("Are you sure you want to delete this timer?")) {
             ui.HideModal();
-            db.DeleteTimer(currentTimer);
+            db.DeleteTimer(db.currentTimer);
         }
     });
 
@@ -71,7 +91,7 @@ $(() => {
         if (ValidateNewTimer()) {
             ui.StartLoading();
             $('.button-active').removeClass('button-active');
-            await AddNewTimer();
+            db.AddNewTimer();
             $('#newtimer-form')[0].reset();
         }
     });
@@ -199,10 +219,9 @@ $(() => {
      * Delete me functionality (GPDR)
      */
     $('#menu-extra-delete').on('click', async function() {
-        if(confirm("This will delete your user from this service, as well as all its " + 
-            "data (countdowns, color schemes)")) {
+        if(confirm("This will delete your user from this service, as well as all of its data (countdowns, color schemes)")) {
             ui.HideModal();
-            await DeleteCurrentUser();
+            db.DeleteCurrentUser();
         }
     });
 
@@ -246,8 +265,8 @@ function ValidateNewTimer() {
  * Use current timer data to update values of input form for editing timer
  */
 function UpdateEditFields() {
-    $('#edittimer-name').val(currentTimer.name);
-    let dt = new Date(currentTimer.end._milliseconds);
+    $('#edittimer-name').val(db.currentTimer.name);
+    let dt = new Date(db.currentTimer.end._milliseconds);
     let date = dt.getFullYear() + "-" 
         + (dt.getMonth() < 10 ? ("0" + (dt.getMonth() + 1)) : (dt.getMonth() + 1)) + "-"
         + (dt.getDate() < 10 ? ("0" + dt.getDate()) : dt.getDate());
@@ -271,48 +290,38 @@ function DisplayNextTimer(next = true) {
 }
 
 function StartNext() {
-    countdown = StartCountdown(GetNextTimer());
+    countdown = StartCountdown(db.GetNextTimer());
     ui.DisplayMainContent('#countdown');
     $('#content').removeClass('slidefix')
     $('#countdown-content').slideDown();
 }
 
 function StartPrevious() {
-    countdown = StartCountdown(GetPreviousTimer());
+    countdown = StartCountdown(db.GetPreviousTimer());
     ui.DisplayMainContent('#countdown');
     $('#content').removeClass('slidefix')
     $('#countdown-content').slideDown();
 }
 
-function loadPage() {
-    if (auth.currentUser) {
-        db      = new DatabaseHandler(auth.getUid());
-
-        colors.GetColorsFromFS(true);
-        StartLoadingTimers();
-    }
-}
-
 function StartLoadingTimers(displayTimer = null) {
     ui.StartLoading('Fetching your things');
-    let func = () => {
+    if (!db)
+    db.GetActiveTimers(function() {
         colors.GetColorsFromFS(displayTimer);
-        db.MigrateEndedTimers();
-    }
-    db.GetActiveTimers(func);
+        LoadingComplete();
+    });
 }
 
 function LoadingComplete(timer = null) {
     ui.DisplayMainContent('#countdown');
-    if (!db.myActiveTimers) StartEmptyCountdown();
-    else if (db.myActiveTimers.length < 1) {
+    if (!db.myActiveTimers || db.myActiveTimers.length < 1) {
         StartEmptyCountdown();
     } else {
         if (timer) {
             console.log('Starting timer: ' + timer);
             countdown = StartCountdown(timer);
         } else {
-            countdown = startCountdown(findSoonestTimer());
+            countdown = StartCountdown(findSoonestTimer());
         }
     }
 }
@@ -355,7 +364,7 @@ function CheckForTimerLength(seconds = 0) {
 function StartCountdown(timer) {
     if (countdown) clearInterval(countdown);
     DisplayTimerInfo(timer);
-    currentTimer = timer;
+    db.currentTimer = timer;
     let milliseconds = (timer.end._milliseconds) ? timer.end._milliseconds : (timer.end.milliseconds) ? timer.end.milliseconds : 0;
     let time = milliseconds - new Date().getTime();
     if (time > 0) {

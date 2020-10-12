@@ -34,7 +34,7 @@ class UserInterface {
             $('.button-active').removeClass('button-active');
 
         $('#content > div').not(container + ', #menu').slideUp();
-        this.HideMenu();
+        //this.HideMenu();
         $(container).slideDown();
 
         if ($('#countdown > div:not(#countdown-header)').is(':hidden'))
@@ -82,7 +82,7 @@ class UserInterface {
         $('#menu').slideUp();
     }
 
-    EndLoading(success = true) {
+    StopLoading(success = true) {
         if (success) {
             $('#content').addClass('slidefix');
             $('#countdown-header, #countdown-content, #counters-text, #menu').slideDown();
@@ -141,15 +141,19 @@ class Colors {
         this.light        = 55;
     }
 
-    GetColorsFromFS(setbackground = false) {
+    GetColorsFromFS(setbackground = false, callback) {
         db.myColors.doc(auth.getUid()).get().then(col => {
             if (col) {
                 if (col.data().colors) {
-                    this.colors = (col.data().colors.colors) ? col.data().colors.colors : this.DefaultColors().colors;
-                    this.gradient = (col.data().colors.gradient) ? col.data().colors.gradient : this.DefaultColors().gradient;
-                    if (setbackground) this.GentlySetBackgroundColor();
+                    let def = this.DefaultColors();
+                    if (def.colors.h != col.data().colors.colors.h && def.gradient != col.data().gradient) {
+                        this.colors = col.data().colors.colors;
+                        this.gradient = col.data().colors.gradient;
+                        if (setbackground) this.GentlySetBackgroundColor();
+                    }
                 }
             }
+            if (callback) callback();
         });
     }
 
@@ -196,7 +200,6 @@ class Colors {
     GentlySetBackgroundColor() {
         let tempcol = new Colors();
         let now = new Date().getHours();
-        let currCol = this;
 
         if (tempcol.colors.h != colors.colors.h || tempcol.gradient != colors.gradient) {
             let down = true;
@@ -204,16 +207,16 @@ class Colors {
                 if (down) tempcol.light = tempcol.light / 1.047;
                 else tempcol.light = tempcol.light + (0.125 / ((2 / tempcol.light) > 1 ? 0.173 : (2 / tempcol.light)));
 
-                currCol.SetBGColors(tempcol);
+                this.SetBGColors(tempcol);
                 if (tempcol.light < 1.3) {
                     down             = false;
-                    tempcol.colors   = currCol.colors;
-                    tempcol.gradient = currCol.gradient;
+                    tempcol.colors   = this.colors;
+                    tempcol.gradient = this.gradient;
                 }
-                if (tempcol.light >= currCol.GetFluxV2Value(now)) {
+                if (tempcol.light >= this.GetFluxV2Value(now)) {
                     clearInterval(dark);
                 }
-            }, 16.7);
+            }.bind(this), 16.7);
         } else {
             ui.FluxV2(now);
         }
@@ -329,7 +332,7 @@ class Colors {
             this.shiftInterval = setInterval(function() {
                 this.colors.h = (this.colors.h + 0.25 > 360) ? 0 : this.colors.h + 0.25;
                 this.SetBGColors();
-            }, 16.7);
+            }.bind(this), 16.7);
         }
     }
 
