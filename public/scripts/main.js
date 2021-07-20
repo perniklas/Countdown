@@ -7,7 +7,8 @@ var db,
     colors,
     ui,
     auth,
-    countdown;
+    countdown,
+    intervals = [];
 
 $(() => {
     colors  = new Colors();
@@ -67,7 +68,10 @@ $(() => {
     $('#countdown-delete').on('click tap touchstart', function() {
         if(confirm("Are you sure you want to delete this timer?")) {
             ui.HideModal();
-            db.DeleteTimer(db.currentTimer);
+            let superfunFunction = function() {
+                ui.DisplayTimerWhenLoadingIsComplete(db.GetNextTimer());
+            }
+            db.DeleteTimer(db.currentTimer, superfunFunction);
         }
     });
 
@@ -305,10 +309,10 @@ function StartPrevious() {
 
 function StartLoadingTimers(displayTimer = null) {
     ui.StartLoading('Fetching your things');
-    if (!db)
+    if (!db) return;
     db.GetActiveTimers(function() {
-        colors.GetColorsFromFS(displayTimer);
-        LoadingComplete();
+        colors.GetColorsFromFS(displayTimer ? false : true);
+        LoadingComplete(displayTimer);
     });
 }
 
@@ -362,17 +366,22 @@ function CheckForTimerLength(seconds = 0) {
  * @param {object} timer a timer object that has a name, end.milliseconds and a userid.
  */
 function StartCountdown(timer) {
-    if (countdown) clearInterval(countdown);
+    //if (countdown) clearInterval(countdown);
+    if (intervals.length > 0)
+        intervals.forEach(cd => clearInterval(cd));
+
     DisplayTimerInfo(timer);
     db.currentTimer = timer;
     let milliseconds = (timer.end._milliseconds) ? timer.end._milliseconds : (timer.end.milliseconds) ? timer.end.milliseconds : 0;
     let time = milliseconds - new Date().getTime();
     if (time > 0) {
         UpdateTimer(time);
-        return setInterval(() => {
+        var cd = setInterval(() => {
             time = milliseconds - new Date().getTime();
             UpdateTimer(time);
         }, 1000);
+        intervals.push(cd);
+        return cd;
     } else {
         DisplayEndedTimer();
     }

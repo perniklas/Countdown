@@ -116,40 +116,48 @@ class DatabaseHandler {
 
         newTimer.created.milliseconds = newTimer.created.getTime();
         newTimer.updated.milliseconds = newTimer.updated.getTime();
+        newTimer.end.milliseconds = newTimer.end.getTime();
 
         newTimer.ref.id = userId + "---" + newTimer.name + "---" + newTimer.created.toISOString();
 
-        let func = () => { StartLoadingTimers(this.currentTimer); };
-        this.SaveTimer(newTimer, func);
+        ui.DisplayTimerWhenLoadingIsComplete(newTimer);
+
+        this.SaveTimer(newTimer);
     }
 
     SaveTimer(timer, callback) {
+        this.isLoadingRightNow = true;
         ui.StartLoading('Saving countdown');
         this.activeTimersCollection.doc(timer.ref.id).set(timer)
             .then(() => {
-                this.GetActiveTimers(StartCountdown(this.GetTimerByID(timer.ref.id)));
                 this.currentTimer = timer;
+                this.GetActiveTimers(StartCountdown(this.currentTimer));
                 $('#newtimer-form').trigger('reset');
-
+                this.isLoadingRightNow = false;
                 if (callback) callback();
             })
             .catch(function(error) {
                 console.log('[ERROR]: ' + error);
+                this.isLoadingRightNow = false;
             });
     }
 
     DeleteTimer(timer, callback) {
+        this.isLoadingRightNow = true;
         ui.StartLoading('Deleting');
         let next = this.GetNextTimer();
+        clearInterval(countdown);
         console.log('[Info]: Deleting countdown');
 
         this.activeTimersCollection.doc(timer.ref.id).delete()
             .then(() => {
                 console.log("Timer successfully deleted.");
+                this.isLoadingRightNow = false;
                 StartLoadingTimers(next);
                 if (callback) callback();
             }).catch(error => {
                 alert(error);
+                this.isLoadingRightNow = false;
                 StartLoadingTimers(timer);
             });
     }

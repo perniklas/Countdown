@@ -45,6 +45,18 @@ class UserInterface {
         if (callback)       callback();
     }
 
+    DisplayTimerWhenLoadingIsComplete(timer) {
+        if (timer && timer.end) {
+            let tingtong = setInterval(function() {
+                if (!db.isLoadingRightNow) {
+                    countdown = StartCountdown(timer);
+                    this.DisplayMainContent('#countdown');
+                    clearInterval(tingtong);
+                }
+            }.bind(this), 1500);
+        }
+    }
+
     SetMenuButtonActive(button) {
         $('.button-active').removeClass('button-active');
         button.addClass('button-active');
