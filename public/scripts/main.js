@@ -65,7 +65,7 @@ $(() => {
     /**
      * Delete current timer
      */
-    $('#countdown-delete').on('click tap touchstart', function() {
+    $('#countdown-delete').on('click', function() {
         if(confirm("Are you sure you want to delete this timer?")) {
             ui.HideModal();
             let superfunFunction = function() {
@@ -103,7 +103,7 @@ $(() => {
     /**
      * Display edit timer form
      */
-    $('#countdown-edit').on('click tap touchstart', function() {
+    $('#countdown-edit').on('click', function() {
         if ($(this).hasClass('button-active')) {
             ui.DisplayMainContent('#countdown');
         } else {
@@ -136,14 +136,15 @@ $(() => {
     /**
      * Display next timer
      */
-    $('#menu-nexttimer').on('click', function() {
+
+    $('.nextTimer').on('click', function() {
         DisplayNextTimer();
     });
 
     /**
      * Display previous timer
      */
-    $('#menu-previoustimer').on('click', function() {
+    $('.prevTimer').on('click', function() {
         DisplayNextTimer(false);
     })
 
@@ -194,7 +195,7 @@ $(() => {
         colors.StartGradientShift();
     });
 
-    $('#menu-extra-about').on('click tap touchstart', function() {
+    $('#menu-extra-about').on('click', function() {
         if ($(this).hasClass('button-active')) {
             ui.DisplayMainContent('#countdown');
         } else {
@@ -206,7 +207,7 @@ $(() => {
     /**
      * Open the "About" section with a bunch of info that probably no one cares about.
      */
-    $('.close').on('click tap touchstart', function() {
+    $('.close').on('click', function() {
         if ($(this).is('#login-help')) {
             console.log(':)');
         } else {
@@ -308,7 +309,7 @@ function StartPrevious() {
 }
 
 function StartLoadingTimers(displayTimer = null) {
-    ui.StartLoading('Fetching your things');
+    ui.StartLoading('Loading...');
     if (!db) return;
     db.GetActiveTimers(function() {
         colors.GetColorsFromFS(displayTimer ? false : true);
@@ -366,14 +367,15 @@ function CheckForTimerLength(seconds = 0) {
  * @param {object} timer a timer object that has a name, end.milliseconds and a userid.
  */
 function StartCountdown(timer) {
-    //if (countdown) clearInterval(countdown);
     if (intervals.length > 0)
         intervals.forEach(cd => clearInterval(cd));
 
     DisplayTimerInfo(timer);
     db.currentTimer = timer;
-    let milliseconds = (timer.end._milliseconds) ? timer.end._milliseconds : (timer.end.milliseconds) ? timer.end.milliseconds : 0;
+
+    let milliseconds = timer.endMS ? timer.endMS : (timer.end._milliseconds) ? timer.end._milliseconds : (timer.end.milliseconds) ? timer.end.milliseconds : 0;
     let time = milliseconds - new Date().getTime();
+
     if (time > 0) {
         UpdateTimer(time);
         var cd = setInterval(() => {

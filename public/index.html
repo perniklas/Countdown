@@ -28,10 +28,10 @@
       </div>
     </div>
     <div id="menu" class="hidden">
-      <a class="hover" id="menu-alltimers">Countdowns</a>
+      <a class="hover" id="menu-alltimers">My countdowns</a>
       <a class="hover" id="menu-newtimer">New</a>
-      <a class="hover hide-mobile" id="menu-previoustimer">Previous</a>
-      <a class="hover hide-mobile" id="menu-nexttimer">Next</a>
+      <!-- <a class="hover hide-mobile" id="menu-previoustimer">Previous</a>
+      <a class="hover hide-mobile" id="menu-nexttimer">Next</a> -->
       <a class="hover fas fa-bars" id="menu-extra"></a>
       <div id="menu-modal" class="hidden">
         <a class="hover" id="menu-extra-about">About</a>
@@ -116,6 +116,12 @@
           <h2 id="countdown-title" class="color-main">Loading countdowns...</h2>
           <h3 id="countdown-end-datetime" class="color-sub"></h3>
         </div>
+        <div id="countdown-next" class="hide-mobile">
+          <i class="fas fa-chevron-right nextTimer color-fade"></i>
+        </div>
+        <div id="countdown-previous" class="hide-mobile">
+          <i class="fas fa-chevron-left prevTimer color-fade"></i>
+        </div>
         <div id="countdown-content">
           <div id="counters">
             <p id="days">...</p>
@@ -194,7 +200,7 @@
 
       <div id="about" class="hidden content-context">
         <span class="close hover"><i class="fas fa-times"></i></span>
-        <h1 class="content-context-header color-main">About this website</h1>
+        <h1 class="content-context-header color-main">About this lil' project</h1>
         <hr class="sep" />
         <h4 class="color-sub">Who</h4>
         <p>

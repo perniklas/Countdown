@@ -194,7 +194,9 @@ class DatabaseHandler {
             );
         });
         setTimeout(() => {
-            colors.SetElementBGImageColors('.timer-element', colors.GenerateGradientString(colors, true));
+            colors.GetColorsFromFS(true, () => {
+                colors.SetElementBGImageColors('.timer-element', colors.GenerateGradientString(colors, true));
+            });
         }, 150);
     }
 
@@ -202,9 +204,10 @@ class DatabaseHandler {
         let newEndDateTime = concatDateAndTime($('#edittimer-end-date').val(), $('#edittimer-end-time').val());
         this.currentTimer.name = $('#edittimer-name').val();
         this.currentTimer.endMS = new Date(newEndDateTime).getTime();
+        this.currentTimer.end.seconds = this.currentTimer.endMS / 1000;
+        this.currentTimer.end._milliseconds = this.currentTimer.endMS;
 
-        var func = () => { StartLoadingTimers(this.currentTimer); };
-        db.SaveTimer(this.currentTimer, func);
+        db.SaveTimer(this.currentTimer, () => ui.DisplayTimerWhenLoadingIsComplete(this.currentTimer));
     }
 
     DeleteAllDataForCurrentUser() {

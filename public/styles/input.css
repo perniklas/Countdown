@@ -165,3 +165,62 @@ output {
     padding: .4em .6em;
     border-radius: 3px;
 }
+
+#countdown-next {
+    position: absolute;
+    right: 0;
+    width: 45px;
+    height: 100px;
+    top: 50%;
+}
+
+#countdown-previous {
+    position: absolute;
+    left: 0;
+    width: 45px;
+    height: 100px;
+    top: 50%;
+}
+
+.nextTimer {
+    padding-left: 10px;
+    transform: scale(2, 4);
+}
+
+.nextTimer:hover {
+    animation: slideRight 1.23s ease-in-out infinite;
+    cursor: pointer;
+}
+
+.prevTimer {
+    padding-right: 10px;
+    transform: scale(2, 4);
+    float: right;
+}
+
+.prevTimer:hover {
+    animation: slideLeft 1.23s ease-in-out infinite;
+    cursor: pointer;
+}
+
+@keyframes slideLeft {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(2, 4);
+    }
+
+    50% {
+        transform: translate(-10px, 0) scale(2, 4);
+    }
+}
+
+@keyframes slideRight {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(2, 4);
+    }
+
+    50% {
+        transform: translate(10px, 0) scale(2, 4);
+    }
+}

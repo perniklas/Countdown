@@ -101,6 +101,7 @@ body {
 /*     padding: 10px; */
     height: 0;
     display: none;
+    border: 5px solid white;
 }
 
 #menu-modal > a {

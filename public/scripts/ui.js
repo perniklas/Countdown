@@ -40,6 +40,9 @@ class UserInterface {
         if ($('#countdown > div:not(#countdown-header)').is(':hidden'))
             $('#countdown > div:not(#countdown-header)').slideDown();
 
+        if (/Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+            $('.hide-mobile').hide();
+
         if (displayMenu)    this.ShowMenu();
         else                this.HideMenu();
         if (callback)       callback();
@@ -201,12 +204,14 @@ class Colors {
             reverse  = currentColors.GenerateGradientString(true),
             midHue   = currentColors.CalculateSecondaryHue(true),
             title    = 'hsl(' + midHue + ', 100%, 30%)',
-            subtitle = 'hsl(' + midHue + ', 60%, 30%)';
+            subtitle = 'hsl(' + midHue + ', 60%, 30%)',
+            fade     = 'hsl(' + midHue + ', 50%, 80%)';
 
         currentColors.SetElementBGImageColors('body, .timer-element', gradient);
         currentColors.SetElementBGImageColors('#menu-modal, .btn-submit', reverse, 65);
         $('.color-main, #counters').css({'color': title});
         $('.color-sub').css({'color': subtitle});
+        $('.color-fade').css({'color': fade});
     }
 
     GentlySetBackgroundColor() {
