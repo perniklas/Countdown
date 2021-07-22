@@ -125,6 +125,7 @@ class UserInterface {
             modalButtons.animate({
                 fontSize: '16px'
             }, 240);
+            modal.css({'border': '5px solid white'});
         }
     }
     
@@ -138,7 +139,16 @@ class UserInterface {
             modalButtons.animate({
                 fontSize: '0px'
             }, 1);
+            modal.css({'border': 'none'});
         }
+    }
+
+    ShowColorModal() {
+        
+    }
+
+    HideColorModal() {
+
     }
 }
 
@@ -157,18 +167,26 @@ class Colors {
     }
 
     GetColorsFromFS(setbackground = false, callback) {
-        db.myColors.doc(auth.getUid()).get().then(col => {
+        let bgFunc = function(col) {
             if (col) {
                 if (col.data().colors) {
                     let def = this.DefaultColors();
                     if (def.colors.h != col.data().colors.colors.h && def.gradient != col.data().gradient) {
                         this.colors = col.data().colors.colors;
                         this.gradient = col.data().colors.gradient;
+                        
+                        $('#gradientInput-main').val(this.colors.h);
+                        $('#gradientInput-accent').val(this.gradient);
+
                         if (setbackground) this.GentlySetBackgroundColor();
                     }
                 }
             }
             if (callback) callback();
+        }.bind(this);
+
+        db.myColors.doc(auth.getUid()).get().then(col => {
+            bgFunc(col);
         });
     }
 
@@ -208,7 +226,7 @@ class Colors {
             fade     = 'hsl(' + midHue + ', 50%, 80%)';
 
         currentColors.SetElementBGImageColors('body, .timer-element', gradient);
-        currentColors.SetElementBGImageColors('#menu-modal, .btn-submit', reverse, 65);
+        currentColors.SetElementBGImageColors('#menu-modal, .input-color-gradient, .btn-submit', reverse, 65);
         $('.color-main, #counters').css({'color': title});
         $('.color-sub').css({'color': subtitle});
         $('.color-fade').css({'color': fade});
@@ -218,7 +236,7 @@ class Colors {
         let tempcol = new Colors();
         let now = new Date().getHours();
 
-        if (tempcol.colors.h != colors.colors.h || tempcol.gradient != colors.gradient) {
+        if (tempcol.colors.h != this.colors.h || tempcol.gradient != this.gradient) {
             let down = true;
             let dark = setInterval(function() {
                 if (down) tempcol.light = tempcol.light / 1.047;
@@ -348,6 +366,7 @@ class Colors {
         } else {
             this.shiftInterval = setInterval(function() {
                 this.colors.h = (this.colors.h + 0.25 > 360) ? 0 : this.colors.h + 0.25;
+                $('#gradientInput-main').val('' + this.colors.h);
                 this.SetBGColors();
             }.bind(this), 16.7);
         }

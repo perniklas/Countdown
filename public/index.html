@@ -21,10 +21,20 @@
     <link rel="stylesheet" type="text/css" href="styles/input.css" />
   </head>
   <body>
-    <div id="enableShift" class="hover">
-      <span>start <i class="fas fa-palette"></i></span>
+    <div id="palette">
+      <span id="palette-btn">colors <i class="fas fa-palette"></i></span>
       <div class="input-color-gradient hidden">
-        <input id="gradientInput" class="range" type="range" min="0" max="100" value="50" step="1" />
+        <div>
+          <label for="gradientInput-main">Main color</label>
+          <input id="gradientInput-main" class="range" type="range" min="0" max="360" value="50" step="3" />
+        </div>
+        <div>
+          <label for="gradientInput-accent">Secondary color</label>
+          <input id="gradientInput-accent" class="range" type="range" min="0" max="360" value="50" step="3" />
+        </div>
+        <div>
+          <span id="enableShift">start</span>
+        </div>
       </div>
     </div>
     <div id="menu" class="hidden">
@@ -87,12 +97,13 @@
 
       <div id="login-help-text" class="hidden">
         <span class="close hover"><i class="fas fa-times"></i></span>
-        <h4 class="color-sub">Why do we need an account?</h4>
+        <h4 class="color-sub">Why do I need an account?</h4>
         <p>
-          Accounts are great when you want your users to be able to have their own stuff, 
-          stuff that only they can access. I want your email in order to do exactly this. 
-          We store your email for authentication and from this authentication you are given an ID 
-          that looks like a cat with five broken legs fell over the keyboard. This ID is used 
+          Accounts are great when you want to be able to have their own stuff that is inaccessible to other people.
+          You know how it is. If you want to use this service, you have to put your email in the box. Don't worry,
+          I'm personally not gonna use your email for anything other than authentication (and if this changes at any point you will be notified by email).
+          I store your email for authentication and from this authentication you are given an ID 
+          that looks like it's been written by a cat with five broken legs that fell over the keyboard. This ID is used 
           to refer to your stuff - your countdowns and whatever color you've settled on for the 
           background. It is also used for resetting your password, should you forget it.
         </p>

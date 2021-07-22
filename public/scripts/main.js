@@ -53,6 +53,11 @@ $(() => {
         if (!$(event.target).closest('#menu-modal, #menu-extra').length) {
             ui.HideModal();
         }
+        if (!$(event.target).closest('#palette').length) {
+            $('.input-color-gradient').slideUp();
+            $('.input-color-gradient').css({'border': 'none'});
+            $('#palette-btn').removeClass('active');
+        }
     });
 
     /**
@@ -182,17 +187,39 @@ $(() => {
     /**
      * Start/stop background gradient shift
      */
-    $('#enableShift > span').on('click', function() {
-        if ($(this).parent().hasClass('shift')) {
+    $('#enableShift').on('click', function() {
+        if ($(this).hasClass('shift')) {
             $(this).html('start <i class="fas fa-palette"></i>');
-            $(this).parent().removeClass('shift');
-            $('.input-color-gradient').slideUp();
+            $(this).removeClass('shift');
         } else {
-            $(this).html('end <i class="fas fa-palette"></i>');
-            $(this).parent().addClass('shift');
-            $('.input-color-gradient').slideDown();
+            $(this).html('stop <i class="fas fa-palette"></i>');
+            $(this).addClass('shift');
         }
         colors.StartGradientShift();
+    });
+
+    $('#gradientInput-main').on('input', function() {
+        colors.colors.h = parseInt($(this).val());
+        colors.SetBGColors();
+    });
+
+    $('#gradientInput-accent').on('input', function() {
+        colors.gradient = parseInt($(this).val());
+        colors.SetBGColors();
+    });
+
+    $('#gradientInput-accent, #gradientInput-main').on('mouseup', colors.SaveColorsToFS);
+
+    $('#palette-btn').on('click', function() {
+        if ($(this).hasClass('active')) {
+            $('.input-color-gradient').slideUp();
+            $('.input-color-gradient').css({'border': 'none'});
+            $(this).removeClass('active');
+        } else {
+            $(this).addClass('active');
+            $('.input-color-gradient').css({'border': '5px solid white'});
+            $('.input-color-gradient').slideDown();
+        }
     });
 
     $('#menu-extra-about').on('click', function() {

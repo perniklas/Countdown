@@ -194,9 +194,9 @@ class DatabaseHandler {
             );
         });
         setTimeout(() => {
-            colors.GetColorsFromFS(true, () => {
+            // colors.GetColorsFromFS(true, () => {
                 colors.SetElementBGImageColors('.timer-element', colors.GenerateGradientString(colors, true));
-            });
+            // });
         }, 150);
     }
 
