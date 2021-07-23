@@ -54,9 +54,7 @@ $(() => {
             ui.HideModal();
         }
         if (!$(event.target).closest('#palette').length) {
-            $('.input-color-gradient').slideUp();
-            $('.input-color-gradient').css({'border': 'none'});
-            $('#palette-btn').removeClass('active');
+            ui.HideColorModal();
         }
     });
 
@@ -208,17 +206,15 @@ $(() => {
         colors.SetBGColors();
     });
 
-    $('#gradientInput-accent, #gradientInput-main').on('mouseup', colors.SaveColorsToFS);
+    $('#gradientInput-accent, #gradientInput-main').on('mouseup', function() {
+        colors.SaveColorsToFS(colors.colors, colors.gradient);
+    });
 
     $('#palette-btn').on('click', function() {
         if ($(this).hasClass('active')) {
-            $('.input-color-gradient').slideUp();
-            $('.input-color-gradient').css({'border': 'none'});
-            $(this).removeClass('active');
+            ui.HideColorModal();
         } else {
-            $(this).addClass('active');
-            $('.input-color-gradient').css({'border': '5px solid white'});
-            $('.input-color-gradient').slideDown();
+            ui.ShowColorModal();
         }
     });
 

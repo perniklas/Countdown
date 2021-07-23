@@ -139,16 +139,22 @@ class UserInterface {
             modalButtons.animate({
                 fontSize: '0px'
             }, 1);
-            modal.css({'border': 'none'});
+            setTimeout(() => modal.css({'border': 'none'}), 400);
         }
     }
 
     ShowColorModal() {
-        
+        let modal = $('.input-color-gradient');
+        modal.css({'border': '5px solid white'});
+        modal.slideDown();
+        $('#palette-btn').addClass('active');
     }
 
     HideColorModal() {
-
+        let modal = $('.input-color-gradient');
+        modal.slideUp();
+        setTimeout(() => modal.css({'border': 'none'}), 400);
+        $('#palette-btn').removeClass('active');
     }
 }
 
@@ -190,11 +196,11 @@ class Colors {
         });
     }
 
-    SaveColorsToFS() {
+    SaveColorsToFS(colors, gradient) {
         db.myColors.doc(auth.getUid()).set({
             'colors': {
-                'colors': this.colors,
-                'gradient': this.gradient
+                'colors': colors,
+                'gradient': gradient
             }
         });
     }
@@ -207,11 +213,10 @@ class Colors {
     GenerateGradientString(isReversed = false) {
         let direction = 'to bottom right';
         if (isReversed) direction = 'to top left';
-        let hue2 = this.CalculateSecondaryHue();
 
         return 'linear-gradient(' + direction + ', ' + 
             'hsl(' + this.colors.h + ',' + (this.colors.s / 2).toFixed() + '%,' + this.light + '%),' +
-            'hsl(' + hue2 + ',' + (this.colors.s / 2).toFixed() + '%,' + this.light + '%))';
+            'hsl(' + this.gradient + ',' + (this.colors.s / 2).toFixed() + '%,' + this.light + '%))';
     }
 
     SetBGColors(color = null) {
@@ -220,10 +225,12 @@ class Colors {
 
         let gradient = currentColors.GenerateGradientString(),
             reverse  = currentColors.GenerateGradientString(true),
-            midHue   = currentColors.CalculateSecondaryHue(true),
+            midHue   = currentColors.CalculateMidpointHue(),
             title    = 'hsl(' + midHue + ', 100%, 30%)',
             subtitle = 'hsl(' + midHue + ', 60%, 30%)',
             fade     = 'hsl(' + midHue + ', 50%, 80%)';
+
+        this.midHue = midHue;
 
         currentColors.SetElementBGImageColors('body, .timer-element', gradient);
         currentColors.SetElementBGImageColors('#menu-modal, .input-color-gradient, .btn-submit', reverse, 65);
@@ -257,10 +264,31 @@ class Colors {
         }
     }
 
-    CalculateSecondaryHue(betweenTwoHues = false) {
-        if (betweenTwoHues)
-            return (this.colors.h - (this.gradient / 2)) < 0 ? (360 + this.colors.h) - (this.gradient / 2) : this.colors.h - (this.gradient / 2);
-        return (this.colors.h - this.gradient) < 0 ? ((360 + this.colors.h) - this.gradient) : this.colors.h - this.gradient;
+    CalculateMidpointHue() {
+        let main        = this.HSLToHex(this.colors.h, this.colors.s, this.light);
+        let secondary   = this.HSLToHex(this.gradient, this.colors.s, this.light);
+
+        let mainDec     = this.hex2dec(main);
+        let offDec      = this.hex2dec(secondary);
+
+        let mainCmyk    = this.rgb2cmyk(mainDec[0], mainDec[1], mainDec[2]);
+        let offCmyk     = this.rgb2cmyk(offDec[0], offDec[1], offDec[2]);
+
+        let colorMixC   = (mainCmyk[0] + offCmyk[0]) / 2;
+        let colorMixM   = (mainCmyk[1] + offCmyk[1]) / 2;
+        let colorMixY   = (mainCmyk[2] + offCmyk[2]) / 2;
+        let colorMixK   = (mainCmyk[3] + offCmyk[3]) / 2;
+
+        let mixDec      = this.cmyk2rgb(colorMixC, colorMixM, colorMixY, colorMixK);
+        let mixHex      = this.rgb2hex(mixDec[0], mixDec[1], mixDec[2]);
+        let mixHSL      = this.HexToHSL(mixHex);
+
+        return mixHSL.substr(mixHSL.indexOf('(') + 1, mixHSL.indexOf(',') - mixHSL.indexOf('(') - 1);
+        
+        // if (betweenTwoHues)
+        //     return this.colors.h - (this.colors.h - (this.gradient / 2))
+        //     //return (this.colors.h - (this.gradient / 2)) < 0 ? (360 + this.colors.h) - (this.gradient / 2) : this.colors.h - (this.gradient / 2);
+        // return (this.colors.h - this.gradient) < 0 ? ((360 + this.colors.h) - this.gradient) : this.colors.h - this.gradient;
     }
 
     DefaultColors() {
@@ -362,7 +390,7 @@ class Colors {
         if (this.shiftInterval) {
             clearInterval(this.shiftInterval);
             this.shiftInterval = null;
-            this.SaveColorsToFS();
+            this.SaveColorsToFS(this.colors, this.gradient);
         } else {
             this.shiftInterval = setInterval(function() {
                 this.colors.h = (this.colors.h + 0.25 > 360) ? 0 : this.colors.h + 0.25;
@@ -375,4 +403,115 @@ class Colors {
     SetElementBGImageColors(element, gradient) {
         $(element).css({'background-image': gradient});
     }
+
+    hex2dec(hex) {
+        return hex.replace('#', '').match(/.{2}/g).map(n => parseInt(n, 16));
+    }
+    
+    rgb2hex(r, g, b) {
+        r = Math.round(r);
+        g = Math.round(g);
+        b = Math.round(b);
+        r = Math.min(r, 255);
+        g = Math.min(g, 255);
+        b = Math.min(b, 255);
+        return '#' + [r, g, b].map(c => c.toString(16).padStart(2, '0')).join('');
+    }
+    
+    rgb2cmyk(r, g, b) {
+        let c = 1 - (r / 255);
+        let m = 1 - (g / 255);
+        let y = 1 - (b / 255);
+        let k = Math.min(c, m, y);
+        c = (c - k) / (1 - k);
+        m = (m - k) / (1 - k);
+        y = (y - k) / (1 - k);
+        return [c, m, y, k];
+    }
+    
+    cmyk2rgb(c, m, y, k) {
+        let r = c * (1 - k) + k;
+        let g = m * (1 - k) + k;
+        let b = y * (1 - k) + k;
+        r = (1 - r) * 255 + .5;
+        g = (1 - g) * 255 + .5;
+        b = (1 - b) * 255 + .5;
+        return [r, g, b];
+    }
+    
+    
+    mix_cmyks(...cmyks) {
+        let c = cmyks.map(cmyk => cmyk[0]).reduce((a, b) => a + b) / 2;
+        let m = cmyks.map(cmyk => cmyk[1]).reduce((a, b) => a + b) / 2;
+        let y = cmyks.map(cmyk => cmyk[2]).reduce((a, b) => a + b) / 2;
+        let k = cmyks.map(cmyk => cmyk[3]).reduce((a, b) => a + b) / 2;
+
+        var ceee = cmyks[0];
+        return [c, m, y, k];
+    }
+    
+    mix_hexes(...hexes) {
+        let rgbs = hexes.map(hex => this.hex2dec(...hex)); 
+        let cmyks = rgbs.map(rgb => this.rgb2cmyk(...rgb));
+        let mixture_cmyk = this.mix_cmyks(...cmyks);
+        let mixture_rgb = this.cmyk2rgb(...mixture_cmyk);
+        let mixture_hex = this.rgb2hex(...mixture_rgb);
+        return mixture_hex;
+    }
+
+    HSLToHex(h, s, l) {
+        l /= 100;
+        let a = s * Math.min(l, 1 - l) / 100;
+        let f = n => {
+            let k = (n + h / 30) % 12;
+            let color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+            return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
+        };
+        return `#${f(0)}${f(8)}${f(4)}`;
+    }
+
+    HexToHSL(H) {
+        // Convert hex to RGB first
+        let r = 0, g = 0, b = 0;
+        if (H.length == 4) {
+          r = "0x" + H[1] + H[1];
+          g = "0x" + H[2] + H[2];
+          b = "0x" + H[3] + H[3];
+        } else if (H.length == 7) {
+          r = "0x" + H[1] + H[2];
+          g = "0x" + H[3] + H[4];
+          b = "0x" + H[5] + H[6];
+        }
+        // Then to HSL
+        r /= 255;
+        g /= 255;
+        b /= 255;
+        let cmin = Math.min(r,g,b),
+            cmax = Math.max(r,g,b),
+            delta = cmax - cmin,
+            h = 0,
+            s = 0,
+            l = 0;
+      
+        if (delta == 0)
+          h = 0;
+        else if (cmax == r)
+          h = ((g - b) / delta) % 6;
+        else if (cmax == g)
+          h = (b - r) / delta + 2;
+        else
+          h = (r - g) / delta + 4;
+      
+        h = Math.round(h * 60);
+      
+        if (h < 0)
+          h += 360;
+      
+        l = (cmax + cmin) / 2;
+        s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+        s = +(s * 100).toFixed(1);
+        l = +(l * 100).toFixed(1);
+      
+        return "hsl(" + h + "," + s + "%," + l + "%)";
+      }
 }
