@@ -248,7 +248,7 @@ class Colors {
                     tempcol.colors   = this.colors;
                     tempcol.gradient = this.gradient;
                 }
-                if (tempcol.light >= this.GetFluxV2Value(now)) {
+                if (tempcol.light >= this.GetFluxV2Value(now) && !down) {
                     clearInterval(dark);
                 }
             }.bind(this), 16.7);
