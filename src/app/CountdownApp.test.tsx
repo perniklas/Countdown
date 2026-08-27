@@ -1,9 +1,12 @@
-import { render, screen, within } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { celebrate } from '../celebrate'
 import type { Countdown } from '../domain/countdown'
 import { FakeCountdownRepository } from '../test/fakeCountdownRepository'
 import { CountdownApp } from './CountdownApp'
+
+vi.mock('../celebrate', () => ({ celebrate: vi.fn() }))
 
 const future = (id: string, hours: number): Countdown => ({
   id,
@@ -21,6 +24,10 @@ describe('CountdownApp', () => {
     vi.spyOn(Date, 'now').mockReturnValue(
       new Date('2030-01-01T10:00:00Z').getTime(),
     )
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   it('centers the nearest countdown and reveals the compact library', async () => {
@@ -111,3 +118,31 @@ describe('CountdownApp', () => {
     expect(screen.getByRole('dialog', { name: /new countdown/i })).toBeVisible()
   })
 })
+
+  it('celebrates a selected countdown once without archiving it mid-session', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2030-01-01T10:00:00Z'))
+    const finalSecond = future('final-second', 1 / 3_600)
+    const repository = new FakeCountdownRepository([finalSecond])
+    const archive = vi.spyOn(repository, 'archiveExpired')
+
+    render(
+      <CountdownApp
+        uid="user-1"
+        repository={repository}
+        displayName="Ada"
+        onSignOut={vi.fn()}
+      />,
+    )
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0)
+    })
+    expect(
+      screen.getByRole('heading', { name: 'final-second' }),
+    ).toBeInTheDocument()
+    act(() => vi.advanceTimersByTime(2_500))
+    act(() => vi.advanceTimersByTime(5_000))
+
+    expect(celebrate).toHaveBeenCalledTimes(1)
+    expect(archive).not.toHaveBeenCalledWith('user-1', ['final-second'])
+  })

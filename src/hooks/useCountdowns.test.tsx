@@ -1,8 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import type { Countdown, CountdownInput } from '../domain/countdown'
-import type { CountdownRepository } from '../services/countdownRepository'
-import { useCountdowns } from './useCountdowns'
+import type { Countdown } from '../domain/countdown'
+import type { CountdownRepository } from '../services/countdownRepository'import { useCountdowns } from './useCountdowns'
 
 const item = (
   id: string,
@@ -28,8 +27,7 @@ function repositoryDouble() {
       fail = onError
       return vi.fn()
     }),
-    create: vi.fn(async (_uid: string, _input: CountdownInput) => 'created'),
-    update: vi.fn(async () => undefined),
+    create: vi.fn(async () => 'created'),    update: vi.fn(async () => undefined),
     remove: vi.fn(async () => undefined),
     archiveExpired: vi.fn(async () => undefined),
   }

@@ -1,5 +1,6 @@
 import { LogOut, Menu, Plus, Sparkles } from 'lucide-react'
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useMemo, useRef, useState, type CSSProperties } from 'react'
+import { celebrate } from '../celebrate'
 import { CountdownEditor } from '../components/CountdownEditor'
 import { CountdownLibrary } from '../components/CountdownLibrary'
 import { EmptyState } from '../components/EmptyState'
@@ -16,7 +17,6 @@ interface CountdownAppProps {
   displayName: string | null
   photoURL?: string | null
   onSignOut: () => void
-  onReachZero?: (countdown: Countdown) => void
 }
 
 export function CountdownApp({
@@ -25,7 +25,6 @@ export function CountdownApp({
   displayName,
   photoURL,
   onSignOut,
-  onReachZero,
 }: CountdownAppProps) {
   const countdowns = useCountdowns(uid, repository)
   const { active, history } = useMemo(
@@ -38,16 +37,11 @@ export function CountdownApp({
   const [editing, setEditing] = useState<Countdown | null>(null)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
-    setSelectedId((current) => {
-      if (current && countdowns.items.some((item) => item.id === current)) {
-        return current
-      }
-      return active[0]?.id ?? null
-    })
-  }, [active, countdowns.items])
+  const celebratedIds = useRef(new Set<string>())
 
-  const selected = countdowns.items.find((item) => item.id === selectedId) ?? null
+  const selected =
+    countdowns.items.find((item) => item.id === selectedId) ?? active[0] ?? null
+  const resolvedSelectedId = selected?.id ?? null
   const theme = selected?.theme ?? 'aurora'
   const gradientMood = selected?.themeSettings.gradientMood ?? 50
   const themeStyle = getAuroraVariables(gradientMood) as CSSProperties
@@ -91,6 +85,12 @@ export function CountdownApp({
     }
   }
 
+
+  const handleReachZero = (countdown: Countdown) => {
+    if (celebratedIds.current.has(countdown.id)) return
+    celebratedIds.current.add(countdown.id)
+    celebrate()
+  }
   return (
     <main className={`theme-root theme-${theme}`} style={themeStyle}>
       <div className="app-decoration" aria-hidden="true">
@@ -135,8 +135,8 @@ export function CountdownApp({
             countdown={selected}
             onEdit={() => openEdit(selected)}
             onReachZero={
-              selected.status === 'active' && onReachZero
-                ? () => onReachZero(selected)
+              selected.status === 'active'
+                ? () => handleReachZero(selected)
                 : undefined
             }
           />
@@ -154,7 +154,7 @@ export function CountdownApp({
         <CountdownLibrary
           active={active}
           history={history}
-          selectedId={selectedId}
+          selectedId={resolvedSelectedId}
           onClose={() => setLibraryOpen(false)}
           onCreate={openCreate}
           onSelect={setSelectedId}

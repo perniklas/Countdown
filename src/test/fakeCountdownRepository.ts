@@ -14,7 +14,6 @@ export class FakeCountdownRepository implements CountdownRepository {
   subscribe(
     _uid: string,
     onData: (items: Countdown[]) => void,
-    _onError: (error: Error) => void,
   ) {
     this.listeners.add(onData)
     queueMicrotask(() => onData([...this.items]))

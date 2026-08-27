@@ -15,8 +15,6 @@ export function useCountdowns(
 
   useEffect(() => {
     let migratedInitialSnapshot = false
-    setLoading(true)
-    setError(null)
 
     return repository.subscribe(
       uid,

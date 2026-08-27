@@ -5,7 +5,12 @@ export function useCountdownClock(
   targetAt: number,
   onReachZero?: () => void,
 ): TimeParts {
-  const [parts, setParts] = useState(() => getTimeParts(targetAt))
+  const [clock, setClock] = useState(() => ({
+    targetAt,
+    parts: getTimeParts(targetAt),
+  }))
+  const parts =
+    clock.targetAt === targetAt ? clock.parts : getTimeParts(targetAt)
   const callbackRef = useRef(onReachZero)
   const observedPositiveRef = useRef(!parts.isComplete)
   const notifiedRef = useRef(false)
@@ -18,11 +23,10 @@ export function useCountdownClock(
     const initial = getTimeParts(targetAt)
     observedPositiveRef.current = !initial.isComplete
     notifiedRef.current = false
-    setParts(initial)
 
     const tick = () => {
       const next = getTimeParts(targetAt)
-      setParts(next)
+      setClock({ targetAt, parts: next })
 
       if (!next.isComplete) {
         observedPositiveRef.current = true
