@@ -1,20 +1,67 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /userscolors/{document=**} {
-      allow read, write, create: if request.auth.uid != null;
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
     }
-    match /timers/{document=**} {
-      allow write: if resource.data.userId == string(request.auth.uid);
-      allow read: if resource.data.userId == string(request.auth.uid);
-      allow delete: if resource.data.userId == string(request.auth.uid);
-      allow create: if request.auth.uid != null;
+
+    function hasValidFields(data) {
+      return data.keys().hasAll([
+        'title',
+        'targetAt',
+        'status',
+        'theme',
+        'themeSettings',
+        'createdAt',
+        'updatedAt'
+      ]) && data.keys().hasOnly([
+        'title',
+        'targetAt',
+        'status',
+        'theme',
+        'themeSettings',
+        'createdAt',
+        'updatedAt'
+      ]);
     }
-    match /expired/{document=**} {
-      allow write: if resource.data.userId == string(request.auth.uid);
-      allow read: if resource.data.userId == string(request.auth.uid);
-      allow delete: if resource.data.userId == string(request.auth.uid);
-      allow create: if request.auth.uid != null;
+
+    function hasValidThemeSettings(settings) {
+      return settings is map
+        && settings.keys().hasOnly(['gradientMood'])
+        && settings.gradientMood is number
+        && settings.gradientMood >= 0
+        && settings.gradientMood <= 100;
+    }
+
+    function isValidCountdown(data) {
+      return hasValidFields(data)
+        && data.title is string
+        && data.title.size() >= 1
+        && data.title.size() <= 80
+        && !data.title.matches('^\\s.*')
+        && !data.title.matches('.*\\s$')
+        && data.targetAt is timestamp
+        && data.status in ['active', 'history']
+        && data.theme in [
+          'aurora',
+          'event-horizon',
+          'hyperdrive',
+          'paper-riot'
+        ]
+        && hasValidThemeSettings(data.themeSettings)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    match /users/{userId}/countdowns/{countdownId} {
+      allow read, delete: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && isValidCountdown(request.resource.data)
+        && request.resource.data.status == 'active';
+      allow update: if isOwner(userId)
+        && isValidCountdown(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt;
     }
   }
 }
