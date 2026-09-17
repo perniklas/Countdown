@@ -8,13 +8,34 @@ import { HeroCountdown } from '../components/HeroCountdown'
 import { Toast } from '../components/Toast'
 import { ThemeScene } from '../components/ThemeScene'
 import { partitionCountdowns, type Countdown, type CountdownInput } from '../domain/countdown'
-import { getParallaxOffsets, getStarWarp } from '../domain/pointerEffects'
+import {
+  getEventHorizonParallax,
+  getParallaxOffsets,
+  getStarWarp,
+} from '../domain/pointerEffects'
 import { getGlassVariables } from '../domain/theme'
 import { useCountdowns } from '../hooks/useCountdowns'
 import type { CountdownRepository } from '../services/countdownRepository'
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
 const round3 = (value: number) => Math.round(value * 1_000) / 1_000
+
+const EH_PARALLAX_PROPERTIES = [
+  '--eh-disc-x',
+  '--eh-disc-y',
+  '--eh-disc-tilt-x',
+  '--eh-disc-tilt-y',
+  '--eh-core-x',
+  '--eh-core-y',
+  '--eh-halo-x',
+  '--eh-halo-y',
+  '--eh-ring-x',
+  '--eh-ring-y',
+  '--eh-fg-x',
+  '--eh-fg-y',
+  '--eh-stars-x',
+  '--eh-stars-y',
+] as const
 
 const resetSceneMotion = (root: HTMLElement) => {
   root.style.setProperty('--pointer-x', '0.5')
@@ -23,6 +44,10 @@ const resetSceneMotion = (root: HTMLElement) => {
   root.style.setProperty('--parallax-far-y', '0px')
   root.style.setProperty('--parallax-near-x', '0px')
   root.style.setProperty('--parallax-near-y', '0px')
+
+  for (const prop of EH_PARALLAX_PROPERTIES) {
+    root.style.setProperty(prop, prop.includes('tilt') ? '0deg' : '0px')
+  }
 
   root.querySelectorAll<HTMLElement>('.eh-star').forEach((star) => {
     star.style.setProperty('--warp-x', '0px')
@@ -185,6 +210,29 @@ export function CountdownApp({
       }
 
       if (theme === 'event-horizon') {
+        const offsets = getEventHorizonParallax({
+          clientX: pointer.clientX,
+          clientY: pointer.clientY,
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        })
+        pointer.root.style.setProperty('--eh-disc-x', `${offsets.discX}px`)
+        pointer.root.style.setProperty('--eh-disc-y', `${offsets.discY}px`)
+        pointer.root.style.setProperty('--eh-disc-tilt-x', `${offsets.discTiltX}deg`)
+        pointer.root.style.setProperty('--eh-disc-tilt-y', `${offsets.discTiltY}deg`)
+        pointer.root.style.setProperty('--eh-core-x', `${offsets.coreX}px`)
+        pointer.root.style.setProperty('--eh-core-y', `${offsets.coreY}px`)
+        pointer.root.style.setProperty('--eh-halo-x', `${offsets.haloX}px`)
+        pointer.root.style.setProperty('--eh-halo-y', `${offsets.haloY}px`)
+        pointer.root.style.setProperty('--eh-ring-x', `${offsets.ringX}px`)
+        pointer.root.style.setProperty('--eh-ring-y', `${offsets.ringY}px`)
+        pointer.root.style.setProperty('--eh-fg-x', `${offsets.foregroundX}px`)
+        pointer.root.style.setProperty('--eh-fg-y', `${offsets.foregroundY}px`)
+        pointer.root.style.setProperty('--eh-stars-x', `${offsets.starsX}px`)
+        pointer.root.style.setProperty('--eh-stars-y', `${offsets.starsY}px`)
+
         const pointerX = pointer.clientX - rect.left
         const pointerY = pointer.clientY - rect.top
         const radius = Math.min(280, Math.max(170, Math.min(rect.width, rect.height) * 0.32))
