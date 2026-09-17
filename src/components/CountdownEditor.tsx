@@ -157,7 +157,7 @@ export function CountdownEditor({
                 }
               />
               <span className="mood-labels" aria-hidden="true">
-                <small>Sunrise</small><small>Ocean</small><small>Violet</small>
+                <small>Ember</small><small>Lagoon</small><small>Orchid</small>
               </span>
             </label>
           ) : null}

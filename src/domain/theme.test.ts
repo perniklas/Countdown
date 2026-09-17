@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  getAuroraVariables,
+  getGlassVariables,
   normalizeGradientMood,
   themeById,
   THEMES,
@@ -15,21 +15,31 @@ describe('normalizeGradientMood', () => {
   })
 })
 
-describe('getAuroraVariables', () => {
-  it('maps the range endpoints to stable gradient values', () => {
-    expect(getAuroraVariables(0)).toEqual({
-      '--aurora-hue-a': '18deg',
-      '--aurora-hue-b': '332deg',
-      '--aurora-angle': '128deg',
-      '--aurora-saturation': '86%',
-      '--aurora-lightness': '94%',
+describe('getGlassVariables', () => {
+  it('maps the mood range to stable glass gradient values', () => {
+    expect(getGlassVariables(0)).toEqual({
+      '--glass-hue-a': '12deg',
+      '--glass-hue-b': '76deg',
+      '--glass-hue-c': '188deg',
+      '--glass-hue-d': '314deg',
+      '--glass-saturation': '74%',
+      '--glass-angle': '108deg',
     })
-    expect(getAuroraVariables(100)).toEqual({
-      '--aurora-hue-a': '276deg',
-      '--aurora-hue-b': '310deg',
-      '--aurora-angle': '205deg',
-      '--aurora-saturation': '92%',
-      '--aurora-lightness': '89%',
+    expect(getGlassVariables(50)).toEqual({
+      '--glass-hue-a': '177deg',
+      '--glass-hue-b': '241deg',
+      '--glass-hue-c': '353deg',
+      '--glass-hue-d': '119deg',
+      '--glass-saturation': '85%',
+      '--glass-angle': '180deg',
+    })
+    expect(getGlassVariables(100)).toEqual({
+      '--glass-hue-a': '342deg',
+      '--glass-hue-b': '46deg',
+      '--glass-hue-c': '158deg',
+      '--glass-hue-d': '284deg',
+      '--glass-saturation': '96%',
+      '--glass-angle': '252deg',
     })
   })
 })

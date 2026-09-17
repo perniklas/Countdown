@@ -10,12 +10,31 @@ import {
   signOutUser,
 } from './firebase'
 import { createFirebaseCountdownRepository } from './services/firebaseCountdownRepository'
+import { createLocalStorageCountdownRepository } from './services/localStorageCountdownRepository'
+
+const GUEST_MODE_KEY = 'moment:guest-mode:v1'
+
+const readGuestMode = () => {
+  try {
+    return localStorage.getItem(GUEST_MODE_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
 
 function ReadyApp({ auth, db }: Extract<typeof firebaseClientState, { ready: true }>) {
   const [user, setUser] = useState<User | null | undefined>(undefined)
   const [signingIn, setSigningIn] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
-  const repository = useMemo(() => createFirebaseCountdownRepository(db), [db])
+  const [guestMode, setGuestMode] = useState(readGuestMode)
+  const firebaseRepository = useMemo(
+    () => createFirebaseCountdownRepository(db),
+    [db],
+  )
+  const localRepository = useMemo(
+    () => createLocalStorageCountdownRepository(localStorage),
+    [],
+  )
 
   useEffect(() => onAuthStateChanged(auth, setUser), [auth])
 
@@ -33,6 +52,35 @@ function ReadyApp({ auth, db }: Extract<typeof firebaseClientState, { ready: tru
     }
   }
 
+  const handleContinueWithoutLogin = () => {
+    setAuthError(null)
+    try {
+      localStorage.setItem(GUEST_MODE_KEY, 'true')
+      setGuestMode(true)
+    } catch {
+      setAuthError('Local storage is not available in this browser.')
+    }
+  }
+
+  const handleLeaveGuestMode = () => {
+    try {
+      localStorage.removeItem(GUEST_MODE_KEY)
+    } finally {
+      setGuestMode(false)
+    }
+  }
+
+  if (guestMode) {
+    return (
+      <CountdownApp
+        uid="guest"
+        repository={localRepository}
+        displayName="Guest"
+        onSignOut={handleLeaveGuestMode}
+      />
+    )
+  }
+
   if (user === undefined) {
     return <main className="boot-screen" aria-label="Loading Moment"><span /></main>
   }
@@ -41,6 +89,7 @@ function ReadyApp({ auth, db }: Extract<typeof firebaseClientState, { ready: tru
     return (
       <AuthScreen
         onSignIn={() => void handleSignIn()}
+        onContinueWithoutLogin={handleContinueWithoutLogin}
         signingIn={signingIn}
         error={authError}
       />
@@ -50,7 +99,7 @@ function ReadyApp({ auth, db }: Extract<typeof firebaseClientState, { ready: tru
   return (
     <CountdownApp
       uid={user.uid}
-      repository={repository}
+      repository={firebaseRepository}
       displayName={user.displayName}
       photoURL={user.photoURL}
       onSignOut={() => void signOutUser(auth as Auth)}

@@ -1,0 +1,368 @@
+/* Miami Sundown (theme id: hyperdrive) */
+
+.theme-root.theme-hyperdrive {
+  --c-night: #140428;
+  --c-violet: #3a1264;
+  --c-violet-bright: #7b2ff7;
+  --c-magenta: #ff2e88;
+  --c-orange: #ff6f3c;
+  --c-gold: #ffd166;
+  --c-cyan: #2de2e6;
+  --horizon: 60%;
+  --surface: rgb(58 18 100 / 38%);
+  --surface-strong: rgb(28 6 54 / 74%);
+  --line: rgb(255 46 136 / 32%);
+  --ink: #ffe9d6;
+  --muted: #f2b8d8;
+  --accent: #ff6f3c;
+  background: linear-gradient(180deg, #150733 0%, #3c1265 32%, #92206c 62%, #ff6f3c 100%);
+  color: var(--ink);
+}
+
+/* Scene */
+
+.theme-hyperdrive .sundown-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.theme-hyperdrive .sundown-sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #150733 0%,
+    #221049 12%,
+    #3c1265 24%,
+    #641a6e 36%,
+    #92206c 48%,
+    #c72f62 58%,
+    #e8493f 68%,
+    #ff7a3d 78%,
+    #ffb35c 88%,
+    #ffe3a4 96%,
+    #fff1cf 100%
+  );
+}
+
+.theme-hyperdrive .sundown-stars {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 42%;
+  background-image:
+    radial-gradient(1.8px 1.8px at 8% 18%, #fff, transparent 60%),
+    radial-gradient(1.3px 1.3px at 18% 42%, #fff, transparent 60%),
+    radial-gradient(2.1px 2.1px at 30% 12%, #ffe9ff, transparent 60%),
+    radial-gradient(1.3px 1.3px at 38% 58%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 47% 28%, #fff, transparent 60%),
+    radial-gradient(1.3px 1.3px at 58% 46%, #fff, transparent 60%),
+    radial-gradient(2px 2px at 66% 15%, #fff, transparent 60%),
+    radial-gradient(1.3px 1.3px at 74% 55%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 82% 30%, #fff, transparent 60%),
+    radial-gradient(1.3px 1.3px at 90% 48%, #fff, transparent 60%),
+    radial-gradient(1.8px 1.8px at 96% 20%, #ffe9ff, transparent 60%),
+    radial-gradient(1.3px 1.3px at 12% 65%, #fff, transparent 60%),
+    radial-gradient(1.3px 1.3px at 55% 68%, #fff, transparent 60%),
+    radial-gradient(1.3px 1.3px at 70% 74%, #fff, transparent 60%);
+  opacity: 0.6;
+  mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 90%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 90%);
+}
+
+.theme-hyperdrive .sundown-sun {
+  position: absolute;
+  top: var(--horizon);
+  left: 50%;
+  width: min(56vw, 620px);
+  aspect-ratio: 1;
+  background: linear-gradient(180deg, #fff6d8 0%, #ffd166 20%, #ff9a52 42%, #ff5f6d 62%, #ff2e88 82%, #c8186f 100%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  translate: calc((var(--pointer-x, 0.5) - 0.5) * 16px) calc((var(--pointer-y, 0.5) - 0.5) * 10px);
+  box-shadow:
+    0 0 70px 12px rgb(255 209 102 / 55%),
+    0 0 150px 40px rgb(255 111 60 / 40%),
+    0 0 260px 90px rgb(255 46 136 / 22%);
+  mask-image: linear-gradient(
+    180deg,
+    #fff 0%, #fff 56%,
+    transparent 56%, transparent 58.5%,
+    #fff 58.5%, #fff 62%,
+    transparent 62%, transparent 64.8%,
+    #fff 64.8%, #fff 68%,
+    transparent 68%, transparent 71.2%,
+    #fff 71.2%, #fff 74%,
+    transparent 74%, transparent 77.6%,
+    #fff 77.6%, #fff 80%,
+    transparent 80%, transparent 84%,
+    #fff 84%, #fff 86%,
+    transparent 86%, transparent 90.5%,
+    #fff 90.5%, #fff 92%,
+    transparent 92%, transparent 97%,
+    #fff 97%, #fff 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #fff 0%, #fff 56%,
+    transparent 56%, transparent 58.5%,
+    #fff 58.5%, #fff 62%,
+    transparent 62%, transparent 64.8%,
+    #fff 64.8%, #fff 68%,
+    transparent 68%, transparent 71.2%,
+    #fff 71.2%, #fff 74%,
+    transparent 74%, transparent 77.6%,
+    #fff 77.6%, #fff 80%,
+    transparent 80%, transparent 84%,
+    #fff 84%, #fff 86%,
+    transparent 86%, transparent 90.5%,
+    #fff 90.5%, #fff 92%,
+    transparent 92%, transparent 97%,
+    #fff 97%, #fff 100%
+  );
+}
+
+.theme-hyperdrive .sundown-haze {
+  position: absolute;
+  top: var(--horizon);
+  left: 50%;
+  width: 150%;
+  height: 40%;
+  background: radial-gradient(
+    ellipse 60% 100% at 50% 20%,
+    rgb(255 227 164 / 65%) 0%,
+    rgb(255 154 82 / 45%) 32%,
+    rgb(255 46 136 / 22%) 58%,
+    transparent 78%
+  );
+  transform: translate(-50%, -35%);
+  translate: calc((var(--pointer-x, 0.5) - 0.5) * 10px) calc((var(--pointer-y, 0.5) - 0.5) * 6px);
+  filter: blur(4px);
+  mix-blend-mode: screen;
+}
+
+.theme-hyperdrive .sundown-horizon {
+  position: absolute;
+  top: var(--horizon);
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ffe9b0 12%, #fff8e0 50%, #ffe9b0 88%, transparent);
+  box-shadow: 0 0 10px 2px rgb(255 233 176 / 85%), 0 0 46px 14px rgb(255 130 90 / 45%);
+  transform: translateY(-50%);
+}
+
+.theme-hyperdrive .sundown-grid {
+  position: absolute;
+  top: calc(var(--horizon) - 9%);
+  right: -30%;
+  bottom: 0;
+  left: -30%;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 22%,
+    rgb(30 6 54 / 45%) 42%,
+    rgb(22 4 40 / 74%) 65%,
+    #100118 100%
+  );
+}
+
+.theme-hyperdrive .sundown-grid::before {
+  position: absolute;
+  top: 9%;
+  right: -20%;
+  bottom: -30%;
+  left: -20%;
+  background-image:
+    linear-gradient(rgb(255 60 170 / 55%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(45 226 230 / 32%) 1px, transparent 1px);
+  background-size: 64px 42px;
+  content: '';
+  transform: perspective(340px) rotateX(62deg);
+  transform-origin: 50% 0%;
+  animation: grid-move 4.5s linear infinite;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 26%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 26%);
+}
+
+.theme-hyperdrive .sundown-grid::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 22%;
+  background: linear-gradient(180deg, rgb(255 214 150 / 55%), transparent 85%);
+  content: '';
+  transform: translateX(-50%);
+  opacity: 0.6;
+  mix-blend-mode: screen;
+}
+
+.theme-hyperdrive .sundown-palm {
+  position: absolute;
+  bottom: 0;
+  width: clamp(150px, 20vw, 230px);
+  height: clamp(230px, 34vh, 440px);
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 420"><defs><path id="f" d="M152,95 C118,70 55,68 10,96 C52,84 96,82 128,92 C108,98 84,112 62,134 C102,120 136,104 152,95 Z"/></defs><path d="M96,420 C90,330 104,210 146,92 L170,98 C138,215 122,330 128,420 Z" fill="%230c0416"/><use href="%23f" fill="%230c0416" transform="rotate(-75 152 95)"/><use href="%23f" fill="%230c0416" transform="rotate(-50 152 95)"/><use href="%23f" fill="%230c0416" transform="rotate(-25 152 95)"/><use href="%23f" fill="%230c0416" transform="rotate(-3 152 95)"/><use href="%23f" fill="%230c0416" transform="rotate(20 152 95)"/><use href="%23f" fill="%230c0416" transform="rotate(45 152 95)"/><use href="%23f" fill="%230c0416" transform="rotate(70 152 95)"/></svg>');
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: contain;
+  filter: drop-shadow(0 10px 18px rgb(10 2 20 / 55%));
+}
+
+.theme-hyperdrive .sundown-palm-left {
+  left: -1%;
+  background-position: bottom left;
+  translate: calc((var(--pointer-x, 0.5) - 0.5) * -8px) 0;
+}
+
+.theme-hyperdrive .sundown-palm-right {
+  right: -1%;
+  background-position: bottom right;
+  transform: scaleX(-1);
+  translate: calc((var(--pointer-x, 0.5) - 0.5) * 8px) 0;
+}
+
+.theme-hyperdrive .sundown-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 12%) 0 1px, transparent 1px 3px);
+  mix-blend-mode: multiply;
+  opacity: 0.16;
+}
+
+/* Typography and chrome */
+
+.theme-hyperdrive .hero-countdown h1 {
+  position: relative;
+  font-family: 'Archivo Variable', Archivo, sans-serif;
+  font-style: italic;
+  font-weight: 800;
+  font-variation-settings: 'wdth' 112;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 92%) 0%, rgb(255 255 255 / 0%) 38%),
+    linear-gradient(180deg, #fff3c8 0%, #ffd166 30%, #ff9a52 55%, #ff2e88 85%, #c8186f 100%);
+  background-blend-mode: screen, normal;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgb(20 4 40 / 55%);
+  filter:
+    drop-shadow(0 3px 10px rgb(10 2 20 / 50%))
+    drop-shadow(0 0 20px rgb(255 111 60 / 55%))
+    drop-shadow(0 0 44px rgb(255 46 136 / 35%));
+}
+
+.theme-hyperdrive .time-grid {
+  position: relative;
+}
+
+.theme-hyperdrive .time-grid::before {
+  position: absolute;
+  inset: -10px;
+  border-radius: 30px;
+  background: rgb(20 4 40 / 34%);
+  backdrop-filter: blur(14px);
+  content: '';
+  pointer-events: none;
+}
+
+.theme-hyperdrive .time-unit {
+  position: relative;
+  border: 1px solid rgb(255 46 136 / 38%);
+  border-radius: 6px 30px 6px 30px;
+  background: linear-gradient(160deg, rgb(58 18 100 / 42%), rgb(20 4 40 / 55%));
+  box-shadow:
+    inset 0 0 0 1px rgb(255 209 102 / 8%),
+    inset 0 24px 40px rgb(255 111 60 / 6%),
+    0 0 0 1px rgb(255 46 136 / 12%),
+    0 18px 50px rgb(10 2 20 / 45%),
+    0 0 40px rgb(255 111 60 / 18%);
+  clip-path: polygon(0 14px, 14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%);
+  backdrop-filter: blur(16px) saturate(135%);
+}
+
+.theme-hyperdrive .time-value {
+  font-family: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
+  font-weight: 620;
+  color: #fff2df;
+  text-shadow: 0 0 20px rgb(255 154 82 / 65%), 0 0 44px rgb(255 46 136 / 35%);
+}
+
+.theme-hyperdrive .time-label,
+.theme-hyperdrive .countdown-kicker {
+  color: var(--c-gold);
+  text-shadow: 0 0 12px rgb(255 209 102 / 45%);
+}
+
+.theme-hyperdrive .target-date {
+  color: #ffb0d6;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.theme-hyperdrive .app-brand .brand-mark,
+.theme-hyperdrive .header-button b,
+.theme-hyperdrive .user-menu > span {
+  background: linear-gradient(160deg, var(--c-gold), var(--c-magenta));
+  color: #1a0630;
+  box-shadow: 0 0 16px rgb(255 46 136 / 45%);
+}
+
+.theme-hyperdrive .header-button,
+.theme-hyperdrive .user-menu {
+  border-color: rgb(255 209 102 / 22%);
+  background: rgb(58 18 100 / 35%);
+}
+
+.theme-hyperdrive .app-footer,
+.theme-hyperdrive .text-button {
+  color: #ffb0d6;
+}
+
+.theme-hyperdrive .text-button:hover,
+.theme-hyperdrive .app-footer button:hover {
+  color: var(--c-gold);
+}
+
+.theme-swatch-hyperdrive {
+  background:
+    repeating-linear-gradient(0deg, rgb(20 4 40 / 65%) 0 2px, transparent 2px 5px) 0 58% / 100% 42%,
+    radial-gradient(circle at 50% 80%, #ffe9b0 0%, #ffb35c 26%, #ff6f3c 46%, #ff2e88 68%, transparent 72%),
+    linear-gradient(180deg, #1a0a35, #4a1466 40%, #b21f6d 68%, #ff6f3c 88%, #ffd166 100%);
+  color: #ffe9c2;
+}
+
+.dot-hyperdrive {
+  background: linear-gradient(180deg, #ffe9b0, #ff6f3c 55%, #ff2e88);
+}
+
+@media (max-width: 640px) {
+  .theme-hyperdrive .sundown-palm {
+    width: clamp(70px, 22vw, 120px);
+    height: clamp(140px, 26vh, 260px);
+    opacity: 0.85;
+  }
+
+  .theme-hyperdrive .hero-countdown h1 {
+    font-size: clamp(2rem, 11.5vw, 3.6rem);
+    font-variation-settings: 'wdth' 100;
+    letter-spacing: -0.01em;
+  }
+}
+
+@media (max-width: 420px) {
+  .theme-hyperdrive .sundown-palm {
+    display: none;
+  }
+}
+
+@keyframes grid-move { to { background-position: 0 42px, 64px 0; } }

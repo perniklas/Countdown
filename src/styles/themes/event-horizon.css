@@ -1,0 +1,410 @@
+/* Event Horizon — standing in front of Gargantua: one enormous dark sphere,
+   a white-hot accretion disk seen edge-on, and its lensed halo arching over
+   the top and bottom. Mostly black. Almost nothing else. */
+
+.theme-root.theme-event-horizon {
+  --surface: rgb(12 11 10 / 40%);
+  --surface-strong: rgb(16 14 12 / 72%);
+  --line: rgb(234 214 168 / 14%);
+  --ink: #f3ecd9;
+  --muted: #a99873;
+  --accent: #ffb347;
+  background:
+    radial-gradient(120% 95% at 50% 40%, #100d0c 0%, #0a0808 42%, #050404 72%, #020202 100%);
+}
+
+/* ---------- scene scaffold ---------- */
+
+.theme-event-horizon .eh-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ---------- starfield ---------- */
+
+.theme-event-horizon .eh-starfield {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.theme-event-horizon .eh-star-layer {
+  position: absolute;
+  inset: -12% -25%;
+  will-change: transform;
+}
+
+.theme-event-horizon .eh-star-layer[data-layer='0'] {
+  animation: eh-drift-0 140s ease-in-out infinite alternate;
+}
+
+.theme-event-horizon .eh-star-layer[data-layer='1'] {
+  animation: eh-drift-1 90s ease-in-out infinite alternate;
+}
+
+.theme-event-horizon .eh-star-layer[data-layer='2'] {
+  animation: eh-drift-2 60s ease-in-out infinite alternate;
+}
+
+.theme-event-horizon .eh-star {
+  --warp-x: 0px;
+  --warp-y: 0px;
+  --warp-scale: 1;
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: 0 0 2px rgb(255 255 255 / 65%), 0 0 6px rgb(255 244 222 / 30%);
+  transform: translate3d(var(--warp-x), var(--warp-y), 0) scale(var(--warp-scale));
+  transform-origin: center;
+  will-change: transform;
+}
+
+.theme-event-horizon .eh-star:nth-child(4n) {
+  animation: eh-twinkle-a 4.6s ease-in-out infinite;
+  animation-delay: -0.6s;
+}
+
+.theme-event-horizon .eh-star:nth-child(4n + 1) {
+  animation: eh-twinkle-b 6.1s ease-in-out infinite;
+  animation-delay: -2.4s;
+}
+
+.theme-event-horizon .eh-star:nth-child(4n + 2) {
+  animation: eh-twinkle-c 5.3s ease-in-out infinite;
+  animation-delay: -3.5s;
+}
+
+.theme-event-horizon .eh-star:nth-child(4n + 3) {
+  animation: eh-twinkle-a 5.8s ease-in-out infinite;
+  animation-delay: -1.4s;
+}
+
+/* ---------- dust / nebula haze ---------- */
+
+.theme-event-horizon .eh-dust {
+  position: absolute;
+  inset: -15%;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 55% 38% at 22% 74%, rgb(150 108 66 / 12%), transparent 62%),
+    radial-gradient(ellipse 48% 34% at 80% 20%, rgb(110 88 66 / 10%), transparent 60%),
+    radial-gradient(ellipse 70% 55% at 55% 48%, rgb(60 46 36 / 10%), transparent 68%);
+  mix-blend-mode: screen;
+  opacity: 0.6;
+  animation: eh-dust-drift 210s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+/* ---------- the black hole ---------- */
+
+.theme-event-horizon .eh-hole {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  width: min(105vw, 1150px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.theme-event-horizon .eh-bloom {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: 175%;
+  height: 175%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgb(255 179 71 / 16%) 0%,
+    rgb(224 122 23 / 8%) 36%,
+    transparent 70%
+  );
+  filter: blur(46px);
+}
+
+.theme-event-horizon .eh-halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 148%;
+  height: 148%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: conic-gradient(
+    from 0deg,
+    #fffdf6 0deg,
+    #fffdf6 10deg,
+    #ffb347 48deg,
+    #93511c 90deg,
+    #ffb347 132deg,
+    #fffdf6 170deg,
+    #fffdf6 190deg,
+    #ffb347 228deg,
+    #93511c 270deg,
+    #ffb347 312deg,
+    #fffdf6 350deg,
+    #fffdf6 360deg
+  );
+  mask: radial-gradient(closest-side, transparent 0 44%, #fff 50% 62%, transparent 72%);
+  -webkit-mask: radial-gradient(closest-side, transparent 0 44%, #fff 50% 62%, transparent 72%);
+}
+
+.theme-event-horizon .eh-halo::after {
+  content: '';
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  background: inherit;
+  mask: inherit;
+  -webkit-mask: inherit;
+  filter: blur(16px);
+  opacity: 0.6;
+  mix-blend-mode: screen;
+}
+
+.theme-event-horizon .eh-disk {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: 138%;
+  height: 138%;
+  border-radius: 50%;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scaleY(0.3);
+  mask: radial-gradient(closest-side, transparent 0 54%, #fff 60% 84%, transparent 90%);
+  -webkit-mask: radial-gradient(closest-side, transparent 0 54%, #fff 60% 84%, transparent 90%);
+  filter: drop-shadow(0 0 34px rgb(255 170 70 / 25%));
+}
+
+.theme-event-horizon .eh-disk::before {
+  content: '';
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from -35deg,
+    #fffaf0 0deg,
+    #ffdca6 55deg,
+    #ffb347 100deg,
+    #d97a1c 150deg,
+    #7a3d0a 195deg,
+    #d97a1c 245deg,
+    #ffb347 300deg,
+    #fffaf0 360deg
+  );
+  animation: eh-disk-spin 58s linear infinite;
+}
+
+.theme-event-horizon .eh-photon-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, #fffaf0 0%, #ffdca6 92%, transparent 100%);
+  mask: radial-gradient(closest-side, transparent 0 93%, #fff 95% 97%, transparent 99%);
+  -webkit-mask: radial-gradient(closest-side, transparent 0 93%, #fff 95% 97%, transparent 99%);
+  filter: blur(1px);
+  box-shadow: 0 0 22px 3px rgb(255 236 202 / 55%);
+}
+
+.theme-event-horizon .eh-sphere {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  width: 68%;
+  height: 68%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 42% 38%, #060505 0%, #020202 55%, #000 100%);
+  box-shadow:
+    inset 0 -26px 60px 0 rgb(255 179 71 / 5%),
+    inset 0 24px 50px 0 rgb(255 179 71 / 4%);
+}
+
+/* ---------- typography ---------- */
+
+.theme-event-horizon .hero-countdown h1 {
+  font-family: 'Archivo Variable', 'Archivo', sans-serif;
+  font-weight: 280;
+  font-stretch: 122%;
+  letter-spacing: -0.01em;
+  text-shadow:
+    0 0 2px rgb(0 0 0 / 85%),
+    0 2px 20px rgb(0 0 0 / 70%),
+    0 0 40px rgb(255 179 71 / 30%);
+}
+
+.theme-event-horizon .countdown-kicker,
+.theme-event-horizon .time-label {
+  color: var(--muted);
+  letter-spacing: 0.22em;
+}
+
+.theme-event-horizon .countdown-kicker,
+.theme-event-horizon .time-label,
+.theme-event-horizon .target-date,
+.theme-event-horizon .hero-edit,
+.theme-event-horizon .app-footer,
+.theme-event-horizon .text-button {
+  text-shadow:
+    -1px -1px 3px rgb(0 0 0 / 85%),
+    1px -1px 3px rgb(0 0 0 / 85%),
+    -1px 1px 3px rgb(0 0 0 / 85%),
+    1px 1px 3px rgb(0 0 0 / 85%),
+    0 2px 10px rgb(0 0 0 / 65%);
+}
+
+.theme-event-horizon .time-unit {
+  min-height: 200px;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  background: linear-gradient(180deg, transparent, rgb(255 210 150 / 3%));
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.theme-event-horizon .time-value {
+  font-family: 'Archivo Variable', 'Archivo', sans-serif;
+  font-weight: 260;
+  font-stretch: 118%;
+  letter-spacing: -0.02em;
+  text-shadow:
+    0 0 3px rgb(0 0 0 / 90%),
+    0 3px 22px rgb(0 0 0 / 75%),
+    0 0 46px rgb(255 179 71 / 26%);
+}
+
+.theme-event-horizon .target-date {
+  color: var(--muted);
+}
+
+.theme-event-horizon .hero-edit {
+  color: var(--muted);
+}
+
+/* ---------- chrome ---------- */
+
+.theme-event-horizon .app-brand .brand-mark,
+.theme-event-horizon .header-button b,
+.theme-event-horizon .user-menu > span {
+  background: #ffb347;
+  color: #0c0a08;
+}
+
+.theme-event-horizon .header-button,
+.theme-event-horizon .user-menu {
+  border-color: var(--line);
+  background: var(--surface);
+}
+
+.theme-event-horizon .app-footer,
+.theme-event-horizon .text-button {
+  color: var(--muted);
+}
+
+.theme-event-horizon .app-footer button {
+  color: inherit;
+}
+
+/* ---------- swatch / dot previews ---------- */
+
+.theme-swatch-event-horizon {
+  background:
+    radial-gradient(circle at 50% 50%, #030202 0 32%, transparent 34%),
+    conic-gradient(
+      from -20deg,
+      #fff8ea,
+      #ffb347 25%,
+      #7a3d0a 50%,
+      #ffb347 75%,
+      #fff8ea 100%
+    );
+  color: #f5ecd8;
+}
+
+.dot-event-horizon {
+  background:
+    radial-gradient(circle at 50% 50%, #020202 0 28%, transparent 30%),
+    conic-gradient(
+      from 60deg,
+      #fff8ea,
+      #ffb347 30%,
+      #7a3d0a 60%,
+      #ffb347 85%,
+      #fff8ea 100%
+    );
+}
+
+/* ---------- motion ---------- */
+
+@keyframes eh-drift-0 {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-3%, 1.6%); }
+}
+
+@keyframes eh-drift-1 {
+  from { transform: translate(0, 0); }
+  to { transform: translate(4.5%, -2.2%); }
+}
+
+@keyframes eh-drift-2 {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-6.5%, 2.8%); }
+}
+
+@keyframes eh-disk-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes eh-twinkle-a {
+  0%, 100% { filter: brightness(0.72); }
+  50% { filter: brightness(1.2); }
+}
+
+@keyframes eh-twinkle-b {
+  0%, 100% { filter: brightness(1.08); }
+  50% { filter: brightness(0.62); }
+}
+
+@keyframes eh-twinkle-c {
+  0%, 100% { filter: brightness(0.86); }
+  50% { filter: brightness(1.08); }
+}
+
+@keyframes eh-dust-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+  50% { transform: translate(1.6%, -1%) scale(1.02); opacity: 0.68; }
+}
+
+/* ---------- mobile ---------- */
+
+@media (max-width: 760px) {
+  .theme-event-horizon .eh-hole {
+    top: 45%;
+    width: min(132vw, 860px);
+  }
+
+  .theme-event-horizon .eh-sphere {
+    width: 96%;
+    height: 96%;
+  }
+
+  .theme-event-horizon .eh-photon-ring {
+    width: 98%;
+    height: 98%;
+  }
+
+  .theme-event-horizon .time-unit {
+    min-height: 125px;
+  }
+}

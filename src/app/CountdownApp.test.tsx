@@ -1,4 +1,4 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { celebrate } from '../celebrate'
@@ -146,3 +146,56 @@ describe('CountdownApp', () => {
     expect(celebrate).toHaveBeenCalledTimes(1)
     expect(archive).not.toHaveBeenCalledWith('user-1', ['final-second'])
   })
+it('moves the main theme background at different parallax depths and recenters it', () => {
+  const repository = new FakeCountdownRepository()
+
+  const { container } = render(
+    <CountdownApp
+      uid="user-1"
+      repository={repository}
+      displayName="Ada"
+      onSignOut={vi.fn()}
+    />,
+  )
+
+  const themeRoot = container.querySelector<HTMLElement>('.theme-root')
+  expect(themeRoot).not.toBeNull()
+
+  Object.defineProperty(themeRoot!, 'getBoundingClientRect', {
+    value: () => ({
+      left: 0,
+      top: 0,
+      width: 1_000,
+      height: 800,
+      right: 1_000,
+      bottom: 800,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    }),
+  })
+
+  const animationFrame = vi
+    .spyOn(window, 'requestAnimationFrame')
+    .mockImplementation((callback) => {
+      callback(0)
+      return 1
+    })
+
+  fireEvent.pointerMove(themeRoot!, { clientX: 750, clientY: 200 })
+
+  expect(themeRoot!.style.getPropertyValue('--parallax-far-x')).toBe('6px')
+  expect(themeRoot!.style.getPropertyValue('--parallax-far-y')).toBe('-5px')
+  expect(themeRoot!.style.getPropertyValue('--parallax-near-x')).toBe('14px')
+  expect(themeRoot!.style.getPropertyValue('--parallax-near-y')).toBe('-11px')
+
+  fireEvent.pointerLeave(themeRoot!)
+
+  expect(themeRoot!.style.getPropertyValue('--parallax-far-x')).toBe('0px')
+  expect(themeRoot!.style.getPropertyValue('--parallax-far-y')).toBe('0px')
+  expect(themeRoot!.style.getPropertyValue('--parallax-near-x')).toBe('0px')
+  expect(themeRoot!.style.getPropertyValue('--parallax-near-y')).toBe('0px')
+
+  animationFrame.mockRestore()
+})
+

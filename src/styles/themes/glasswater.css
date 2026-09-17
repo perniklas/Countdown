@@ -1,0 +1,315 @@
+/* Glasswater (theme id: aurora) — liquid glass over a saturated, shifting gradient. */
+
+.theme-root.theme-aurora {
+  --surface: rgb(255 255 255 / 40%);
+  --surface-strong: rgb(255 255 255 / 68%);
+  --line: rgb(255 255 255 / 48%);
+  --ink: #1b2038;
+  --muted: #5c6078;
+  --accent: hsl(var(--glass-hue-a) 60% 32%);
+  background-color: hsl(var(--glass-hue-a) 20% 96%);
+  background-image: linear-gradient(
+    var(--glass-angle),
+    hsl(var(--glass-hue-a) calc(var(--glass-saturation) * 0.22) 95%),
+    hsl(var(--glass-hue-b) calc(var(--glass-saturation) * 0.14) 94%) 45%,
+    hsl(var(--glass-hue-c) calc(var(--glass-saturation) * 0.22) 96%)
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* Background scene: colour masses that the glass panels sit on top of */
+/* ---------------------------------------------------------------- */
+
+.theme-aurora .glass-scene {
+  position: absolute;
+  inset: 0;
+}
+
+.theme-aurora .glass-blob {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.theme-aurora .glass-blob-a {
+  top: -10%;
+  left: -6%;
+  width: 64vw;
+  aspect-ratio: 1;
+  background: hsl(var(--glass-hue-a) var(--glass-saturation) 74% / 88%);
+  filter: blur(clamp(40px, 5.5vw, 72px));
+  translate: var(--parallax-far-x) var(--parallax-far-y);
+  animation: glass-drift-a 27s ease-in-out infinite alternate;
+}
+
+.theme-aurora .glass-blob-c {
+  right: -8%;
+  bottom: -16%;
+  width: 70vw;
+  aspect-ratio: 1;
+  background: hsl(var(--glass-hue-c) var(--glass-saturation) 72% / 84%);
+  filter: blur(clamp(40px, 5.5vw, 72px));
+  translate: calc(-1 * var(--parallax-far-x)) calc(-1 * var(--parallax-far-y));
+  animation: glass-drift-c 33s ease-in-out infinite alternate;
+}
+
+.theme-aurora .glass-blob-b {
+  top: -6%;
+  right: -4%;
+  width: 42vw;
+  min-width: 240px;
+  aspect-ratio: 1;
+  background: hsl(var(--glass-hue-b) var(--glass-saturation) 78% / 80%);
+  filter: blur(clamp(34px, 4.5vw, 58px));
+  translate: var(--parallax-near-x) var(--parallax-near-y);
+  animation: glass-drift-b 21s ease-in-out infinite alternate;
+}
+
+.theme-aurora .glass-blob-d {
+  bottom: -4%;
+  left: -8%;
+  width: 38vw;
+  min-width: 220px;
+  aspect-ratio: 1;
+  background: hsl(var(--glass-hue-d) var(--glass-saturation) 76% / 78%);
+  filter: blur(clamp(34px, 4.5vw, 58px));
+  translate: calc(-1 * var(--parallax-near-x)) calc(-1 * var(--parallax-near-y));
+  animation: glass-drift-d 38s ease-in-out infinite alternate;
+}
+
+.theme-aurora .glass-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+@keyframes glass-drift-a {
+  to { transform: translate3d(3.5vw, -4vw, 0) scale(1.07); }
+}
+
+@keyframes glass-drift-b {
+  to { transform: translate3d(-4vw, 3.5vw, 0) scale(1.1); }
+}
+
+@keyframes glass-drift-c {
+  to { transform: translate3d(-3vw, 3vw, 0) scale(1.05); }
+}
+
+@keyframes glass-drift-d {
+  to { transform: translate3d(3vw, -3vw, 0) scale(1.09); }
+}
+
+/* ---------------------------------------------------------------- */
+/* Time panels — liquid glass                                       */
+/* ---------------------------------------------------------------- */
+
+.theme-aurora .time-unit {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: clamp(26px, 3.6vw, 34px);
+  background:
+    radial-gradient(30% 30% at calc(var(--pointer-x) * 100%) calc(var(--pointer-y) * 100%), rgb(255 255 255 / 55%), transparent 72%),
+    linear-gradient(160deg, hsl(var(--glass-hue-a) var(--glass-saturation) 88% / 38%), hsl(var(--glass-hue-c) var(--glass-saturation) 86% / 22%) 74%);
+  box-shadow:
+    0 36px 74px -24px rgb(20 14 40 / 34%),
+    0 14px 32px -12px rgb(20 14 40 / 16%),
+    inset 2px 3px 0 rgb(255 255 255 / 85%),
+    inset -14px -18px 30px -8px rgb(255 255 255 / 30%),
+    inset 0 -22px 34px -16px rgb(16 10 36 / 22%),
+    inset 0 -8px 16px -10px hsl(var(--glass-hue-c) 65% 45% / 30%);
+  backdrop-filter: blur(24px) saturate(175%) brightness(1.06) contrast(1.03);
+  -webkit-backdrop-filter: blur(24px) saturate(175%) brightness(1.06) contrast(1.03);
+}
+
+.theme-aurora .time-unit::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: linear-gradient(164deg, rgb(255 255 255 / 78%) 0%, rgb(255 255 255 / 26%) 26%, transparent 52%);
+  mix-blend-mode: soft-light;
+  content: '';
+  pointer-events: none;
+}
+
+.theme-aurora .time-unit::after {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 35%),
+    inset 0 1.5px 0 rgb(255 255 255 / 90%),
+    inset -1.5px -2px 0 rgb(255 255 255 / 12%),
+    inset 0 -16px 26px -12px rgb(16 10 36 / 24%);
+  content: '';
+  pointer-events: none;
+}
+
+.theme-aurora .time-unit > * {
+  position: relative;
+  z-index: 1;
+}
+
+.theme-aurora .time-value {
+  color: var(--ink);
+  text-shadow: 0 1px 0 rgb(255 255 255 / 65%), 0 10px 24px rgb(20 14 42 / 10%);
+}
+
+.theme-aurora .time-label {
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- */
+/* Header — small glass chips                                       */
+/* ---------------------------------------------------------------- */
+
+.theme-aurora .header-button,
+.theme-aurora .user-menu {
+  border: 1px solid rgb(255 255 255 / 50%);
+  background: linear-gradient(155deg, rgb(255 255 255 / 55%), rgb(255 255 255 / 20%));
+  box-shadow:
+    0 10px 24px -14px rgb(30 20 55 / 30%),
+    inset 1px 1px 0 rgb(255 255 255 / 70%),
+    inset -4px -6px 12px -4px rgb(255 255 255 / 18%);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+}
+
+.theme-aurora .app-brand .brand-mark {
+  border: 1px solid rgb(255 255 255 / 35%);
+  background: linear-gradient(160deg, hsl(var(--glass-hue-a) 42% 30% / 95%), hsl(var(--glass-hue-c) 36% 20% / 95%));
+  box-shadow:
+    0 10px 20px -10px rgb(20 14 40 / 45%),
+    inset 1px 1px 0 rgb(255 255 255 / 35%);
+  backdrop-filter: blur(10px);
+  color: #fff;
+}
+
+/* ---------------------------------------------------------------- */
+/* Typography and small details                                     */
+/* ---------------------------------------------------------------- */
+
+.theme-aurora .hero-countdown h1 {
+  font-family: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
+  font-weight: 380;
+  letter-spacing: -0.075em;
+  background: linear-gradient(160deg, var(--ink), hsl(var(--glass-hue-a) 45% 22%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.theme-aurora .countdown-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.theme-aurora .countdown-kicker::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(var(--glass-hue-a) 72% 55%);
+  box-shadow: 0 0 10px hsl(var(--glass-hue-a) 80% 60% / 70%);
+  content: '';
+}
+
+.theme-aurora .target-date {
+  width: fit-content;
+  margin: 6px auto 0;
+  padding: 8px 18px;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgb(255 255 255 / 45%), rgb(255 255 255 / 18%));
+  box-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / 55%),
+    0 8px 20px -14px rgb(30 20 55 / 30%);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  color: var(--muted);
+}
+
+.theme-aurora .hero-edit:hover {
+  color: var(--accent);
+}
+
+.theme-aurora .app-footer {
+  color: var(--muted);
+}
+
+.theme-aurora .app-footer button:hover {
+  color: var(--accent);
+}
+
+/* ---------------------------------------------------------------- */
+/* Theme picker previews                                            */
+/* ---------------------------------------------------------------- */
+
+.theme-swatch-aurora {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 55%);
+  background:
+    radial-gradient(120% 120% at 18% 14%, hsl(177deg 85% 78% / 92%), transparent 55%),
+    radial-gradient(120% 120% at 86% 92%, hsl(353deg 85% 80% / 85%), transparent 55%),
+    linear-gradient(150deg, hsl(177deg 40% 94%), hsl(241deg 32% 92%));
+  color: #21203a;
+}
+
+.theme-swatch-aurora::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgb(255 255 255 / 70%), transparent 45%);
+  mix-blend-mode: soft-light;
+  content: '';
+}
+
+.dot-aurora {
+  background: linear-gradient(160deg, hsl(177deg 85% 72%), hsl(353deg 80% 78%));
+}
+
+/* ---------------------------------------------------------------- */
+/* Small screens                                                    */
+/* ---------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  /* Tall narrow viewports need the blobs sized off vmax (not vw) so the
+     colour reaches the vertical middle of the page, not just the corners. */
+  .theme-aurora .glass-blob-a {
+    top: -12%;
+    left: -18%;
+    width: 78vmax;
+  }
+
+  .theme-aurora .glass-blob-c {
+    right: -20%;
+    bottom: -18%;
+    width: 84vmax;
+  }
+
+  .theme-aurora .glass-blob-b {
+    top: -8%;
+    right: -10%;
+    width: 52vmax;
+    min-width: 0;
+  }
+
+  .theme-aurora .glass-blob-d {
+    bottom: -6%;
+    left: -14%;
+    width: 48vmax;
+    min-width: 0;
+  }
+
+  .theme-aurora .time-unit {
+    backdrop-filter: blur(18px) saturate(155%) brightness(1.05);
+    -webkit-backdrop-filter: blur(18px) saturate(155%) brightness(1.05);
+  }
+}

@@ -7,21 +7,25 @@ export interface ThemeDefinition {
 }
 
 export const THEMES: readonly ThemeDefinition[] = [
-  { id: 'aurora', name: 'Aurora', description: 'Soft, calm, luminous' },
+  {
+    id: 'aurora',
+    name: 'Glasswater',
+    description: 'Light bent through wet glass',
+  },
   {
     id: 'event-horizon',
     name: 'Event Horizon',
-    description: 'Dark, orbital, infinite',
+    description: 'Falling toward something enormous',
   },
   {
     id: 'hyperdrive',
-    name: 'Hyperdrive',
-    description: 'Neon, electric, fast',
+    name: 'Miami Sundown',
+    description: 'Last light over the strip',
   },
   {
     id: 'paper-riot',
     name: 'Paper Riot',
-    description: 'Bold, tactile, playful',
+    description: 'Two inks, one pass, slightly off',
   },
 ]
 
@@ -34,16 +38,17 @@ export function normalizeGradientMood(value: number): number {
   return Math.round(Math.min(100, Math.max(0, value)))
 }
 
-const interpolate = (start: number, end: number, amount: number) =>
-  Math.round(start + (end - start) * amount)
+const wrapHue = (value: number) => Math.round(((value % 360) + 360) % 360)
 
-export function getAuroraVariables(mood: number): Record<string, string> {
+export function getGlassVariables(mood: number): Record<string, string> {
   const amount = normalizeGradientMood(mood) / 100
+  const hue = 12 + amount * 330
   return {
-    '--aurora-hue-a': `${interpolate(18, 276, amount)}deg`,
-    '--aurora-hue-b': `${interpolate(332, 310, amount)}deg`,
-    '--aurora-angle': `${interpolate(128, 205, amount)}deg`,
-    '--aurora-saturation': `${interpolate(86, 92, amount)}%`,
-    '--aurora-lightness': `${interpolate(94, 89, amount)}%`,
+    '--glass-hue-a': `${wrapHue(hue)}deg`,
+    '--glass-hue-b': `${wrapHue(hue + 64)}deg`,
+    '--glass-hue-c': `${wrapHue(hue + 176)}deg`,
+    '--glass-hue-d': `${wrapHue(hue - 58)}deg`,
+    '--glass-saturation': `${Math.round(74 + amount * 22)}%`,
+    '--glass-angle': `${Math.round(108 + amount * 144)}deg`,
   }
 }

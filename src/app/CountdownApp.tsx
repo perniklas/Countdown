@@ -1,16 +1,35 @@
 import { LogOut, Menu, Plus, Sparkles } from 'lucide-react'
-import { useMemo, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
 import { celebrate } from '../celebrate'
 import { CountdownEditor } from '../components/CountdownEditor'
 import { CountdownLibrary } from '../components/CountdownLibrary'
 import { EmptyState } from '../components/EmptyState'
 import { HeroCountdown } from '../components/HeroCountdown'
 import { Toast } from '../components/Toast'
+import { ThemeScene } from '../components/ThemeScene'
 import { partitionCountdowns, type Countdown, type CountdownInput } from '../domain/countdown'
-import { getAuroraVariables } from '../domain/theme'
+import { getParallaxOffsets, getStarWarp } from '../domain/pointerEffects'
+import { getGlassVariables } from '../domain/theme'
 import { useCountdowns } from '../hooks/useCountdowns'
 import type { CountdownRepository } from '../services/countdownRepository'
 
+const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
+const round3 = (value: number) => Math.round(value * 1_000) / 1_000
+
+const resetSceneMotion = (root: HTMLElement) => {
+  root.style.setProperty('--pointer-x', '0.5')
+  root.style.setProperty('--pointer-y', '0.5')
+  root.style.setProperty('--parallax-far-x', '0px')
+  root.style.setProperty('--parallax-far-y', '0px')
+  root.style.setProperty('--parallax-near-x', '0px')
+  root.style.setProperty('--parallax-near-y', '0px')
+
+  root.querySelectorAll<HTMLElement>('.eh-star').forEach((star) => {
+    star.style.setProperty('--warp-x', '0px')
+    star.style.setProperty('--warp-y', '0px')
+    star.style.setProperty('--warp-scale', '1')
+  })
+}
 interface CountdownAppProps {
   uid: string
   repository: CountdownRepository
@@ -37,14 +56,46 @@ export function CountdownApp({
   const [editing, setEditing] = useState<Countdown | null>(null)
   const [saving, setSaving] = useState(false)
 
-  const celebratedIds = useRef(new Set<string>())
+  const celebrationStop = useRef<(() => void) | null>(null)
+  const themeRootRef = useRef<HTMLElement>(null)
+  const pointerFrame = useRef<number | null>(null)
+  const latestPointer = useRef<{ root: HTMLElement; clientX: number; clientY: number } | null>(null)
 
   const selected =
     countdowns.items.find((item) => item.id === selectedId) ?? active[0] ?? null
   const resolvedSelectedId = selected?.id ?? null
   const theme = selected?.theme ?? 'aurora'
   const gradientMood = selected?.themeSettings.gradientMood ?? 50
-  const themeStyle = getAuroraVariables(gradientMood) as CSSProperties
+  const themeStyle =
+    theme === 'aurora' ? (getGlassVariables(gradientMood) as CSSProperties) : undefined
+  useEffect(() => {
+    if (
+      selected &&
+      (selected.status === 'history' || selected.targetAt <= Date.now())
+    ) {
+      celebrationStop.current = celebrate()
+    }
+
+    return () => {
+      celebrationStop.current?.()
+      celebrationStop.current = null
+    }
+  }, [resolvedSelectedId, selected?.status, selected?.targetAt])
+
+  useEffect(() => {
+    if (pointerFrame.current !== null) {
+      cancelAnimationFrame(pointerFrame.current)
+      pointerFrame.current = null
+    }
+    latestPointer.current = null
+    if (themeRootRef.current) resetSceneMotion(themeRootRef.current)
+
+    return () => {
+      if (pointerFrame.current !== null) {
+        cancelAnimationFrame(pointerFrame.current)
+      }
+    }
+  }, [theme])
 
   const openCreate = () => {
     setLibraryOpen(false)
@@ -86,17 +137,94 @@ export function CountdownApp({
   }
 
 
-  const handleReachZero = (countdown: Countdown) => {
-    if (celebratedIds.current.has(countdown.id)) return
-    celebratedIds.current.add(countdown.id)
-    celebrate()
+  const handleReachZero = () => {
+    celebrationStop.current?.()
+    celebrationStop.current = celebrate()
+  }
+  const moveBackgroundWithPointer = (event: ReactPointerEvent<HTMLElement>) => {
+    if (
+      event.pointerType === 'touch' ||
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    ) {
+      return
+    }
+
+    latestPointer.current = {
+      root: event.currentTarget,
+      clientX: event.clientX,
+      clientY: event.clientY,
+    }
+    if (pointerFrame.current !== null) return
+
+    pointerFrame.current = requestAnimationFrame(() => {
+      pointerFrame.current = null
+      const pointer = latestPointer.current
+      if (!pointer) return
+
+      const rect = pointer.root.getBoundingClientRect()
+      if (rect.width <= 0 || rect.height <= 0) return
+
+      const pointerFractionX = round3(clamp01((pointer.clientX - rect.left) / rect.width))
+      const pointerFractionY = round3(clamp01((pointer.clientY - rect.top) / rect.height))
+      pointer.root.style.setProperty('--pointer-x', String(pointerFractionX))
+      pointer.root.style.setProperty('--pointer-y', String(pointerFractionY))
+
+      if (theme === 'aurora') {
+        const offsets = getParallaxOffsets({
+          clientX: pointer.clientX,
+          clientY: pointer.clientY,
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        })
+        pointer.root.style.setProperty('--parallax-far-x', String(offsets.farX) + 'px')
+        pointer.root.style.setProperty('--parallax-far-y', String(offsets.farY) + 'px')
+        pointer.root.style.setProperty('--parallax-near-x', String(offsets.nearX) + 'px')
+        pointer.root.style.setProperty('--parallax-near-y', String(offsets.nearY) + 'px')
+      }
+
+      if (theme === 'event-horizon') {
+        const pointerX = pointer.clientX - rect.left
+        const pointerY = pointer.clientY - rect.top
+        const radius = Math.min(280, Math.max(170, Math.min(rect.width, rect.height) * 0.32))
+
+        pointer.root
+          .querySelectorAll<HTMLElement>('.eh-star')
+          .forEach((star) => {
+            const warp = getStarWarp({
+              starX: (Number(star.dataset.x) / 100) * rect.width,
+              starY: (Number(star.dataset.y) / 100) * rect.height,
+              pointerX,
+              pointerY,
+              radius,
+            })
+            star.style.setProperty('--warp-x', String(warp.x) + 'px')
+            star.style.setProperty('--warp-y', String(warp.y) + 'px')
+            star.style.setProperty('--warp-scale', String(warp.scale))
+          })
+      }
+    })
+  }
+
+  const recenterBackground = (event: ReactPointerEvent<HTMLElement>) => {
+    latestPointer.current = null
+    if (pointerFrame.current !== null) {
+      cancelAnimationFrame(pointerFrame.current)
+      pointerFrame.current = null
+    }
+    resetSceneMotion(event.currentTarget)
   }
   return (
-    <main className={`theme-root theme-${theme}`} style={themeStyle}>
+    <main
+      className={`theme-root theme-${theme}`}
+      ref={themeRootRef}
+      style={themeStyle}
+      onPointerMove={moveBackgroundWithPointer}
+      onPointerLeave={recenterBackground}
+    >
       <div className="app-decoration" aria-hidden="true">
-        <span className="decoration-one" />
-        <span className="decoration-two" />
-        <span className="decoration-three" />
+        <ThemeScene theme={theme} />
       </div>
 
       <header className="app-header">
@@ -136,7 +264,7 @@ export function CountdownApp({
             onEdit={() => openEdit(selected)}
             onReachZero={
               selected.status === 'active'
-                ? () => handleReachZero(selected)
+                ? handleReachZero
                 : undefined
             }
           />
@@ -146,7 +274,7 @@ export function CountdownApp({
       </div>
 
       <footer className="app-footer">
-        <span>{history.length > 0 ? `${history.length} moment${history.length === 1 ? '' : 's'} in history` : 'Make time feel special'}</span>
+        <span></span>
         <button type="button" onClick={() => setLibraryOpen(true)}>Open your library</button>
       </footer>
 
@@ -184,3 +312,5 @@ export function CountdownApp({
     </main>
   )
 }
+
+
