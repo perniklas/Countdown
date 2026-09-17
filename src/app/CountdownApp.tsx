@@ -10,8 +10,8 @@ import { ThemeScene } from '../components/ThemeScene'
 import { partitionCountdowns, type Countdown, type CountdownInput } from '../domain/countdown'
 import {
   getEventHorizonParallax,
+  getGravitationalLensOffset,
   getParallaxOffsets,
-  getStarWarp,
 } from '../domain/pointerEffects'
 import { getGlassVariables } from '../domain/theme'
 import { useCountdowns } from '../hooks/useCountdowns'
@@ -53,6 +53,7 @@ const resetSceneMotion = (root: HTMLElement) => {
     star.style.setProperty('--warp-x', '0px')
     star.style.setProperty('--warp-y', '0px')
     star.style.setProperty('--warp-scale', '1')
+    star.style.setProperty('--lens-opacity', '1')
   })
 }
 interface CountdownAppProps {
@@ -233,24 +234,31 @@ export function CountdownApp({
         pointer.root.style.setProperty('--eh-stars-x', `${offsets.starsX}px`)
         pointer.root.style.setProperty('--eh-stars-y', `${offsets.starsY}px`)
 
-        const pointerX = pointer.clientX - rect.left
-        const pointerY = pointer.clientY - rect.top
-        const radius = Math.min(280, Math.max(170, Math.min(rect.width, rect.height) * 0.32))
+        const sphere = pointer.root.querySelector('.eh-singularity')
+        if (sphere) {
+          const sphereRect = sphere.getBoundingClientRect()
+          const holeX = sphereRect.left + sphereRect.width / 2 - rect.left
+          const holeY = sphereRect.top + sphereRect.height / 2 - rect.top
+          const shadowRadius = sphereRect.width / 2
+          const einsteinRadius = shadowRadius * 1.4
 
-        pointer.root
-          .querySelectorAll<HTMLElement>('.eh-star')
-          .forEach((star) => {
-            const warp = getStarWarp({
-              starX: (Number(star.dataset.x) / 100) * rect.width,
-              starY: (Number(star.dataset.y) / 100) * rect.height,
-              pointerX,
-              pointerY,
-              radius,
+          pointer.root
+            .querySelectorAll<HTMLElement>('.eh-star')
+            .forEach((star) => {
+              const lens = getGravitationalLensOffset({
+                starX: (Number(star.dataset.x) / 100) * rect.width,
+                starY: (Number(star.dataset.y) / 100) * rect.height,
+                holeX,
+                holeY,
+                shadowRadius,
+                einsteinRadius,
+              })
+              star.style.setProperty('--warp-x', String(lens.dx) + 'px')
+              star.style.setProperty('--warp-y', String(lens.dy) + 'px')
+              star.style.setProperty('--warp-scale', String(lens.scale))
+              star.style.setProperty('--lens-opacity', String(lens.opacity))
             })
-            star.style.setProperty('--warp-x', String(warp.x) + 'px')
-            star.style.setProperty('--warp-y', String(warp.y) + 'px')
-            star.style.setProperty('--warp-scale', String(warp.scale))
-          })
+        }
       }
     })
   }

@@ -145,137 +145,136 @@ describe('CountdownApp', () => {
     expect(celebrate).toHaveBeenCalledTimes(1)
     expect(archive).not.toHaveBeenCalledWith('user-1', ['final-second'])
   })
-it('moves the main theme background at different parallax depths and recenters it', () => {
-  const repository = new FakeCountdownRepository()
 
-  const { container } = render(
-    <CountdownApp
-      uid="user-1"
-      repository={repository}
-      displayName="Ada"
-      onSignOut={vi.fn()}
-    />,
-  )
+  it('moves the main theme background at different parallax depths and recenters it', () => {
+    const repository = new FakeCountdownRepository()
 
-  const themeRoot = container.querySelector<HTMLElement>('.theme-root')
-  expect(themeRoot).not.toBeNull()
+    const { container } = render(
+      <CountdownApp
+        uid="user-1"
+        repository={repository}
+        displayName="Ada"
+        onSignOut={vi.fn()}
+      />,
+    )
 
-  Object.defineProperty(themeRoot!, 'getBoundingClientRect', {
-    value: () => ({
-      left: 0,
-      top: 0,
-      width: 1_000,
-      height: 800,
-      right: 1_000,
-      bottom: 800,
-      x: 0,
-      y: 0,
-      toJSON: () => ({}),
-    }),
-  })
+    const themeRoot = container.querySelector<HTMLElement>('.theme-root')
+    expect(themeRoot).not.toBeNull()
 
-  const animationFrame = vi
-    .spyOn(window, 'requestAnimationFrame')
-    .mockImplementation((callback) => {
-      callback(0)
-      return 1
+    Object.defineProperty(themeRoot!, 'getBoundingClientRect', {
+      value: () => ({
+        left: 0,
+        top: 0,
+        width: 1_000,
+        height: 800,
+        right: 1_000,
+        bottom: 800,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
     })
 
-  fireEvent.pointerMove(themeRoot!, { clientX: 750, clientY: 200 })
+    const animationFrame = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callback(0)
+        return 1
+      })
 
-  expect(themeRoot!.style.getPropertyValue('--parallax-far-x')).toBe('6px')
-  expect(themeRoot!.style.getPropertyValue('--parallax-far-y')).toBe('-5px')
-  expect(themeRoot!.style.getPropertyValue('--parallax-near-x')).toBe('14px')
-  expect(themeRoot!.style.getPropertyValue('--parallax-near-y')).toBe('-11px')
+    fireEvent.pointerMove(themeRoot!, { clientX: 750, clientY: 200 })
 
-  fireEvent.pointerLeave(themeRoot!)
+    expect(themeRoot!.style.getPropertyValue('--parallax-far-x')).toBe('6px')
+    expect(themeRoot!.style.getPropertyValue('--parallax-far-y')).toBe('-5px')
+    expect(themeRoot!.style.getPropertyValue('--parallax-near-x')).toBe('14px')
+    expect(themeRoot!.style.getPropertyValue('--parallax-near-y')).toBe('-11px')
 
-  expect(themeRoot!.style.getPropertyValue('--parallax-far-x')).toBe('0px')
-  expect(themeRoot!.style.getPropertyValue('--parallax-far-y')).toBe('0px')
-  expect(themeRoot!.style.getPropertyValue('--parallax-near-x')).toBe('0px')
-  expect(themeRoot!.style.getPropertyValue('--parallax-near-y')).toBe('0px')
+    fireEvent.pointerLeave(themeRoot!)
 
-  animationFrame.mockRestore()
-})
+    expect(themeRoot!.style.getPropertyValue('--parallax-far-x')).toBe('0px')
+    expect(themeRoot!.style.getPropertyValue('--parallax-far-y')).toBe('0px')
+    expect(themeRoot!.style.getPropertyValue('--parallax-near-x')).toBe('0px')
+    expect(themeRoot!.style.getPropertyValue('--parallax-near-y')).toBe('0px')
 
-it('drives multi-layer black hole parallax and 3D tilts on event-horizon theme', async () => {
-  const repository = new FakeCountdownRepository([
-    {
-      id: 'gargantua',
-      title: 'Gargantua Journey',
-      targetAt: Date.now() + 24 * 60 * 60 * 1_000,
-      status: 'active',
-      theme: 'event-horizon',
-      themeSettings: { gradientMood: 50 },
-      createdAt: 1,
-      updatedAt: 1,
-    },
-  ])
-
-  const { container } = render(
-    <CountdownApp
-      uid="user-1"
-      repository={repository}
-      displayName="Cooper"
-      onSignOut={vi.fn()}
-    />,
-  )
-
-  expect(
-    await screen.findByRole('heading', { name: 'Gargantua Journey' }),
-  ).toBeInTheDocument()
-
-  const themeRoot = container.querySelector<HTMLElement>('.theme-root')
-  expect(themeRoot).not.toBeNull()
-
-  Object.defineProperty(themeRoot!, 'getBoundingClientRect', {
-    value: () => ({
-      left: 0,
-      top: 0,
-      width: 1_000,
-      height: 800,
-      right: 1_000,
-      bottom: 800,
-      x: 0,
-      y: 0,
-      toJSON: () => ({}),
-    }),
+    animationFrame.mockRestore()
   })
 
-  const animationFrame = vi
-    .spyOn(window, 'requestAnimationFrame')
-    .mockImplementation((callback) => {
-      callback(0)
-      return 1
+  it('drives multi-layer black hole parallax and 3D tilts on event-horizon theme', async () => {
+    const repository = new FakeCountdownRepository([
+      {
+        id: 'gargantua',
+        title: 'Gargantua Journey',
+        targetAt: Date.now() + 24 * 60 * 60 * 1_000,
+        status: 'active',
+        theme: 'event-horizon',
+        themeSettings: { gradientMood: 50 },
+        createdAt: 1,
+        updatedAt: 1,
+      },
+    ])
+
+    const { container } = render(
+      <CountdownApp
+        uid="user-1"
+        repository={repository}
+        displayName="Cooper"
+        onSignOut={vi.fn()}
+      />,
+    )
+
+    expect(
+      await screen.findByRole('heading', { name: 'Gargantua Journey' }),
+    ).toBeInTheDocument()
+
+    const themeRoot = container.querySelector<HTMLElement>('.theme-root')
+    expect(themeRoot).not.toBeNull()
+
+    Object.defineProperty(themeRoot!, 'getBoundingClientRect', {
+      value: () => ({
+        left: 0,
+        top: 0,
+        width: 1_000,
+        height: 800,
+        right: 1_000,
+        bottom: 800,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
     })
 
-  fireEvent.pointerMove(themeRoot!, { clientX: 750, clientY: 200 })
+    const animationFrame = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callback(0)
+        return 1
+      })
 
+    fireEvent.pointerMove(themeRoot!, { clientX: 750, clientY: 200 })
 
-  expect(themeRoot!.style.getPropertyValue('--eh-disc-x')).toBe('14px')
-  expect(themeRoot!.style.getPropertyValue('--eh-disc-y')).toBe('-10px')
-  expect(themeRoot!.style.getPropertyValue('--eh-disc-tilt-x')).toBe('5deg')
-  expect(themeRoot!.style.getPropertyValue('--eh-disc-tilt-y')).toBe('6deg')
-  expect(themeRoot!.style.getPropertyValue('--eh-core-x')).toBe('8px')
-  expect(themeRoot!.style.getPropertyValue('--eh-core-y')).toBe('-6px')
-  expect(themeRoot!.style.getPropertyValue('--eh-halo-x')).toBe('4px')
-  expect(themeRoot!.style.getPropertyValue('--eh-halo-y')).toBe('-3px')
-  expect(themeRoot!.style.getPropertyValue('--eh-ring-x')).toBe('7.5px')
-  expect(themeRoot!.style.getPropertyValue('--eh-ring-y')).toBe('-5.5px')
+    expect(themeRoot!.style.getPropertyValue('--eh-disc-x')).toBe('14px')
+    expect(themeRoot!.style.getPropertyValue('--eh-disc-y')).toBe('-10px')
+    expect(themeRoot!.style.getPropertyValue('--eh-disc-tilt-x')).toBe('5deg')
+    expect(themeRoot!.style.getPropertyValue('--eh-disc-tilt-y')).toBe('6deg')
+    expect(themeRoot!.style.getPropertyValue('--eh-core-x')).toBe('8px')
+    expect(themeRoot!.style.getPropertyValue('--eh-core-y')).toBe('-6px')
+    expect(themeRoot!.style.getPropertyValue('--eh-halo-x')).toBe('4px')
+    expect(themeRoot!.style.getPropertyValue('--eh-halo-y')).toBe('-3px')
+    expect(themeRoot!.style.getPropertyValue('--eh-ring-x')).toBe('7.5px')
+    expect(themeRoot!.style.getPropertyValue('--eh-ring-y')).toBe('-5.5px')
 
-  fireEvent.pointerLeave(themeRoot!)
+    fireEvent.pointerLeave(themeRoot!)
 
-  expect(themeRoot!.style.getPropertyValue('--eh-disc-x')).toBe('0px')
-  expect(themeRoot!.style.getPropertyValue('--eh-disc-y')).toBe('0px')
-  expect(themeRoot!.style.getPropertyValue('--eh-disc-tilt-x')).toBe('0deg')
-  expect(themeRoot!.style.getPropertyValue('--eh-disc-tilt-y')).toBe('0deg')
-  expect(themeRoot!.style.getPropertyValue('--eh-core-x')).toBe('0px')
-  expect(themeRoot!.style.getPropertyValue('--eh-core-y')).toBe('0px')
-  expect(themeRoot!.style.getPropertyValue('--eh-halo-x')).toBe('0px')
-  expect(themeRoot!.style.getPropertyValue('--eh-halo-y')).toBe('0px')
+    expect(themeRoot!.style.getPropertyValue('--eh-disc-x')).toBe('0px')
+    expect(themeRoot!.style.getPropertyValue('--eh-disc-y')).toBe('0px')
+    expect(themeRoot!.style.getPropertyValue('--eh-disc-tilt-x')).toBe('0deg')
+    expect(themeRoot!.style.getPropertyValue('--eh-disc-tilt-y')).toBe('0deg')
+    expect(themeRoot!.style.getPropertyValue('--eh-core-x')).toBe('0px')
+    expect(themeRoot!.style.getPropertyValue('--eh-core-y')).toBe('0px')
+    expect(themeRoot!.style.getPropertyValue('--eh-halo-x')).toBe('0px')
+    expect(themeRoot!.style.getPropertyValue('--eh-halo-y')).toBe('0px')
 
-  animationFrame.mockRestore()
+    animationFrame.mockRestore()
+  })
 })
-})
-
 

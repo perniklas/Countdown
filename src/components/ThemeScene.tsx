@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import type { ThemeId } from '../domain/countdown'
 
 type StarLayer = 0 | 1 | 2
@@ -30,10 +31,7 @@ const LAYER_OPACITY_RANGE: Record<StarLayer, [number, number]> = {
   2: [0.58, 0.86],
 }
 
-const createBackgroundStars = (
-  count: number,
-  isBlackHoleTheme = false,
-): BackgroundStar[] => {
+const createBackgroundStars = (count: number): BackgroundStar[] => {
   let seed = 0x7a31f2d9
   const random = () => {
     seed = (Math.imul(1_664_525, seed) + 1_013_904_223) >>> 0
@@ -51,30 +49,28 @@ const createBackgroundStars = (
     let lensAngle = 0
     let arcStretch = 1
 
-    if (isBlackHoleTheme) {
-      // Black hole center is at (50%, 48%)
-      const dx = x - 50
-      const dy = (y - 48) * 1.25 // spherical aspect ratio correction
-      const dist = Math.hypot(dx, dy)
-      const shadowRadius = 15.5 // shadow boundary %
+    // Black hole center is at (50%, 48%)
+    const dx = x - 50
+    const dy = (y - 48) * 1.25 // spherical aspect ratio correction
+    const dist = Math.hypot(dx, dy)
+    const shadowRadius = 15.5 // shadow boundary %
 
-      if (dist < shadowRadius) {
-        // Gravitational deflection away from shadow interior: never inside
-        const angle = Math.atan2(dy, dx)
-        const deflectedDist = shadowRadius + 1.2 + random() * 8.5
-        x = Math.round((50 + Math.cos(angle) * deflectedDist) * 100) / 100
-        y = Math.round((48 + (Math.sin(angle) * deflectedDist) / 1.25) * 100) / 100
-        isLensed = true
-        lensAngle = Math.round((angle * (180 / Math.PI) + 90) * 10) / 10
-        arcStretch = Math.round((1.8 + random() * 1.4) * 100) / 100
-      } else if (dist < 36) {
-        // Gravitational warping / Einstein arc zone near black hole
-        const angle = Math.atan2(dy, dx)
-        isLensed = true
-        lensAngle = Math.round((angle * (180 / Math.PI) + 90) * 10) / 10
-        const proximity = (36 - dist) / (36 - shadowRadius)
-        arcStretch = Math.round((1 + proximity ** 1.4 * 2.2) * 100) / 100
-      }
+    if (dist < shadowRadius) {
+      // Gravitational deflection away from shadow interior: never inside
+      const angle = Math.atan2(dy, dx)
+      const deflectedDist = shadowRadius + 1.2 + random() * 8.5
+      x = Math.round((50 + Math.cos(angle) * deflectedDist) * 100) / 100
+      y = Math.round((48 + (Math.sin(angle) * deflectedDist) / 1.25) * 100) / 100
+      isLensed = true
+      lensAngle = Math.round((angle * (180 / Math.PI) + 90) * 10) / 10
+      arcStretch = Math.round((1.8 + random() * 1.4) * 100) / 100
+    } else if (dist < 36) {
+      // Gravitational warping / Einstein arc zone near black hole
+      const angle = Math.atan2(dy, dx)
+      isLensed = true
+      lensAngle = Math.round((angle * (180 / Math.PI) + 90) * 10) / 10
+      const proximity = (36 - dist) / (36 - shadowRadius)
+      arcStretch = Math.round((1 + proximity ** 1.4 * 2.2) * 100) / 100
     }
 
     return {
@@ -119,8 +115,7 @@ const createAccretionSparks = (count: number): AccretionSpark[] => {
   }))
 }
 
-const AURORA_STARS = createBackgroundStars(92, false)
-const EVENT_HORIZON_STARS = createBackgroundStars(240, true)
+const EVENT_HORIZON_STARS = createBackgroundStars(240)
 const EVENT_HORIZON_SPARKS = createAccretionSparks(18)
 
 interface ThemeSceneProps {
@@ -160,14 +155,16 @@ export function ThemeScene({ theme }: ThemeSceneProps) {
                       top: star.y + '%',
                       width: star.size + 'px',
                       height: star.size + 'px',
-                      opacity: star.opacity,
                       background: star.color,
-                      ...(star.isLensed
-                        ? ({
-                            '--lens-rot': `${star.lensAngle}deg`,
-                            '--lens-stretch': String(star.arcStretch),
-                          } as CSSProperties)
-                        : {}),
+                      ...({
+                        '--star-opacity': star.opacity,
+                        ...(star.isLensed
+                          ? {
+                              '--lens-rot': `${star.lensAngle}deg`,
+                              '--lens-stretch': String(star.arcStretch),
+                            }
+                          : {}),
+                      } as CSSProperties),
                     }}
                   />
                 ))}
@@ -210,6 +207,7 @@ export function ThemeScene({ theme }: ThemeSceneProps) {
                     <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
                   </radialGradient>
 
+                  {/* Fades the crescent tips at the left/right ends so they dissolve instead of ending bluntly */}
                   <mask id="eh-feather-mask">
                     <rect x="0" y="0" width="800" height="600" fill="url(#eh-arch-vignette)" />
                   </mask>
@@ -221,12 +219,13 @@ export function ThemeScene({ theme }: ThemeSceneProps) {
                     className="eh-upper-arch-base"
                     d="M 40,310 C 100,105 250,45 400,45 C 550,45 700,105 760,310 C 660,215 520,175 400,175 C 280,175 140,215 40,310 Z"
                     fill="url(#eh-doppler-grad)"
+                    opacity="0.12"
                   />
                   <path
                     className="eh-upper-arch-core"
                     d="M 100,310 C 160,140 270,90 400,90 C 530,90 640,140 700,310 C 620,210 510,180 400,180 C 290,180 180,210 100,310 Z"
                     fill="url(#eh-arch-inner-grad)"
-                    opacity="0.8"
+                    opacity="0.12"
                   />
                   <path
                     className="eh-upper-arch-filament"
@@ -234,7 +233,7 @@ export function ThemeScene({ theme }: ThemeSceneProps) {
                     fill="none"
                     stroke="#ffffff"
                     strokeWidth="1.8"
-                    opacity="0.85"
+                    opacity="0.9"
                   />
 
                   {/* Lower Lensed Arch: subtle underside curve */}
@@ -242,7 +241,7 @@ export function ThemeScene({ theme }: ThemeSceneProps) {
                     className="eh-lower-arch-base"
                     d="M 110,300 C 170,390 280,422 400,422 C 520,422 630,390 690,300 C 620,360 510,395 400,395 C 290,395 180,360 110,300 Z"
                     fill="url(#eh-doppler-grad)"
-                    opacity="0.55"
+                    opacity="0.1"
                   />
                   <path
                     className="eh-lower-arch-filament"
@@ -250,7 +249,7 @@ export function ThemeScene({ theme }: ThemeSceneProps) {
                     fill="none"
                     stroke="#ffeec7"
                     strokeWidth="1.4"
-                    opacity="0.65"
+                    opacity="0.7"
                   />
                 </g>
               </svg>
@@ -263,7 +262,7 @@ export function ThemeScene({ theme }: ThemeSceneProps) {
             <div className="eh-front-disc">
               <div className="eh-disc-surface">
                 <div className="eh-disc-plasma" />
-                <div className="eh-disc-core" />
+                <div className="eh-disc-rings" />
                 <div className="eh-disc-isco" />
               </div>
             </div>
