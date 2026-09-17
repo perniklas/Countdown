@@ -125,16 +125,18 @@
 }
 
 /* ---------- the black hole (Gargantua) ---------- */
+/* Compact shadow (~16vw), a thick white-to-orange lensed ring hugging it,
+   and a flat accretion disc that passes behind the shadow's top and in
+   front of its lower third. */
 
 .theme-event-horizon .eh-hole {
   position: absolute;
   top: 48%;
   left: 50%;
-  width: min(106vw, 1180px);
+  width: min(80vw, 760px);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   perspective: 1100px;
-  transform-style: preserve-3d;
   pointer-events: none;
 }
 
@@ -144,74 +146,91 @@
   top: 50%;
   left: 50%;
   z-index: 1;
-  width: 140%;
-  height: 140%;
+  width: 120%;
+  height: 120%;
   border-radius: 50%;
-  transform: translate(-50%, -50%) translate3d(var(--eh-halo-x, 0px), var(--eh-halo-y, 0px), -60px);
+  transform: translate(-50%, -50%) translate3d(var(--eh-halo-x, 0px), var(--eh-halo-y, 0px), -90px);
   background: radial-gradient(
     circle,
-    rgb(255 185 80 / 11%) 0%,
-    rgb(230 110 20 / 6%) 32%,
-    rgb(120 40 5 / 3%) 55%,
-    transparent 72%
+    rgb(255 185 80 / 10%) 0%,
+    rgb(230 110 20 / 5%) 30%,
+    rgb(120 40 5 / 2%) 50%,
+    transparent 68%
   );
-  filter: blur(52px);
+  filter: blur(40px);
   pointer-events: none;
   transition: transform 0.22s cubic-bezier(0.15, 0.85, 0.35, 1);
+  will-change: transform;
 }
 
-/* 2. Rear Lensed Arches (Upper arch towering above, lower arch below) */
-.theme-event-horizon .eh-rear-lensing {
+/* 2. Accretion disc — far half, sits behind the shadow.
+   Colour is radial from the ellipse's own centre (the black hole), which
+   naturally gives a white-hot core fading to gold/orange/brown outward in
+   every direction, tapering the disc to nothing at its thin left/right tips. */
+.theme-event-horizon .eh-disc-back,
+.theme-event-horizon .eh-disc-front {
   position: absolute;
   top: 50%;
   left: 50%;
-  z-index: 2;
-  width: 130%;
-  height: 100%;
-  transform: translate(-50%, -50%) translate3d(var(--eh-halo-x, 0px), var(--eh-halo-y, 0px), -35px);
-  transition: transform 0.22s cubic-bezier(0.15, 0.85, 0.35, 1);
-  will-change: transform;
+  width: 97%;
+  height: 18%;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(
+      closest-side ellipse,
+      rgba(20, 7, 2, 0.16) 0%,
+      transparent 1.6%,
+      transparent 3.4%,
+      rgba(20, 7, 2, 0.12) 5%
+    ),
+    radial-gradient(
+      closest-side ellipse,
+      transparent 0 22%,
+      rgba(255, 255, 255, 0.9) 27%,
+      #ffd9a0 32%,
+      #f09030 42%,
+      #8a3d10 58%,
+      #4a1d05 76%,
+      transparent 96%
+    );
   pointer-events: none;
 }
 
-.theme-event-horizon .eh-lensing-svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 0 7px rgba(255, 175, 60, 0.25)) drop-shadow(0 0 15px rgba(220, 95, 15, 0.1));
+.theme-event-horizon .eh-disc-back {
+  z-index: 2;
+  transform: translate(-50%, -50%)
+    rotate(-4deg)
+    translate3d(var(--eh-disc-x, 0px), var(--eh-disc-y, 0px), -40px)
+    rotateX(var(--eh-disc-tilt-x, 0deg))
+    rotateY(calc(var(--eh-disc-tilt-y, 0deg) * 0.15));
+  transition: transform 0.18s cubic-bezier(0.15, 0.85, 0.35, 1);
+  will-change: transform;
 }
 
-.theme-event-horizon .eh-upper-arch-base,
-.theme-event-horizon .eh-upper-arch-core,
-.theme-event-horizon .eh-lower-arch-base {
-  filter: blur(18px);
-}
-
-.theme-event-horizon .eh-upper-arch-filament {
-  filter: drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 12px #ffba42);
-  animation: eh-arch-pulse 6s ease-in-out infinite alternate;
-}
-
-.theme-event-horizon .eh-lower-arch-filament {
-  filter: drop-shadow(0 0 4px #ffe4b5) drop-shadow(0 0 10px #ff9426);
-}
-
-/* 3. Secondary Einstein caustic rings */
-.theme-event-horizon .eh-caustic-rings {
+/* 3. Lensed ring — thick white-to-orange band hugging the shadow */
+.theme-event-horizon .eh-lensed-ring {
   position: absolute;
   top: 50%;
   left: 50%;
   z-index: 3;
-  width: 40%;
+  width: 30%;
   aspect-ratio: 1;
   border-radius: 50%;
-  transform: translate(-50%, -50%) translate3d(calc(var(--eh-halo-x, 0px) * 0.9), calc(var(--eh-halo-y, 0px) * 0.9), -15px);
-  border: 1px solid rgba(255, 200, 110, 0.28);
-  box-shadow:
-    0 0 18px 2px rgba(255, 160, 45, 0.3),
-    inset 0 0 14px 1px rgba(255, 140, 30, 0.22);
-  pointer-events: none;
+  transform: translate(-50%, -50%) translate3d(var(--eh-ring-x, 0px), var(--eh-ring-y, 0px), -15px);
+  background: radial-gradient(
+    closest-side circle,
+    transparent 0 66%,
+    #ffffff 68%,
+    #fff3cf 74%,
+    #ffc06a 84%,
+    #e8761a 92%,
+    rgba(150, 50, 5, 0.35) 97%,
+    transparent 100%
+  );
+  filter: blur(0.8px) drop-shadow(0 0 18px rgb(255 165 60 / 55%));
   transition: transform 0.2s cubic-bezier(0.15, 0.85, 0.35, 1);
+  will-change: transform;
+  pointer-events: none;
 }
 
 /* 4. Event Horizon Shadow (Singularity Core) */
@@ -220,7 +239,7 @@
   top: 50%;
   left: 50%;
   z-index: 4;
-  width: 32%;
+  width: 20%;
   aspect-ratio: 1;
   border-radius: 50%;
   transform: translate(-50%, -50%) translate3d(var(--eh-core-x, 0px), var(--eh-core-y, 0px), 0px);
@@ -235,28 +254,23 @@
   height: 100%;
   border-radius: 50%;
   background: #000000;
-  box-shadow:
-    0 0 35px 8px #000000,
-    inset 0 -24px 55px 0 rgb(255 179 71 / 8%),
-    inset 0 20px 45px 0 rgb(255 179 71 / 6%);
 }
 
-/* 5. The Photon Sphere / Einstein Ring */
+/* 5. The Photon Sphere / Einstein Ring — thin ultra-bright rim */
 .theme-event-horizon .eh-photon-ring {
   position: absolute;
   top: 50%;
   left: 50%;
   z-index: 5;
-  width: 32.8%;
+  width: 20.6%;
   aspect-ratio: 1;
   border-radius: 50%;
-  transform: translate(-50%, -50%) translate3d(var(--eh-ring-x, 0px), var(--eh-ring-y, 0px), 12px);
+  transform: translate(-50%, -50%) translate3d(var(--eh-ring-x, 0px), var(--eh-ring-y, 0px), 15px);
   border: 1.5px solid rgba(255, 255, 255, 0.96);
   box-shadow:
     0 0 5px 1.5px #ffffff,
     0 0 12px 3px #ffe29a,
-    0 0 28px 7px #ff9826,
-    0 0 65px 14px rgba(255, 120, 15, 0.5),
+    0 0 26px 6px #ff9826,
     inset 0 0 5px 1px rgba(255, 255, 255, 0.95);
   animation: eh-photon-pulse 5s ease-in-out infinite alternate;
   transition: transform 0.2s cubic-bezier(0.15, 0.85, 0.35, 1);
@@ -264,183 +278,18 @@
   pointer-events: none;
 }
 
-/* 6. The Front Accretion Disc (Cuts across front of the shadow) */
-.theme-event-horizon .eh-front-disc {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+/* 6. Accretion disc — near half, crosses the shadow's lower third */
+.theme-event-horizon .eh-disc-front {
   z-index: 6;
-  width: 95%;
-  aspect-ratio: 1;
-  transform-origin: center center;
+  mask-image: linear-gradient(to bottom, transparent 0 54%, #000 70%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0 54%, #000 70%);
   transform: translate(-50%, -50%)
-    translate3d(var(--eh-disc-x, 0px), var(--eh-disc-y, 0px), 32px)
-    rotateX(calc(73deg + var(--eh-disc-tilt-x, 0deg)))
-    rotateY(var(--eh-disc-tilt-y, 0deg));
+    rotate(-4deg)
+    translate3d(var(--eh-disc-x, 0px), var(--eh-disc-y, 0px), 40px)
+    rotateX(var(--eh-disc-tilt-x, 0deg))
+    rotateY(calc(var(--eh-disc-tilt-y, 0deg) * 0.15));
   transition: transform 0.18s cubic-bezier(0.15, 0.85, 0.35, 1);
   will-change: transform;
-  pointer-events: none;
-}
-
-.theme-event-horizon .eh-disc-surface {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  mask: radial-gradient(circle, transparent 0 27%, #fff 29% 45%, transparent 48%);
-  -webkit-mask: radial-gradient(circle, transparent 0 27%, #fff 29% 45%, transparent 48%);
-  filter: drop-shadow(0 0 35px rgba(255, 170, 50, 0.75));
-  opacity: 0.62;
-}
-
-.theme-event-horizon .eh-disc-rings {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  opacity: 0.5;
-  background: repeating-radial-gradient(
-    circle,
-    rgba(255, 235, 190, 0.5) 0px,
-    rgba(255, 205, 130, 0.42) 24px,
-    rgba(220, 140, 60, 0.34) 48px,
-    rgba(180, 100, 35, 0.32) 72px,
-    rgba(255, 215, 150, 0.46) 96px
-  );
-  animation: eh-disk-spin 64s linear infinite;
-}
-
-.theme-event-horizon .eh-disc-plasma {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    from -50deg,
-    #ffffff 0deg,
-    #fff6db 32deg,
-    #ffbc52 75deg,
-    #e3660e 125deg,
-    #822b02 185deg,
-    #401100 230deg,
-    #a63501 275deg,
-    #ffa538 320deg,
-    #ffffff 360deg
-  );
-  mix-blend-mode: hard-light;
-  animation: eh-disk-spin 42s linear infinite;
-}
-
-.theme-event-horizon .eh-disc-isco {
-  position: absolute;
-  inset: 33%;
-  border-radius: 50%;
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 10px 2px #ffe6a6, inset 0 0 8px 1px #ffb347;
-}
-
-/* 7. Relativistic Doppler Brightening Boost (Approaching left side) */
-.theme-event-horizon .eh-doppler-boost {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 7;
-  width: 120%;
-  height: 60%;
-  transform: translate(-50%, -50%) translate3d(calc(var(--eh-disc-x, 0px) * 1.1), var(--eh-disc-y, 0px), 36px);
-  background: radial-gradient(
-    ellipse 45% 40% at 24% 50%,
-    rgba(255, 255, 255, 0.16) 0%,
-    rgba(255, 190, 70, 0.1) 42%,
-    transparent 75%
-  );
-  mix-blend-mode: screen;
-  pointer-events: none;
-  transition: transform 0.18s cubic-bezier(0.15, 0.85, 0.35, 1);
-}
-
-/* 8. Infalling Matter Filaments */
-.theme-event-horizon .eh-filaments {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 8;
-  width: 44%;
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%) translate3d(var(--eh-core-x, 0px), var(--eh-core-y, 0px), 38px);
-  pointer-events: none;
-  transition: transform 0.2s cubic-bezier(0.15, 0.85, 0.35, 1);
-}
-
-.theme-event-horizon .eh-filament {
-  position: absolute;
-  border-radius: 50%;
-  border: 1.5px solid transparent;
-  filter: drop-shadow(0 0 8px #ff9e2e);
-}
-
-.theme-event-horizon .eh-fil-1 {
-  inset: 6%;
-  border-top-color: rgba(255, 240, 200, 0.85);
-  transform: rotate(25deg);
-  animation: eh-fil-spin 18s linear infinite;
-}
-
-.theme-event-horizon .eh-fil-2 {
-  inset: 12%;
-  border-right-color: rgba(255, 195, 75, 0.75);
-  transform: rotate(140deg);
-  animation: eh-fil-spin 12s linear infinite reverse;
-}
-
-.theme-event-horizon .eh-fil-3 {
-  inset: 18%;
-  border-bottom-color: rgba(255, 220, 140, 0.8);
-  transform: rotate(240deg);
-  animation: eh-fil-spin 15s linear infinite;
-}
-
-/* 9. Anamorphic Lens Flare */
-.theme-event-horizon .eh-anamorphic-flare {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 9;
-  width: 120%;
-  height: 5px;
-  transform: translate(-50%, -50%) translate3d(var(--eh-fg-x, 0px), var(--eh-fg-y, 0px), 52px);
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 130, 20, 0.01) 12%,
-    rgba(255, 190, 80, 0.35) 36%,
-    rgba(255, 255, 255, 0.96) 50%,
-    rgba(255, 190, 80, 0.35) 64%,
-    rgba(255, 130, 20, 0.01) 88%,
-    transparent 100%
-  );
-  filter: blur(1px) drop-shadow(0 0 12px rgba(255, 200, 100, 0.85));
-  opacity: 0.5;
-  animation: eh-flare-pulse 5.5s ease-in-out infinite alternate;
-  transition: transform 0.16s cubic-bezier(0.15, 0.85, 0.35, 1);
-  will-change: transform;
-  pointer-events: none;
-}
-
-/* 10. Foreground Accretion Sparks */
-.theme-event-horizon .eh-sparks {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  transform: translate3d(var(--eh-fg-x, 0px), var(--eh-fg-y, 0px), 65px);
-  transition: transform 0.15s cubic-bezier(0.15, 0.85, 0.35, 1);
-  will-change: transform;
-  pointer-events: none;
-}
-
-.theme-event-horizon .eh-spark {
-  position: absolute;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 0 4px 1px #ffdf9e, 0 0 10px 2px #ff9e2e;
-  animation: eh-spark-orbit ease-in-out infinite alternate;
 }
 
 /* ---------- typography ---------- */
@@ -576,10 +425,6 @@
   to { transform: translate(-6.5%, 2.8%); }
 }
 
-@keyframes eh-disk-spin {
-  to { transform: rotate(360deg); }
-}
-
 @keyframes eh-twinkle-a {
   0%, 100% { filter: brightness(0.72); }
   50% { filter: brightness(1.2); }
@@ -605,7 +450,7 @@
 @media (max-width: 760px) {
   .theme-event-horizon .eh-hole {
     top: 44%;
-    width: min(136vw, 760px);
+    width: min(84vw, 480px);
   }
 
   .theme-event-horizon .time-unit {
@@ -634,60 +479,11 @@
   }
 }
 
-@keyframes eh-arch-pulse {
-  0%, 100% {
-    opacity: 0.92;
-    filter: drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 12px #ffba42);
-  }
-  50% {
-    opacity: 1;
-    filter: drop-shadow(0 0 7px #ffffff) drop-shadow(0 0 18px #ffd06e);
-  }
-}
-
-@keyframes eh-flare-pulse {
-  0%, 100% {
-    opacity: 0.45;
-    transform: translate(-50%, -50%) translate3d(var(--eh-fg-x, 0px), var(--eh-fg-y, 0px), 52px) scaleX(0.95);
-  }
-  50% {
-    opacity: 0.56;
-    transform: translate(-50%, -50%) translate3d(var(--eh-fg-x, 0px), var(--eh-fg-y, 0px), 52px) scaleX(1.04);
-  }
-}
-
-@keyframes eh-fil-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes eh-spark-orbit {
-  0% {
-    transform: translate3d(0, 0, 0) scale(0.9);
-    opacity: 0.35;
-  }
-  50% {
-    opacity: 0.95;
-  }
-  100% {
-    transform: translate3d(22px, -12px, 12px) scale(1.15);
-    opacity: 0.45;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .theme-event-horizon .eh-star-layer,
   .theme-event-horizon .eh-star,
   .theme-event-horizon .eh-dust,
-  .theme-event-horizon .eh-upper-arch-filament,
-  .theme-event-horizon .eh-photon-ring,
-  .theme-event-horizon .eh-disc-rings,
-  .theme-event-horizon .eh-disc-plasma,
-  .theme-event-horizon .eh-fil-1,
-  .theme-event-horizon .eh-fil-2,
-  .theme-event-horizon .eh-fil-3,
-  .theme-event-horizon .eh-anamorphic-flare,
-  .theme-event-horizon .eh-spark {
+  .theme-event-horizon .eh-photon-ring {
     animation: none !important;
   }
 
@@ -695,15 +491,11 @@
   .theme-event-horizon .eh-dust,
   .theme-event-horizon .eh-hole,
   .theme-event-horizon .eh-bloom,
-  .theme-event-horizon .eh-rear-lensing,
-  .theme-event-horizon .eh-caustic-rings,
+  .theme-event-horizon .eh-disc-back,
+  .theme-event-horizon .eh-lensed-ring,
   .theme-event-horizon .eh-singularity,
   .theme-event-horizon .eh-photon-ring,
-  .theme-event-horizon .eh-front-disc,
-  .theme-event-horizon .eh-doppler-boost,
-  .theme-event-horizon .eh-filaments,
-  .theme-event-horizon .eh-anamorphic-flare,
-  .theme-event-horizon .eh-sparks {
+  .theme-event-horizon .eh-disc-front {
     transition: none !important;
   }
 }
