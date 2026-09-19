@@ -131,6 +131,59 @@
 .valheim-scene .vh-vignette {
   background: radial-gradient(ellipse at 50% 38%, transparent 30%, #102b2520 68%, #10231c99 100%);
 }
+
+/* ---- Meadows: a photograph cut into six parallax layers ---- */
+.valheim-photo { overflow: hidden; background: #0c1a13; }
+.valheim-photo .vh-photo-base,
+.valheim-photo .vh-photo-layer,
+.valheim-photo .vh-photo-fill { position: absolute; }
+/* Blurred full frame behind every layer: parallax gaps reveal soft depth, never a hole. */
+.valheim-photo .vh-photo-base {
+  inset: -9%;
+  background: url(/valheim/meadows-source.webp) center / cover no-repeat;
+  filter: blur(11px) brightness(.82) saturate(.94);
+  transform: scale(1.05);
+}
+.valheim-photo .vh-photo-layer {
+  inset: -9%;
+  transform:
+    translate3d(
+      calc((.5 - var(--pointer-x, .5)) * var(--px)),
+      calc((.5 - var(--pointer-y, .5)) * var(--py)),
+      0);
+  transition: transform .18s ease-out;
+  will-change: transform;
+}
+.valheim-photo .vh-photo-fill {
+  inset: 0;
+  background: url(/valheim/meadows-source.webp) center / cover no-repeat;
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: vh-photo-drift var(--idle-dur, 20s) ease-in-out infinite alternate;
+  will-change: transform;
+}
+/* Warm sun bloom from the bright right-hand sky, and legibility scrims. */
+.valheim-photo .vh-photo-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 72% 30%, rgb(255 241 194 / 30%), transparent 46%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.valheim-photo .vh-photo-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(#0b1a1266 0%, transparent 22% 60%, #0a17104d 100%);
+  pointer-events: none;
+}
+@keyframes vh-photo-drift {
+  from { transform: translate3d(calc(var(--idle-x, 0px) * -1), calc(var(--idle-y, 0px) * -1), 0); }
+  to   { transform: translate3d(var(--idle-x, 0px), var(--idle-y, 0px), 0); }
+}
 .vh-weather i {
   position: absolute;
   top: var(--y);
@@ -320,4 +373,5 @@
     transform: none;
     rotate: none;
   }
+  .valheim-photo .vh-photo-layer, .valheim-photo .vh-photo-fill { transform: none; }
 }
