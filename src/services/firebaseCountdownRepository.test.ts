@@ -70,14 +70,14 @@ describe('serializeCountdown', () => {
       serializeCountdown({
         title: '  Holiday  ',
         targetAt: 5_000,
-        theme: 'paper-riot',
+        theme: 'valheim',
         themeSettings: { gradientMood: 64.4 },
       }),
     ).toEqual({
       title: 'Holiday',
       targetAt: 5_000,
-      theme: 'paper-riot',
-      themeSettings: { gradientMood: 64 },
+      theme: 'valheim',
+      themeSettings: { gradientMood: 64, biome: 'meadows' },
     })
   })
 })

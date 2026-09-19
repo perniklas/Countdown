@@ -2,7 +2,9 @@ export type ThemeId =
   | 'aurora'
   | 'event-horizon'
   | 'hyperdrive'
-  | 'paper-riot'
+  | 'valheim'
+
+export type ValheimBiome = 'meadows' | 'black-forest' | 'swamp' | 'mountains' | 'plains'
 
 export type CountdownStatus = 'active' | 'history'
 
@@ -12,7 +14,7 @@ export interface Countdown {
   targetAt: number
   status: CountdownStatus
   theme: ThemeId
-  themeSettings: { gradientMood: number }
+  themeSettings: { gradientMood: number; biome?: ValheimBiome }
   createdAt: number
   updatedAt: number
 }

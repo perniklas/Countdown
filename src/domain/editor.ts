@@ -1,5 +1,5 @@
-import type { Countdown, CountdownInput, ThemeId } from './countdown'
-import { normalizeGradientMood } from './theme'
+import type { Countdown, CountdownInput, ThemeId, ValheimBiome } from './countdown'
+import { normalizeGradientMood, normalizeValheimBiome, normalizeThemeSettings } from './theme'
 
 export interface CountdownDraft {
   title: string
@@ -7,6 +7,7 @@ export interface CountdownDraft {
   time: string
   theme: ThemeId
   gradientMood: number
+  biome?: ValheimBiome
 }
 
 export type DraftResult =
@@ -79,9 +80,10 @@ export function draftToInput(
       title,
       targetAt,
       theme: draft.theme,
-      themeSettings: {
-        gradientMood: normalizeGradientMood(draft.gradientMood),
-      },
+      themeSettings: normalizeThemeSettings(draft.theme, {
+        gradientMood: draft.gradientMood,
+        ...(draft.theme === 'valheim' ? { biome: draft.biome } : {}),
+      }),
     },
   }
 }
@@ -96,6 +98,7 @@ export function countdownToDraft(countdown: Countdown): CountdownDraft {
     gradientMood: normalizeGradientMood(
       countdown.themeSettings.gradientMood,
     ),
+    biome: normalizeValheimBiome(countdown.themeSettings.biome),
   }
 }
 
@@ -108,5 +111,6 @@ export function emptyDraft(now = new Date()): CountdownDraft {
     time: `${pad(target.getHours())}:${pad(target.getMinutes())}`,
     theme: 'aurora',
     gradientMood: 50,
+    biome: 'meadows',
   }
 }

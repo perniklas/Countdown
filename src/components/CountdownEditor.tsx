@@ -7,7 +7,7 @@ import {
   emptyDraft,
   type CountdownDraft,
 } from '../domain/editor'
-import { THEMES } from '../domain/theme'
+import { THEMES, VALHEIM_BIOMES, normalizeValheimBiome } from '../domain/theme'
 
 interface CountdownEditorProps {
   countdown: Countdown | null
@@ -159,6 +159,22 @@ export function CountdownEditor({
               <span className="mood-labels" aria-hidden="true">
                 <small>Ember</small><small>Lagoon</small><small>Orchid</small>
               </span>
+            </label>
+          ) : null}
+
+          {draft.theme === 'valheim' ? (
+            <label className="field biome-field">
+              <span>Valheim biome</span>
+              <select
+                value={draft.biome ?? 'meadows'}
+                onChange={(event) => update('biome', normalizeValheimBiome(event.target.value))}
+                aria-describedby={titleId + '-biome-description'}
+              >
+                {VALHEIM_BIOMES.map((biome) => <option key={biome.id} value={biome.id}>{biome.name}</option>)}
+              </select>
+              <small id={titleId + '-biome-description'}>
+                {VALHEIM_BIOMES.find((biome) => biome.id === (draft.biome ?? 'meadows'))?.description}
+              </small>
             </label>
           ) : null}
 

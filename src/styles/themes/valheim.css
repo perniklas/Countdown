@@ -1,0 +1,323 @@
+/* Original Valheim-inspired landscapes: one world, five very different moods. */
+.theme-root.theme-valheim {
+  --surface: rgb(34 49 33 / 70%);
+  --surface-strong: #293d2a;
+  --line: rgb(233 209 151 / 32%);
+  --ink: #fff3d1;
+  --muted: #e0d7b2;
+  --accent: #ead298;
+  --vh-sky-top: #567d74;
+  --vh-sky-bottom: #e5d99b;
+  --vh-far: #96a875;
+  --vh-mid: #738f53;
+  --vh-near: #486a39;
+  --vh-grass: #344e2e;
+  background: #4e7042;
+  color: var(--ink);
+}
+.theme-root.theme-valheim[data-biome='black-forest'] {
+  --surface: rgb(12 34 40 / 80%);
+  --surface-strong: #173239;
+  --line: rgb(149 198 194 / 28%);
+  --ink: #e9f2df;
+  --muted: #c0d6ca;
+  --accent: #9fd6d1;
+  --vh-sky-top: #112733;
+  --vh-sky-bottom: #577476;
+  --vh-far: #4a6667;
+  --vh-mid: #2b4c51;
+  --vh-near: #183d3e;
+  --vh-grass: #102d30;
+  background: #183d3e;
+}
+.theme-root.theme-valheim[data-biome='swamp'] {
+  --surface: rgb(23 36 28 / 85%);
+  --surface-strong: #243329;
+  --line: rgb(176 187 116 / 27%);
+  --ink: #e8edcc;
+  --muted: #c6ceb0;
+  --accent: #cad595;
+  --vh-sky-top: #242e2e;
+  --vh-sky-bottom: #80876b;
+  --vh-far: #5e6d57;
+  --vh-mid: #445744;
+  --vh-near: #30473c;
+  background: #243b32;
+}
+.theme-root.theme-valheim[data-biome='mountains'] {
+  --surface: rgb(18 37 58 / 78%);
+  --surface-strong: #233e58;
+  --line: rgb(187 216 233 / 35%);
+  --ink: #f1f5ef;
+  --muted: #d1e0e6;
+  --accent: #bedce8;
+  --vh-sky-top: #142c46;
+  --vh-sky-bottom: #8bafbb;
+  background: #253e58;
+}
+.theme-root.theme-valheim[data-biome='plains'] {
+  --surface: rgb(67 48 30 / 78%);
+  --surface-strong: #513e2b;
+  --line: rgb(243 213 149 / 35%);
+  --ink: #fff1ce;
+  --muted: #eddbb2;
+  --accent: #f6d08c;
+  --vh-sky-top: #8d8770;
+  --vh-sky-bottom: #f1ce83;
+  --vh-far: #b9a16a;
+  --vh-mid: #b09b58;
+  --vh-near: #b09850;
+  --vh-grass: #655630;
+  background: #9b8143;
+}
+.valheim-scene, .valheim-scene > div, .vh-landscape {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.valheim-scene { overflow: hidden; }
+.valheim-scene .vh-sky {
+  background:
+    radial-gradient(ellipse at 73% 22%, rgb(255 237 173 / 27%), transparent 53%),
+    linear-gradient(var(--vh-sky-top), var(--vh-sky-bottom) 76%);
+}
+.valheim-scene .vh-stars {
+  opacity: 0;
+  background-image:
+    radial-gradient(1px 1px at 14% 19%, #edf9ec 90%, transparent),
+    radial-gradient(1px 1px at 32% 7%, #edf9ec 90%, transparent),
+    radial-gradient(2px 2px at 46% 28%, #edf9ec 90%, transparent),
+    radial-gradient(1px 1px at 59% 12%, #edf9ec 90%, transparent),
+    radial-gradient(1px 1px at 83% 33%, #edf9ec 90%, transparent),
+    radial-gradient(1px 1px at 91% 9%, #edf9ec 90%, transparent);
+}
+.valheim-scene .vh-world-tree {
+  inset: -18% -8% 24% 20%;
+  opacity: .09;
+  transform: rotate(-12deg);
+  filter: blur(1px);
+}
+.vh-world-tree svg { width: 100%; height: 100%; overflow: visible; }
+.vh-world-tree path { fill: none; stroke: #e7eec1; stroke-width: 17; }
+.vh-world-tree path + path { stroke-width: 7; }
+.valheim-scene .vh-sun {
+  inset: 14% 20% auto auto;
+  width: clamp(64px, 7vw, 112px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fff2c1;
+  box-shadow: 0 0 45px 18px #ffecb08c, 0 0 140px 70px #ffe3a050;
+}
+.valheim-scene .vh-rays {
+  inset: -20% -30%;
+  transform-origin: 65% 26%;
+  background: repeating-conic-gradient(from 12deg at 65% 26%, transparent 0deg 12deg, rgb(255 241 189 / 22%) 14deg 19deg, transparent 21deg 31deg);
+  mask-image: radial-gradient(ellipse at 65% 26%, #000 5%, #0008 42%, transparent 70%);
+  filter: blur(4px);
+  animation: vh-rays 24s ease-in-out infinite alternate;
+}
+.vh-landscape { width: 100%; height: 100%; }
+.vh-ridge-far { fill: var(--vh-far); }
+.vh-ridge-mid { fill: var(--vh-mid); }
+.vh-ridge-near { fill: var(--vh-near); }
+.vh-grasses { color: var(--vh-grass); }
+.vh-water { fill: #344a3f; }
+.valheim-scene .vh-mist {
+  inset: 59% -20% 7%;
+  background: radial-gradient(ellipse at 50% 40%, #f3e7ba38, transparent 65%);
+  filter: blur(24px);
+  animation: vh-mist 22s ease-in-out infinite alternate;
+}
+.valheim-scene .vh-vignette {
+  background: radial-gradient(ellipse at 50% 38%, transparent 30%, #102b2520 68%, #10231c99 100%);
+}
+.vh-weather i {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: var(--size);
+  height: var(--size);
+  background: #ffedac;
+  border-radius: 50%;
+  box-shadow: 0 0 9px #ffdf8b99;
+  opacity: .6;
+  animation: vh-pollen var(--duration) ease-in-out var(--delay) infinite alternate;
+}
+.theme-valheim[data-biome='black-forest'] .vh-sun {
+  width: 57px;
+  background: #d0e0cb;
+  box-shadow: 0 0 70px 28px #abd8cf30;
+  opacity: .5;
+}
+.theme-valheim[data-biome='black-forest'] .vh-rays { opacity: .18; }
+.theme-valheim[data-biome='black-forest'] .vh-mist {
+  inset: 42% -25% 4%;
+  background: radial-gradient(ellipse, #8ac5c438, transparent 66%);
+}
+.theme-valheim[data-biome='black-forest'] .vh-weather i {
+  background: #a3e7ce;
+  box-shadow: 0 0 13px 3px #73d9d66b;
+}
+.theme-valheim[data-biome='swamp'] .vh-sun,
+.theme-valheim[data-biome='swamp'] .vh-rays { display: none; }
+.theme-valheim[data-biome='swamp'] .vh-world-tree { opacity: .04; }
+.theme-valheim[data-biome='swamp'] .vh-mist {
+  inset: 44% -30% 0;
+  background: radial-gradient(ellipse, #bbcc8438, transparent 63%);
+}
+.theme-valheim[data-biome='swamp'] .vh-weather i {
+  width: 1px;
+  height: 24px;
+  border-radius: 0;
+  background: linear-gradient(transparent, #dae1c675);
+  box-shadow: none;
+  animation: vh-rain 1.3s linear var(--delay) infinite;
+}
+.theme-valheim[data-biome='mountains'] .vh-stars { opacity: .85; }
+.theme-valheim[data-biome='mountains'] .vh-sun {
+  inset: 12% auto auto 22%;
+  width: 72px;
+  background: #e1ede1;
+  box-shadow: 0 0 40px 10px #deeff62e, 0 0 150px 40px #c8e3ec18;
+}
+.theme-valheim[data-biome='mountains'] .vh-rays { display: none; }
+.theme-valheim[data-biome='mountains'] .vh-weather i {
+  background: #e8f4f4;
+  box-shadow: none;
+  opacity: .7;
+  animation: vh-snow var(--duration) linear var(--delay) infinite;
+}
+.theme-valheim[data-biome='mountains'] .vh-mist { opacity: .4; }
+.theme-valheim[data-biome='plains'] .vh-sun {
+  inset: 30% 18% auto auto;
+  width: 120px;
+  background: #ffdc93;
+}
+.theme-valheim[data-biome='plains'] .vh-rays { opacity: .35; }
+.theme-valheim[data-biome='plains'] .vh-weather i {
+  height: 2px;
+  width: 6px;
+  box-shadow: none;
+  animation: vh-dust var(--duration) linear var(--delay) infinite;
+}
+.theme-valheim[data-biome='plains'] .vh-mist { background: radial-gradient(ellipse, #efd49b38, transparent 65%); }
+
+/* Weathered timber, brass edges and generous, readable numerals. */
+.theme-valheim .hero-countdown h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.6rem, 6.7vw, 6.3rem);
+  font-weight: 400;
+  letter-spacing: -.045em;
+  line-height: 1.04;
+  text-shadow: 0 2px 3px #162c23, 0 4px 32px #162c2380;
+}
+.theme-valheim .countdown-kicker {
+  color: var(--ink);
+  letter-spacing: .24em;
+  text-shadow: 0 2px 8px #102219;
+}
+.theme-valheim .time-unit {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background:
+    linear-gradient(100deg, transparent, #f0dbad08 45%, transparent),
+    var(--surface);
+  box-shadow: inset 0 0 0 5px #0d211c18, inset 0 1px #ffefc62b, 0 14px 35px #14221b26;
+  backdrop-filter: blur(12px);
+}
+.theme-valheim .time-unit::after {
+  position: absolute;
+  inset: 6px;
+  border: 1px solid var(--line);
+  opacity: .45;
+  content: '';
+  pointer-events: none;
+}
+.theme-valheim .time-value {
+  line-height: 1.12;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+  letter-spacing: -.05em;
+  text-shadow: 0 2px 12px #0003;
+}
+.theme-valheim .time-label { color: var(--accent); font-weight: 500; letter-spacing: .22em; }
+.theme-valheim .target-date,
+.theme-valheim .hero-edit {
+  color: var(--ink);
+  text-shadow: 0 1px 6px #12251c;
+}
+.theme-valheim .target-date {
+  width: fit-content;
+  max-width: 100%;
+  padding: 8px 15px;
+  margin-inline: auto;
+  border-radius: 3px;
+  background: var(--surface);
+}
+.theme-valheim .app-header { background: linear-gradient(#152c253b, transparent); }
+.theme-valheim .header-button,
+.theme-valheim .user-menu { border-radius: 5px; background: var(--surface); }
+.theme-valheim .app-brand .brand-mark,
+.theme-valheim .header-button b,
+.theme-valheim .user-menu > span {
+  border-radius: 3px;
+  background: var(--accent);
+  color: #263729;
+}
+.theme-valheim .app-footer { color: var(--ink); text-shadow: 0 1px 7px #091d15; }
+.theme-valheim .app-footer > span { letter-spacing: .16em; text-transform: uppercase; font-size: .65rem; }
+.theme-swatch-valheim {
+  background:
+    linear-gradient(155deg, transparent 55%, #466b3a 55% 70%, #345135 70%),
+    radial-gradient(circle at 80% 22%, #fff2b2, #c7c18b 20%, #799477 65%);
+  color: #172e20;
+}
+.dot-valheim { background: linear-gradient(135deg, #ead89e, #5a884e); }
+.biome-field {
+  padding: 15px;
+  border: 1px solid #a5b49566;
+  border-radius: 13px;
+  background: linear-gradient(115deg, #eaf0e1, #f4ecd6);
+}
+.biome-field select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 12px;
+  border: 1px solid #78906b66;
+  border-radius: 8px;
+  background: #fffffff0;
+  color: #293b26;
+  font: inherit;
+}
+.biome-field small { color: #57634e; line-height: 1.5; font-size: .72rem; }
+.biome-field select:focus-visible { outline: 2px solid #52754a; outline-offset: 3px; }
+
+@keyframes vh-rays { from { rotate: -3deg; } to { rotate: 3deg; } }
+@keyframes vh-mist { from { transform: translateX(-4%); } to { transform: translateX(5%); } }
+@keyframes vh-pollen { from { transform: translate(-14px, 18px); opacity: .18; } to { transform: translate(24px, -35px); opacity: .7; } }
+@keyframes vh-rain { from { transform: translate(45px, -120px) rotate(15deg); } to { transform: translate(-55px, 380px) rotate(15deg); } }
+@keyframes vh-snow { from { transform: translate(-30px, -220px); } to { transform: translate(100px, 500px); } }
+@keyframes vh-dust { from { transform: translate(-180px, 20px); opacity: 0; } 50% { opacity: .65; } to { transform: translate(250px, -25px); opacity: 0; } }
+@media (max-width: 640px) {
+  .theme-valheim .hero-countdown h1 { font-size: clamp(2.2rem, 11vw, 3.7rem); }
+  .theme-valheim .countdown-kicker { letter-spacing: .16em; }
+  .theme-valheim .time-value { font-size: clamp(2.2rem, 10vw, 4rem); }
+  .theme-valheim .time-label { letter-spacing: .1em; font-size: .58rem; }
+  .theme-valheim .target-date { font-size: .72rem; }
+  .valheim-scene .vh-sun { right: 12%; top: 18%; }
+  .valheim-scene .vh-world-tree { inset: -5% -50% 35% -20%; }
+  .theme-valheim .app-footer { gap: 14px; }
+  .vh-meadow-oak { transform: translate(510px, 870px) scale(.72); }
+  .vh-meadow-birch { transform: translate(1030px, 846px) scale(.86); }
+  .vh-homestead { transform: translate(963px, 772px) scale(.75); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .valheim-scene *, .valheim-scene *::before, .valheim-scene *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .valheim-scene .vh-rays, .valheim-scene .vh-mist, .valheim-scene .vh-weather i {
+    transform: none;
+    rotate: none;
+  }
+}

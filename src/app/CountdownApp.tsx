@@ -13,7 +13,7 @@ import {
   getGravitationalLensOffset,
   getParallaxOffsets,
 } from '../domain/pointerEffects'
-import { getGlassVariables } from '../domain/theme'
+import { getGlassVariables, normalizeValheimBiome, VALHEIM_BIOMES } from '../domain/theme'
 import { useCountdowns } from '../hooks/useCountdowns'
 import type { CountdownRepository } from '../services/countdownRepository'
 
@@ -91,6 +91,7 @@ export function CountdownApp({
     countdowns.items.find((item) => item.id === selectedId) ?? active[0] ?? null
   const resolvedSelectedId = selected?.id ?? null
   const theme = selected?.theme ?? 'aurora'
+  const biome = normalizeValheimBiome(selected?.themeSettings.biome)
   const gradientMood = selected?.themeSettings.gradientMood ?? 50
   const themeStyle =
     theme === 'aurora' ? (getGlassVariables(gradientMood) as CSSProperties) : undefined
@@ -274,13 +275,14 @@ export function CountdownApp({
   return (
     <main
       className={`theme-root theme-${theme}`}
+      data-biome={theme === 'valheim' ? biome : undefined}
       ref={themeRootRef}
       style={themeStyle}
       onPointerMove={moveBackgroundWithPointer}
       onPointerLeave={recenterBackground}
     >
       <div className="app-decoration" aria-hidden="true">
-        <ThemeScene theme={theme} />
+        <ThemeScene theme={theme} biome={biome} />
       </div>
 
       <header className="app-header">
@@ -330,7 +332,7 @@ export function CountdownApp({
       </div>
 
       <footer className="app-footer">
-        <span></span>
+        <span>{theme === 'valheim' ? 'Valheim · ' + VALHEIM_BIOMES.find((item) => item.id === biome)?.name : ''}</span>
         <button type="button" onClick={() => setLibraryOpen(true)}>Open your library</button>
       </footer>
 

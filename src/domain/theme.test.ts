@@ -50,7 +50,7 @@ describe('theme metadata', () => {
       'aurora',
       'event-horizon',
       'hyperdrive',
-      'paper-riot',
+      'valheim',
     ])
     expect(themeById('unknown').id).toBe('aurora')
   })

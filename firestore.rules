@@ -28,7 +28,10 @@ service cloud.firestore {
 
     function hasValidThemeSettings(settings) {
       return settings is map
-        && settings.keys().hasOnly(['gradientMood'])
+        && settings.keys().hasOnly(['gradientMood', 'biome'])
+        && (!('biome' in settings) || settings.biome in [
+          'meadows', 'black-forest', 'swamp', 'mountains', 'plains'
+        ])
         && settings.gradientMood is number
         && settings.gradientMood >= 0
         && settings.gradientMood <= 100;
@@ -47,7 +50,8 @@ service cloud.firestore {
           'aurora',
           'event-horizon',
           'hyperdrive',
-          'paper-riot'
+          'paper-riot',
+          'valheim'
         ]
         && hasValidThemeSettings(data.themeSettings)
         && data.createdAt is timestamp

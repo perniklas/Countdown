@@ -2,9 +2,8 @@ import type {
   Countdown,
   CountdownInput,
   CountdownStatus,
-  ThemeId,
 } from '../domain/countdown'
-import { normalizeGradientMood, THEMES } from '../domain/theme'
+import { normalizeThemeSettings, storedThemeId } from '../domain/theme'
 import type { CountdownRepository } from './countdownRepository'
 
 export const LOCAL_STORAGE_COUNTDOWNS_KEY = 'moment:guest-countdowns:v1'
@@ -12,14 +11,12 @@ export const LOCAL_STORAGE_COUNTDOWNS_KEY = 'moment:guest-countdowns:v1'
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 
-const isTheme = (value: unknown): value is ThemeId =>
-  typeof value === 'string' && THEMES.some((theme) => theme.id === value)
-
 const isStatus = (value: unknown): value is CountdownStatus =>
   value === 'active' || value === 'history'
 
 const countdownFromStorage = (value: unknown): Countdown | null => {
   if (!isRecord(value) || !isRecord(value.themeSettings)) return null
+  const theme = storedThemeId(value.theme)
 
   if (
     typeof value.id !== 'string' ||
@@ -30,7 +27,7 @@ const countdownFromStorage = (value: unknown): Countdown | null => {
     typeof value.targetAt !== 'number' ||
     !Number.isFinite(value.targetAt) ||
     !isStatus(value.status) ||
-    !isTheme(value.theme) ||
+    !theme ||
     typeof value.themeSettings.gradientMood !== 'number' ||
     typeof value.createdAt !== 'number' ||
     !Number.isFinite(value.createdAt) ||
@@ -45,10 +42,11 @@ const countdownFromStorage = (value: unknown): Countdown | null => {
     title: value.title.trim(),
     targetAt: value.targetAt,
     status: value.status,
-    theme: value.theme,
-    themeSettings: {
-      gradientMood: normalizeGradientMood(value.themeSettings.gradientMood),
-    },
+    theme,
+    themeSettings: normalizeThemeSettings(theme, {
+      gradientMood: value.themeSettings.gradientMood,
+      biome: value.themeSettings.biome,
+    }),
     createdAt: value.createdAt,
     updatedAt: value.updatedAt,
   }
@@ -58,9 +56,7 @@ const normalizeInput = (input: CountdownInput): CountdownInput => ({
   title: input.title.trim(),
   targetAt: input.targetAt,
   theme: input.theme,
-  themeSettings: {
-    gradientMood: normalizeGradientMood(input.themeSettings.gradientMood),
-  },
+  themeSettings: normalizeThemeSettings(input.theme, input.themeSettings),
 })
 
 const createLocalId = () =>

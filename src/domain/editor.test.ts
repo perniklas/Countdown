@@ -56,6 +56,7 @@ describe('countdownToDraft', () => {
       time: '08:05',
       theme: 'hyperdrive',
       gradientMood: 68,
+      biome: 'meadows',
     })
   })
 })

@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
-import type { ThemeId } from '../domain/countdown'
+import type { ThemeId, ValheimBiome } from '../domain/countdown'
+import { ValheimScene } from './ValheimScene'
 
 type StarLayer = 0 | 1 | 2
 
@@ -93,9 +94,10 @@ const EVENT_HORIZON_STARS = createBackgroundStars(240)
 
 interface ThemeSceneProps {
   theme: ThemeId
+  biome?: ValheimBiome
 }
 
-export function ThemeScene({ theme }: ThemeSceneProps) {
+export function ThemeScene({ theme, biome = 'meadows' }: ThemeSceneProps) {
   switch (theme) {
     case 'aurora':
       return (
@@ -173,16 +175,8 @@ export function ThemeScene({ theme }: ThemeSceneProps) {
         </div>
       )
 
-    case 'paper-riot':
-      return (
-        <div className="paper-scene">
-          <span className="paper-ink paper-ink-a" />
-          <span className="paper-ink paper-ink-b" />
-          <span className="paper-ink paper-ink-c" />
-          <span className="paper-halftone" />
-          <span className="paper-grain" />
-        </div>
-      )
+    case 'valheim':
+      return <ValheimScene biome={biome} />
 
     default:
       return null

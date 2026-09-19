@@ -14,9 +14,8 @@ import type {
   Countdown,
   CountdownInput,
   CountdownStatus,
-  ThemeId,
 } from '../domain/countdown'
-import { normalizeGradientMood, THEMES } from '../domain/theme'
+import { normalizeThemeSettings, storedThemeId } from '../domain/theme'
 import type { CountdownRepository } from './countdownRepository'
 
 export interface TimestampLike {
@@ -29,9 +28,6 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isTimestamp = (value: unknown): value is TimestampLike =>
   isRecord(value) && typeof value.toMillis === 'function'
 
-const isTheme = (value: unknown): value is ThemeId =>
-  typeof value === 'string' && THEMES.some((theme) => theme.id === value)
-
 const isStatus = (value: unknown): value is CountdownStatus =>
   value === 'active' || value === 'history'
 
@@ -41,6 +37,7 @@ export function countdownFromDocument(
 ): Countdown | null {
   if (!isRecord(data)) return null
   const settings = data.themeSettings
+  const theme = storedThemeId(data.theme)
 
   if (
     typeof data.title !== 'string' ||
@@ -48,7 +45,7 @@ export function countdownFromDocument(
     data.title.length > 80 ||
     !isTimestamp(data.targetAt) ||
     !isStatus(data.status) ||
-    !isTheme(data.theme) ||
+    !theme ||
     !isRecord(settings) ||
     typeof settings.gradientMood !== 'number' ||
     settings.gradientMood < 0 ||
@@ -64,10 +61,11 @@ export function countdownFromDocument(
     title: data.title.trim(),
     targetAt: data.targetAt.toMillis(),
     status: data.status,
-    theme: data.theme,
-    themeSettings: {
-      gradientMood: normalizeGradientMood(settings.gradientMood),
-    },
+    theme,
+    themeSettings: normalizeThemeSettings(theme, {
+      gradientMood: settings.gradientMood,
+      biome: settings.biome,
+    }),
     createdAt: data.createdAt.toMillis(),
     updatedAt: data.updatedAt.toMillis(),
   }
@@ -78,9 +76,7 @@ export function serializeCountdown(input: CountdownInput) {
     title: input.title.trim(),
     targetAt: input.targetAt,
     theme: input.theme,
-    themeSettings: {
-      gradientMood: normalizeGradientMood(input.themeSettings.gradientMood),
-    },
+    themeSettings: normalizeThemeSettings(input.theme, input.themeSettings),
   }
 }
 
