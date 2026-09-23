@@ -3,108 +3,31 @@ import type { ValheimBiome } from '../domain/countdown'
 
 const PINES = [24, 96, 168, 255, 340, 445, 550, 680, 790, 910, 1030, 1135, 1250, 1340, 1465, 1555]
 
-/**
- * Meadows is a real photograph (public/valheim/meadows-source.webp) dissected
- * into six parallax layers. All other biomes keep the low-poly SVG scenes below.
- *
- * Masks are authored in the source image's 1080x607 space. White = visible for
- * that layer; every shape is Gaussian-blurred so the cut edges feather softly,
- * and a blurred copy of the whole frame sits behind so parallax gaps never open
- * a hole. Ordered back (sky) to front (close tree).
- */
-const MEADOWS_LAYERS: {
-  id: number
-  shapes: string
-  blur: number
-  px: number
-  py: number
-  ix: number
-  iy: number
-  dur: number
-}[] = [
-  {
-    id: 6, // sky
-    shapes: '<rect x="-60" y="-60" width="1200" height="412"/>',
-    blur: 26, px: 6, py: 5, ix: 8, iy: 3, dur: 29,
-  },
-  {
-    id: 5, // floating tree trunk + clouds
-    shapes:
-      '<path d="M398 152 L428 116 L596 62 L610 88 L450 162 Z"/>' +
-      '<ellipse cx="640" cy="180" rx="240" ry="122"/>' +
-      '<ellipse cx="466" cy="148" rx="112" ry="74"/>' +
-      '<ellipse cx="852" cy="212" rx="152" ry="92"/>',
-    blur: 22, px: 12, py: 8, ix: 17, iy: 6, dur: 22,
-  },
-  {
-    id: 4, // forest on the left + sea on the right
-    shapes:
-      '<path d="M-60 -60 L482 -60 L432 122 L300 236 L172 292 L58 324 L-60 340 Z"/>' +
-      '<path d="M695 306 L1052 270 L1100 281 L1100 332 L713 338 Z"/>',
-    blur: 17, px: 18, py: 11, ix: 7, iy: 4, dur: 24,
-  },
-  {
-    id: 3, // the house
-    shapes:
-      '<path d="M248 302 L248 250 L300 190 L346 208 L405 116 L470 202 L500 174 L548 238 L562 300 L548 416 L253 411 Z"/>' +
-      '<path d="M150 306 L300 300 L300 346 L148 336 Z"/>',
-    blur: 12, px: 27, py: 16, ix: 4, iy: 3, dur: 26,
-  },
-  {
-    id: 2, // grass + small trees + path + the tree on the right
-    shapes:
-      '<path d="M-60 342 L180 314 L360 404 L560 408 L762 350 L1100 326 L1100 680 L-60 680 Z"/>' +
-      '<ellipse cx="1016" cy="248" rx="92" ry="118"/>' +
-      '<path d="M990 300 L1036 300 L1042 524 L994 524 Z"/>',
-    blur: 16, px: 42, py: 23, ix: 6, iy: 4, dur: 19,
-  },
-  {
-    id: 1, // the close tree on the left
-    shapes:
-      '<path d="M-60 12 L190 50 L154 184 L62 300 L-60 368 Z"/>' +
-      '<path d="M-60 274 L64 300 L178 570 L120 680 L-60 680 Z"/>',
-    blur: 18, px: 58, py: 33, ix: 11, iy: 8, dur: 16,
-  },
-]
-
-const maskUrl = (shapes: string, blur: number) => {
-  const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 607" preserveAspectRatio="xMidYMid slice">` +
-    `<filter id="b" x="-15%" y="-15%" width="130%" height="130%"><feGaussianBlur stdDeviation="${blur}"/></filter>` +
-    `<g filter="url(#b)" fill="#fff">${shapes}</g></svg>`
-  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
-}
+/** The supplied canvases share one frame: 1 is nearest and must always be on top. */
+const MEADOWS_LAYERS = [
+  { id: 7, movement: 5 },
+  { id: 6, movement: 10 },
+  { id: 5, movement: 18 },
+  { id: 4, movement: 28 },
+  { id: 3, movement: 40 },
+  { id: 2, movement: 54 },
+  { id: 1, movement: 70 },
+] as const
 
 function MeadowsPhotoScene() {
   return (
     <div className="valheim-scene valheim-photo" aria-hidden="true">
-      <div className="vh-photo-base" />
-      {MEADOWS_LAYERS.map((layer) => {
-        const mask = maskUrl(layer.shapes, layer.blur)
-        return (
-          <div
-            key={layer.id}
-            className="vh-photo-layer"
-            data-layer={layer.id}
-            style={{
-              '--px': layer.px + 'px',
-              '--py': layer.py + 'px',
-            } as CSSProperties}
-          >
-            <div
-              className="vh-photo-fill"
-              style={{
-                WebkitMaskImage: mask,
-                maskImage: mask,
-                '--idle-x': layer.ix + 'px',
-                '--idle-y': layer.iy + 'px',
-                '--idle-dur': layer.dur + 's',
-              } as CSSProperties}
-            />
-          </div>
-        )
-      })}
-      <div className="vh-photo-glow" />
+      {MEADOWS_LAYERS.map((layer) => (
+        <img
+          key={layer.id}
+          className="vh-photo-layer"
+          data-layer={layer.id}
+          src={`/valheim/${layer.id}.png`}
+          alt=""
+          draggable={false}
+          style={{ '--layer-movement': `${layer.movement}px` } as CSSProperties}
+        />
+      ))}
       <div className="vh-photo-scrim" />
       <div className="vh-weather">
         {Array.from({ length: 22 }, (_, i) => (

@@ -17,6 +17,12 @@ import { getGlassVariables, normalizeValheimBiome, VALHEIM_BIOMES } from '../dom
 import { useCountdowns } from '../hooks/useCountdowns'
 import type { CountdownRepository } from '../services/countdownRepository'
 
+type DeviceMotionState = 'idle' | 'active' | 'denied' | 'unavailable'
+
+type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
+  requestPermission?: () => Promise<'granted' | 'denied'>
+}
+
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
 const round3 = (value: number) => Math.round(value * 1_000) / 1_000
 
@@ -81,11 +87,13 @@ export function CountdownApp({
   const [editorOpen, setEditorOpen] = useState(false)
   const [editing, setEditing] = useState<Countdown | null>(null)
   const [saving, setSaving] = useState(false)
+  const [deviceMotion, setDeviceMotion] = useState<DeviceMotionState>('idle')
 
   const celebrationStop = useRef<(() => void) | null>(null)
   const themeRootRef = useRef<HTMLElement>(null)
   const pointerFrame = useRef<number | null>(null)
   const latestPointer = useRef<{ root: HTMLElement; clientX: number; clientY: number } | null>(null)
+  const deviceMotionBaseline = useRef<{ beta: number; gamma: number } | null>(null)
 
   const selected =
     countdowns.items.find((item) => item.id === selectedId) ?? active[0] ?? null
@@ -122,8 +130,41 @@ export function CountdownApp({
         cancelAnimationFrame(pointerFrame.current)
       }
     }
-  }, [theme])
+  }, [biome, theme])
 
+  useEffect(() => {
+    if (theme !== 'valheim' || biome !== 'meadows' || deviceMotion !== 'active') return
+    deviceMotionBaseline.current = null
+
+    const root = themeRootRef.current
+    if (!root) return
+
+    const updateFromDeviceOrientation = (event: DeviceOrientationEvent) => {
+      if (
+        window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ||
+        event.beta === null ||
+        event.gamma === null
+      ) {
+        return
+      }
+
+      if (!deviceMotionBaseline.current) {
+        deviceMotionBaseline.current = { beta: event.beta, gamma: event.gamma }
+        return
+      }
+
+      const horizontal = Math.min(1, Math.max(-1, (event.gamma - deviceMotionBaseline.current.gamma) / 25))
+      const vertical = Math.min(1, Math.max(-1, (event.beta - deviceMotionBaseline.current.beta) / 25))
+      root.style.setProperty('--pointer-x', String(round3(0.5 + horizontal * 0.25)))
+      root.style.setProperty('--pointer-y', String(round3(0.5 + vertical * 0.25)))
+    }
+
+    window.addEventListener('deviceorientation', updateFromDeviceOrientation, true)
+    return () => {
+      window.removeEventListener('deviceorientation', updateFromDeviceOrientation, true)
+      resetSceneMotion(root)
+    }
+  }, [biome, deviceMotion, theme])
   const openCreate = () => {
     setLibraryOpen(false)
     setEditing(null)
@@ -167,6 +208,34 @@ export function CountdownApp({
   const handleReachZero = () => {
     celebrationStop.current?.()
     celebrationStop.current = celebrate()
+  }
+  const enableDeviceMotion = async () => {
+    if (
+      !window.isSecureContext ||
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    ) {
+      setDeviceMotion('unavailable')
+      return
+    }
+
+    if (typeof window.DeviceOrientationEvent === 'undefined') {
+      setDeviceMotion('unavailable')
+      return
+    }
+
+    const orientation = DeviceOrientationEvent as DeviceOrientationWithPermission
+    try {
+      if (orientation.requestPermission) {
+        const permission = await orientation.requestPermission()
+        if (permission !== 'granted') {
+          setDeviceMotion('denied')
+          return
+        }
+      }
+      setDeviceMotion('active')
+    } catch {
+      setDeviceMotion('denied')
+    }
   }
   const moveBackgroundWithPointer = (event: ReactPointerEvent<HTMLElement>) => {
     if (
@@ -285,6 +354,17 @@ export function CountdownApp({
         <ThemeScene theme={theme} biome={biome} />
       </div>
 
+      {theme === 'valheim' && biome === 'meadows' && deviceMotion !== 'active' ? (
+        <div className="valheim-motion-control" aria-live="polite">
+          <button
+            type="button"
+            onClick={() => void enableDeviceMotion()}
+            disabled={deviceMotion !== 'idle'}
+          >
+            {deviceMotion === 'idle' ? 'Enable device motion' : 'Device motion unavailable'}
+          </button>
+        </div>
+      ) : null}
       <header className="app-header">
         <a className="app-brand" href="/" aria-label="Moment home">
           <span className="brand-mark"><Sparkles size={17} /></span>

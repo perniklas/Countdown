@@ -132,58 +132,40 @@
   background: radial-gradient(ellipse at 50% 38%, transparent 30%, #102b2520 68%, #10231c99 100%);
 }
 
-/* ---- Meadows: a photograph cut into six parallax layers ---- */
+/* ---- Meadows: seven supplied, transparent depth layers ---- */
 .valheim-photo { overflow: hidden; background: #0c1a13; }
-.valheim-photo .vh-photo-base,
-.valheim-photo .vh-photo-layer,
-.valheim-photo .vh-photo-fill { position: absolute; }
-/* Blurred full frame behind every layer: parallax gaps reveal soft depth, never a hole. */
-.valheim-photo .vh-photo-base {
-  inset: -9%;
-  background: url(/valheim/meadows-source.webp) center / cover no-repeat;
-  filter: blur(11px) brightness(.82) saturate(.94);
-  transform: scale(1.05);
-}
 .valheim-photo .vh-photo-layer {
-  inset: -9%;
-  transform:
-    translate3d(
-      calc((.5 - var(--pointer-x, .5)) * var(--px)),
-      calc((.5 - var(--pointer-y, .5)) * var(--py)),
-      0);
+  position: absolute;
+  inset: -13%;
+  width: 126%;
+  height: 126%;
+  object-fit: cover;
+  transform: translate3d(
+    calc((.5 - var(--pointer-x, .5)) * var(--layer-movement)),
+    calc((.5 - var(--pointer-y, .5)) * var(--layer-movement) * .62),
+    0
+  );
   transition: transform .18s ease-out;
   will-change: transform;
+  user-select: none;
 }
-.valheim-photo .vh-photo-fill {
-  inset: 0;
-  background: url(/valheim/meadows-source.webp) center / cover no-repeat;
-  -webkit-mask-size: cover;
-  mask-size: cover;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  animation: vh-photo-drift var(--idle-dur, 20s) ease-in-out infinite alternate;
-  will-change: transform;
-}
-/* Warm sun bloom from the bright right-hand sky, and legibility scrims. */
-.valheim-photo .vh-photo-glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 72% 30%, rgb(255 241 194 / 30%), transparent 46%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
+/* The depth contract is explicit: a lower source number always paints above a higher one. */
+.valheim-photo .vh-photo-layer[data-layer='1'] { z-index: 7; }
+.valheim-photo .vh-photo-layer[data-layer='2'] { z-index: 6; }
+.valheim-photo .vh-photo-layer[data-layer='3'] { z-index: 5; }
+.valheim-photo .vh-photo-layer[data-layer='4'] { z-index: 4; }
+.valheim-photo .vh-photo-layer[data-layer='5'] { z-index: 3; }
+.valheim-photo .vh-photo-layer[data-layer='6'] { z-index: 2; }
+.valheim-photo .vh-photo-layer[data-layer='7'] { z-index: 1; }
 .valheim-photo .vh-photo-scrim {
   position: absolute;
   inset: 0;
+  z-index: 10;
   background: linear-gradient(#0b1a1266 0%, transparent 22% 60%, #0a17104d 100%);
   pointer-events: none;
 }
-@keyframes vh-photo-drift {
-  from { transform: translate3d(calc(var(--idle-x, 0px) * -1), calc(var(--idle-y, 0px) * -1), 0); }
-  to   { transform: translate3d(var(--idle-x, 0px), var(--idle-y, 0px), 0); }
-}
+.valheim-photo .vh-weather { z-index: 11; }
+.valheim-photo .vh-vignette { z-index: 12; }
 .vh-weather i {
   position: absolute;
   top: var(--y);
@@ -326,6 +308,28 @@
   color: #172e20;
 }
 .dot-valheim { background: linear-gradient(135deg, #ead89e, #5a884e); }
+.valheim-motion-control { display: none; }
+@media (pointer: coarse) {
+  .theme-valheim .valheim-motion-control {
+    position: fixed;
+    right: 14px;
+    bottom: 62px;
+    z-index: 20;
+    display: block;
+  }
+  .theme-valheim .valheim-motion-control button {
+    min-height: 36px;
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--surface-strong);
+    color: var(--ink);
+    font: inherit;
+    font-size: .72rem;
+    box-shadow: 0 5px 18px #10221955;
+  }
+  .theme-valheim .valheim-motion-control button:disabled { opacity: .8; }
+}
 .biome-field {
   padding: 15px;
   border: 1px solid #a5b49566;
@@ -373,5 +377,5 @@
     transform: none;
     rotate: none;
   }
-  .valheim-photo .vh-photo-layer, .valheim-photo .vh-photo-fill { transform: none; }
+  .valheim-photo .vh-photo-layer { transform: none; }
 }
