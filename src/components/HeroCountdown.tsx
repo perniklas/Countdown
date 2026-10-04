@@ -45,7 +45,11 @@ export function HeroCountdown({
       <div className="time-grid" aria-label={`Time remaining until ${countdown.title}`}>
         {units.map((unit) => (
           <div className="time-unit" key={unit.label}>
-            <span className="time-value" aria-hidden="true">
+            <span
+              className="time-value"
+              data-digits={unit.label === 'days' ? (String(unit.value).length >= 5 ? '5+' : String(unit.value).length) : 2}
+              aria-hidden="true"
+            >
               {unit.label === 'days' ? unit.value : twoDigits(unit.value)}
             </span>
             <span className="time-label">{unit.label}</span>

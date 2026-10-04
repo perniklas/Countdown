@@ -3,6 +3,8 @@ export type ThemeId =
   | 'event-horizon'
   | 'hyperdrive'
   | 'valheim'
+  | 'clair-obscur'
+  | 'technical-metal'
 
 export type ValheimBiome = 'meadows' | 'black-forest' | 'swamp' | 'mountains' | 'plains'
 

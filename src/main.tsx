@@ -4,6 +4,7 @@ import '@fontsource-variable/manrope'
 import '@fontsource-variable/space-grotesk'
 import '@fontsource-variable/archivo/standard.css'
 import '@fontsource-variable/archivo/standard-italic.css'
+import '@fontsource/cinzel/500.css'
 import App from './App'
 import './styles.css'
 

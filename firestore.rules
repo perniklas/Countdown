@@ -51,7 +51,9 @@ service cloud.firestore {
           'event-horizon',
           'hyperdrive',
           'paper-riot',
-          'valheim'
+          'valheim',
+          'clair-obscur',
+          'technical-metal'
         ]
         && hasValidThemeSettings(data.themeSettings)
         && data.createdAt is timestamp

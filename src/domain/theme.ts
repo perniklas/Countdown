@@ -9,8 +9,8 @@ export interface ThemeDefinition {
 export const THEMES: readonly ThemeDefinition[] = [
   {
     id: 'aurora',
-    name: 'Glasswater',
-    description: 'Light bent through wet glass',
+    name: 'Daydream',
+    description: 'Color flowing into the afternoon',
   },
   {
     id: 'event-horizon',
@@ -26,6 +26,16 @@ export const THEMES: readonly ThemeDefinition[] = [
     id: 'valheim',
     name: 'Valheim',
     description: 'A quiet moment in the tenth world',
+  },
+  {
+    id: 'clair-obscur',
+    name: 'Clair Obscur',
+    description: 'A painted world in its final hour',
+  },
+  {
+    id: 'technical-metal',
+    name: 'Technical Metal',
+    description: 'Forged in ash, steel, and furnace light',
   },
 ]
 

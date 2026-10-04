@@ -1,0 +1,160 @@
+/* Technical Metal: industrial album artwork, etched steel, ash, and furnace light. */
+.theme-root.theme-technical-metal {
+  --surface: rgb(20 20 20 / 63%);
+  --surface-strong: #171615;
+  --line: rgb(208 187 159 / 29%);
+  --ink: #f2ede3;
+  --muted: #c1b3a0;
+  --accent: #e8a66b;
+  background: #121110;
+  color: var(--ink);
+}
+.theme-technical-metal .metal-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: #171411;
+  background-image: url('/themes/technical-metal-world.webp'), radial-gradient(ellipse at 54% 48%, #443126 0%, #231d19 45%, #0c0c0c 100%);
+  background-position: center;
+  background-size: cover;
+  transform: scale(1.015);
+}
+.theme-technical-metal .metal-scene::after {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgb(9 9 9 / 70%) 0%, rgb(12 11 10 / 32%) 37%, rgb(12 11 10 / 28%) 66%, rgb(7 7 7 / 70%) 100%),
+    linear-gradient(0deg, rgb(7 7 7 / 74%), transparent 46%, rgb(8 8 8 / 36%));
+  content: '';
+}
+.theme-technical-metal .metal-noise {
+  position: absolute;
+  inset: 0;
+  opacity: .15;
+  mix-blend-mode: screen;
+  background-image: repeating-linear-gradient(0deg, transparent 0 4px, rgb(228 218 203 / 7%) 5px);
+}
+.theme-technical-metal .app-content { width: 100%; }
+.theme-technical-metal .hero-countdown {
+  position: relative;
+  width: 72%;
+  margin-right: auto;
+}
+.theme-technical-metal .hero-countdown::before {
+  position: absolute;
+  z-index: -1;
+  inset: -12% 5%;
+  border-top: 1px solid rgb(236 210 177 / 16%);
+  border-bottom: 1px solid rgb(236 210 177 / 12%);
+  background: radial-gradient(ellipse, rgb(11 10 9 / 38%), transparent 72%);
+  content: '';
+  mask-image: linear-gradient(90deg, transparent, #000 17% 83%, transparent);
+}
+.theme-technical-metal .hero-countdown h1 {
+  max-width: 1120px;
+  font-family: 'Archivo Variable', Archivo, sans-serif;
+  font-weight: 800;
+  font-variation-settings: 'wdth' 110;
+  font-size: clamp(2.6rem, 7.6vw, 7.4rem);
+  letter-spacing: -.075em;
+  line-height: .91;
+  text-transform: uppercase;
+  text-shadow: 0 3px 24px rgb(0 0 0 / 90%);
+}
+.theme-technical-metal .countdown-kicker,
+.theme-technical-metal .time-label {
+  color: #edb47f;
+  font-family: 'Archivo Variable', Archivo, sans-serif;
+  font-size: .68rem;
+  font-weight: 650;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px #000;
+}
+.theme-technical-metal .countdown-kicker::before {
+  display: inline-block;
+  width: 28px;
+  height: 3px;
+  margin: 0 12px .2em 0;
+  background: #b74d31;
+  content: '';
+}
+.theme-technical-metal .time-grid { gap: 0; }
+.theme-technical-metal .time-unit {
+  min-height: clamp(126px, 17vw, 196px);
+  position: relative;
+  border: 0;
+  border-left: 1px solid rgb(222 197 166 / 29%);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.theme-technical-metal .time-unit:nth-child(4n + 1) { border-left: 0; }
+.theme-technical-metal .time-unit::before {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  width: 24px;
+  height: 2px;
+  background: #c45a38;
+  content: '';
+}
+.theme-technical-metal .time-unit:nth-child(4n + 1)::before { display: none; }
+.theme-technical-metal .time-value {
+  color: #f5eee1;
+  font-family: 'Archivo Variable', Archivo, sans-serif;
+  font-size: clamp(2.8rem, 6vw, 5.8rem);
+  font-weight: 780;
+  font-variation-settings: 'wdth' 105;
+  letter-spacing: -.09em;
+  text-shadow: 0 2px 14px #000;
+}
+.theme-technical-metal .target-date,
+.theme-technical-metal .header-button,
+.theme-technical-metal .user-menu {
+  border-color: var(--line);
+  border-radius: 2px;
+  background: rgb(12 11 10 / 70%);
+  color: var(--muted);
+  backdrop-filter: blur(10px);
+}
+.theme-technical-metal .app-brand .brand-mark,
+.theme-technical-metal .header-button b,
+.theme-technical-metal .user-menu > span {
+  border-radius: 1px;
+  background: linear-gradient(145deg, #e2b27e, #9b422e);
+  color: #100e0d;
+  box-shadow: none;
+}
+.theme-technical-metal .app-footer,
+.theme-technical-metal .text-button { color: #d2bda2; }
+.theme-swatch-technical-metal {
+  background-image: linear-gradient(90deg, rgb(13 12 11 / 56%), rgb(13 12 11 / 10%)), url('/themes/technical-metal-world.webp');
+  background-position: center;
+  background-size: cover;
+  color: #fff0dd;
+}
+.theme-swatch-technical-metal small { color: #f0deca; }
+.theme-technical-metal .theme-option-check { color: #17110e; }
+.dot-technical-metal { background: linear-gradient(145deg, #dfaa76, #2b201a 54%, #af4d31); }
+@media (max-width: 760px) {
+  .theme-technical-metal .hero-countdown { width: 100%; margin: 0 auto; }
+  .theme-technical-metal .metal-scene { background-position: 75% center; }
+  .theme-technical-metal .metal-scene::after {
+    background:
+      radial-gradient(ellipse 92% 62% at 50% 54%, rgb(8 8 8 / 47%), transparent 100%),
+      linear-gradient(90deg, rgb(7 7 7 / 68%), rgb(7 7 7 / 35%) 62%, rgb(7 7 7 / 9%) 100%),
+      linear-gradient(0deg, rgb(7 7 7 / 76%), transparent 72%);
+  }
+  .theme-technical-metal .time-unit { min-height: 112px; }
+  .theme-technical-metal .time-unit:nth-child(4n + 1) { border-left: 0; }
+  .theme-technical-metal .time-unit:nth-child(2n) { border-left: 1px solid rgb(222 197 166 / 29%); }
+  .theme-technical-metal .time-unit:nth-child(n + 3) { border-top: 1px solid rgb(222 197 166 / 23%); }
+  .theme-technical-metal .time-unit:nth-child(n + 3)::before { top: 0; }
+  .theme-technical-metal .time-unit:nth-child(3) { border-left: 0; }
+  .theme-technical-metal .time-unit:nth-child(n + 3):nth-child(4n + 1)::before { display: block; }
+  .theme-technical-metal .time-unit:nth-child(2n)::before { left: 12px; }
+  .theme-technical-metal .time-value { font-size: clamp(2.5rem, 13vw, 4.4rem); }
+  .theme-technical-metal .hero-countdown h1 { font-size: clamp(2.55rem, 12vw, 4.9rem); }
+}

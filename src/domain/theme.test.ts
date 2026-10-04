@@ -45,12 +45,14 @@ describe('getGlassVariables', () => {
 })
 
 describe('theme metadata', () => {
-  it('contains the four designed themes and falls back to Aurora', () => {
+  it('contains the six designed themes and falls back to Aurora', () => {
     expect(THEMES.map((theme) => theme.id)).toEqual([
       'aurora',
       'event-horizon',
       'hyperdrive',
       'valheim',
+      'clair-obscur',
+      'technical-metal',
     ])
     expect(themeById('unknown').id).toBe('aurora')
   })

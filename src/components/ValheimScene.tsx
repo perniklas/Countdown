@@ -5,13 +5,13 @@ const PINES = [24, 96, 168, 255, 340, 445, 550, 680, 790, 910, 1030, 1135, 1250,
 
 /** The supplied canvases share one frame: 1 is nearest and must always be on top. */
 const MEADOWS_LAYERS = [
-  { id: 7, movement: 5 },
-  { id: 6, movement: 10 },
-  { id: 5, movement: 18 },
+  { id: 7, movement: 70 },
+  { id: 6, movement: 54 },
+  { id: 5, movement: 40 },
   { id: 4, movement: 28 },
-  { id: 3, movement: 40 },
-  { id: 2, movement: 54 },
-  { id: 1, movement: 70 },
+  { id: 3, movement: 18 },
+  { id: 2, movement: 10 },
+  { id: 1, movement: 5 },
 ] as const
 
 function MeadowsPhotoScene() {

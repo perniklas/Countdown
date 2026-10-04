@@ -1,0 +1,155 @@
+/* Clair Obscur: a quiet, painterly Belle Epoque ruin at the edge of a painted world. */
+.theme-root.theme-clair-obscur {
+  --surface: rgb(24 18 19 / 48%);
+  --surface-strong: #261c1c;
+  --line: rgb(229 208 171 / 30%);
+  --ink: #fff4dc;
+  --muted: #d1bfa0;
+  --accent: #dfb779;
+  background: #211b1c;
+  color: var(--ink);
+}
+
+.theme-clair-obscur .clair-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: #282020;
+  background-image: url('/themes/clair-obscur-world.webp'), radial-gradient(ellipse at 58% 32%, #786253 0%, #40302e 34%, #17171c 82%);
+  background-position: center;
+  background-size: cover;
+  transform: scale(1.015);
+}
+.theme-clair-obscur .clair-scene::after {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgb(15 14 17 / 62%) 0%, rgb(17 15 17 / 25%) 38%, rgb(18 16 17 / 20%) 68%, rgb(12 12 15 / 53%) 100%),
+    linear-gradient(0deg, rgb(12 12 15 / 68%) 0%, transparent 42%, rgb(17 14 15 / 35%) 100%);
+  content: '';
+}
+.theme-clair-obscur .clair-petals {
+  position: absolute;
+  inset: -12%;
+  z-index: 1;
+  opacity: .3;
+  background-image:
+    radial-gradient(ellipse 3px 8px at 8% 10%, #e6c778 40%, transparent 46%),
+    radial-gradient(ellipse 4px 10px at 80% 16%, #e7d1a0 40%, transparent 46%),
+    radial-gradient(ellipse 3px 9px at 21% 73%, #d69a69 40%, transparent 46%),
+    radial-gradient(ellipse 3px 8px at 70% 84%, #eedcb1 40%, transparent 46%);
+  background-size: 370px 340px, 440px 410px, 510px 460px, 420px 480px;
+  animation: clair-petals 32s linear infinite;
+}
+.theme-clair-obscur .clair-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: .08;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.62' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.theme-clair-obscur .app-content { width: 100%; }
+.theme-clair-obscur .hero-countdown {
+  position: relative;
+  width: 64%;
+  margin-right: auto;
+}
+.theme-clair-obscur .hero-countdown::before {
+  position: absolute;
+  z-index: -1;
+  inset: -10% 8%;
+  border: 1px solid rgb(233 211 170 / 12%);
+  background: radial-gradient(ellipse, rgb(21 17 18 / 31%), transparent 70%);
+  content: '';
+  mask-image: linear-gradient(90deg, transparent, #000 20% 80%, transparent);
+}
+.theme-clair-obscur .hero-countdown h1 {
+  max-width: 1050px;
+  overflow-wrap: anywhere;
+  font-family: Cinzel, Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(2.7rem, 7vw, 7rem);
+  letter-spacing: -.04em;
+  line-height: 1.02;
+  text-shadow: 0 3px 22px rgb(0 0 0 / 80%), 0 0 54px rgb(35 20 15 / 60%);
+}
+.theme-clair-obscur .countdown-kicker,
+.theme-clair-obscur .time-label {
+  color: #f0d3a2;
+  font-family: Cinzel, Georgia, serif;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-shadow: 0 2px 12px #000;
+}
+.theme-clair-obscur .countdown-kicker::before,
+.theme-clair-obscur .countdown-kicker::after {
+  display: inline-block;
+  width: clamp(24px, 4vw, 58px);
+  height: 1px;
+  margin: 0 13px .28em;
+  background: linear-gradient(90deg, transparent, rgb(233 205 160 / 74%));
+  content: '';
+}
+.theme-clair-obscur .countdown-kicker::after { transform: scaleX(-1); }
+.theme-clair-obscur .time-grid { gap: clamp(8px, 1.4vw, 16px); }
+.theme-clair-obscur .time-unit {
+  min-height: clamp(126px, 17vw, 196px);
+  border: 0;
+  border-right: 1px solid rgb(241 215 172 / 29%);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.theme-clair-obscur .time-unit:last-child { border-right: 0; }
+.theme-clair-obscur .time-value {
+  color: #fff1d1;
+  font-family: Cinzel, Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -.045em;
+  text-shadow: 0 3px 14px #000;
+}
+.theme-clair-obscur .time-value[data-digits='3'] { font-size: clamp(2rem, 5.6vw, 5.8rem); }
+.theme-clair-obscur .time-value[data-digits='4'] { font-size: clamp(1.6rem, 4.7vw, 5.25rem); }
+.theme-clair-obscur .time-value[data-digits='5+'] { font-size: clamp(1.3rem, 3.6vw, 4rem); }
+.theme-clair-obscur .target-date,
+.theme-clair-obscur .header-button,
+.theme-clair-obscur .user-menu {
+  border-color: var(--line);
+  border-radius: 2px;
+  background: rgb(23 19 20 / 61%);
+  color: var(--muted);
+  backdrop-filter: blur(12px);
+}
+.theme-clair-obscur .app-brand .brand-mark,
+.theme-clair-obscur .header-button b,
+.theme-clair-obscur .user-menu > span {
+  border-radius: 50%;
+  background: linear-gradient(145deg, #efcf91, #a7654c);
+  color: #211718;
+}
+.theme-clair-obscur .app-footer,
+.theme-clair-obscur .text-button { color: #e1c9a7; }
+.theme-swatch-clair-obscur {
+  background-image: linear-gradient(90deg, rgb(18 14 16 / 48%), transparent), url('/themes/clair-obscur-world.webp');
+  background-position: center;
+  background-size: cover;
+  color: #fff1d8;
+}
+.theme-swatch-clair-obscur small { color: #fff1d8; }
+.theme-clair-obscur .theme-option-check { color: #2a1d1b; }
+.dot-clair-obscur { background: linear-gradient(140deg, #c3a17b, #352529 53%, #a25346); }
+@keyframes clair-petals { to { background-position: 24px 62px, -38px 78px, 44px -58px, -29px -48px; } }
+@media (max-width: 760px) {
+  .theme-clair-obscur .hero-countdown { width: 100%; margin: 0 auto; }
+  .theme-clair-obscur .clair-scene { background-position: 83% center; }
+  .theme-clair-obscur .clair-scene::after {
+    background:
+      radial-gradient(ellipse 92% 58% at 50% 54%, rgb(10 9 11 / 48%), transparent 100%),
+      linear-gradient(90deg, rgb(12 11 14 / 64%), rgb(12 11 14 / 36%) 58%, rgb(12 11 14 / 7%) 100%),
+      linear-gradient(0deg, rgb(12 12 15 / 66%), transparent 72%);
+  }
+  .theme-clair-obscur .hero-countdown h1 { font-size: clamp(2.6rem, 12vw, 4.8rem); }
+}
+@media (prefers-reduced-motion: reduce) { .theme-clair-obscur .clair-petals { animation: none; } }

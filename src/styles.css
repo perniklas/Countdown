@@ -2,6 +2,8 @@
 @import './styles/themes/event-horizon.css';
 @import './styles/themes/sundown.css';
 @import './styles/themes/valheim.css';
+@import './styles/themes/clair-obscur.css';
+@import './styles/themes/technical-metal.css';
 
 :root {
   font-family: 'Manrope Variable', Manrope, system-ui, sans-serif;
@@ -62,8 +64,8 @@ input:focus-visible {
   width: 36px;
   height: 36px;
   place-items: center;
-  border-radius: 12px;
-  background: #262040;
+  border-radius: 50% 50% 50% 14px;
+  background: linear-gradient(145deg, #e98070, #7fa6b5);
   color: #fff;
 }
 
@@ -146,9 +148,10 @@ input:focus-visible {
   place-items: center;
   padding: 32px 20px;
   background:
-    radial-gradient(circle at 20% 15%, #ffd9cb 0 12%, transparent 38%),
-    radial-gradient(circle at 82% 72%, #bce5f5 0 12%, transparent 38%),
-    linear-gradient(135deg, #faf4ef, #edeafb 52%, #edf7f8);
+    radial-gradient(ellipse 60% 65% at -8% 4%, #f39072 0 34%, transparent 35%),
+    radial-gradient(ellipse 55% 65% at 106% 89%, #809fc1 0 35%, transparent 36%),
+    radial-gradient(ellipse 50% 45% at 84% 10%, #b7e2cb 0 31%, transparent 32%),
+    linear-gradient(135deg, #faeee1, #d9e7d8 53%, #d9d9ec);
 }
 
 .auth-screen::before {

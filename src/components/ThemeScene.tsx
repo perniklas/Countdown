@@ -106,6 +106,17 @@ export function ThemeScene({ theme, biome = 'meadows' }: ThemeSceneProps) {
           <span className="glass-blob glass-blob-b" />
           <span className="glass-blob glass-blob-c" />
           <span className="glass-blob glass-blob-d" />
+          <svg className="daydream-ribbon" viewBox="0 0 1600 900" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="daydream-ribbon-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#b8ebd0" />
+                <stop offset="42%" stopColor="#86c9c5" />
+                <stop offset="72%" stopColor="#8fa8ce" />
+                <stop offset="100%" stopColor="#bd9ed0" />
+              </linearGradient>
+            </defs>
+            <path d="M-90 555C210 345 460 686 724 542c238-130 208-358 511-318 150 20 254 102 455 13v390c-236 113-391 73-542 8-247-106-310 110-511 238-269 170-500-81-727 111Z" fill="url(#daydream-ribbon-gradient)" />
+          </svg>
           <span className="glass-grain" />
         </div>
       )
@@ -178,8 +189,22 @@ export function ThemeScene({ theme, biome = 'meadows' }: ThemeSceneProps) {
     case 'valheim':
       return <ValheimScene biome={biome} />
 
+    case 'clair-obscur':
+      return (
+        <div className="clair-scene">
+          <span className="clair-petals" />
+          <span className="clair-grain" />
+        </div>
+      )
+
+    case 'technical-metal':
+      return (
+        <div className="metal-scene">
+          <span className="metal-noise" />
+        </div>
+      )
+
     default:
       return null
   }
 }
-

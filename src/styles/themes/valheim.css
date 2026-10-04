@@ -239,43 +239,76 @@
 
 /* Weathered timber, brass edges and generous, readable numerals. */
 .theme-valheim .hero-countdown h1 {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: Cinzel, Georgia, 'Times New Roman', serif;
   font-size: clamp(2.6rem, 6.7vw, 6.3rem);
-  font-weight: 400;
-  letter-spacing: -.045em;
+  font-weight: 500;
+  letter-spacing: -.055em;
   line-height: 1.04;
   text-shadow: 0 2px 3px #162c23, 0 4px 32px #162c2380;
 }
 .theme-valheim .countdown-kicker {
   color: var(--ink);
-  letter-spacing: .24em;
+  font-family: Cinzel, Georgia, 'Times New Roman', serif;
+  font-weight: 500;
+  letter-spacing: .19em;
   text-shadow: 0 2px 8px #102219;
 }
 .theme-valheim .time-unit {
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  background:
-    linear-gradient(100deg, transparent, #f0dbad08 45%, transparent),
-    var(--surface);
-  box-shadow: inset 0 0 0 5px #0d211c18, inset 0 1px #ffefc62b, 0 14px 35px #14221b26;
-  backdrop-filter: blur(12px);
+  isolation: isolate;
+  overflow: visible;
+  padding: 24px 18px;
+  border: 0;
+  border-radius: clamp(20px, 3vw, 32px);
+  background: #00000075;
+  box-shadow: inset 0 0 0 1px rgb(255 231 170 / 8%), 0 16px 32px #14221b55;
+  backdrop-filter: blur(2px);
 }
+.theme-valheim .time-unit::before,
 .theme-valheim .time-unit::after {
   position: absolute;
-  inset: 6px;
-  border: 1px solid var(--line);
-  opacity: .45;
+  z-index: -1;
+  border-radius: 2px;
+  box-shadow: inset 0 1px rgb(255 222 155 / 38%), inset 0 -2px rgb(42 21 10 / 65%), 0 2px 4px rgb(7 12 8 / 62%);
   content: '';
   pointer-events: none;
 }
-.theme-valheim .time-value {
-  line-height: 1.12;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-weight: 400;
-  letter-spacing: -.05em;
-  text-shadow: 0 2px 12px #0003;
+/* Straight top and bottom planks with linear grain and a worn upper edge. */
+.theme-valheim .time-unit::before {
+  inset: -7px 4px;
+  background:
+    repeating-linear-gradient(94deg, rgb(54 28 13 / 0%) 0 10px, rgb(43 21 9 / 42%) 11px 13px, rgb(207 141 78 / 20%) 14px 16px) top / 100% 14px no-repeat,
+    linear-gradient(#a56b38, #623518 48%, #3e210e) top / 100% 14px no-repeat,
+    repeating-linear-gradient(86deg, rgb(54 28 13 / 0%) 0 10px, rgb(43 21 9 / 42%) 11px 13px, rgb(207 141 78 / 20%) 14px 16px) bottom / 100% 14px no-repeat,
+    linear-gradient(#3e210e, #623518 52%, #a56b38) bottom / 100% 14px no-repeat;
 }
-.theme-valheim .time-label { color: var(--accent); font-weight: 500; letter-spacing: .22em; }
+/* Straight side planks complete the rectangular wooden frame. */
+.theme-valheim .time-unit::after {
+  inset: 4px -7px;
+  background:
+    repeating-linear-gradient(6deg, rgb(54 28 13 / 0%) 0 10px, rgb(43 21 9 / 42%) 11px 13px, rgb(207 141 78 / 20%) 14px 16px) left / 14px 100% no-repeat,
+    linear-gradient(90deg, #a56b38, #623518 48%, #3e210e) left / 14px 100% no-repeat,
+    repeating-linear-gradient(174deg, rgb(54 28 13 / 0%) 0 10px, rgb(43 21 9 / 42%) 11px 13px, rgb(207 141 78 / 20%) 14px 16px) right / 14px 100% no-repeat,
+    linear-gradient(90deg, #3e210e, #623518 52%, #a56b38) right / 14px 100% no-repeat;
+}
+.theme-valheim .time-value,
+.theme-valheim .time-label {
+  position: relative;
+  z-index: 1;
+}
+.theme-valheim .time-value {
+  color: #fff1c8;
+  line-height: 1.06;
+  font-family: Cinzel, Georgia, 'Times New Roman', serif;
+  font-weight: 500;
+  letter-spacing: -.075em;
+  text-shadow: 0 2px 1px #080d08, 0 0 16px rgb(255 220 145 / 12%);
+}
+.theme-valheim .time-label {
+  color: var(--accent);
+  font-family: Cinzel, Georgia, 'Times New Roman', serif;
+  font-weight: 500;
+  letter-spacing: .16em;
+}
 .theme-valheim .target-date,
 .theme-valheim .hero-edit {
   color: var(--ink);
