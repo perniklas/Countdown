@@ -125,15 +125,17 @@
 }
 
 /* ---------- the black hole (Gargantua) ---------- */
-/* Compact shadow (~16vw), a thick white-to-orange lensed ring hugging it,
-   and a flat accretion disc that passes behind the shadow's top and in
-   front of its lower third. */
+/* A black shadow (21% of the scene) wrapped by the lensed image of the disc:
+   a ring that is thick over the top and thin underneath, plus a faint outer
+   arch. A flat, thin accretion disc runs edge-on across the whole scene and
+   crosses in front of the shadow. Every layer sits at its own depth so the
+   pointer parallax separates them. */
 
 .theme-event-horizon .eh-hole {
   position: absolute;
   top: 48%;
   left: 50%;
-  width: min(80vw, 760px);
+  width: min(88vw, 940px);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   perspective: 1100px;
@@ -146,60 +148,48 @@
   top: 50%;
   left: 50%;
   z-index: 1;
-  width: 120%;
-  height: 120%;
+  width: 110%;
+  height: 90%;
   border-radius: 50%;
   transform: translate(-50%, -50%) translate3d(var(--eh-halo-x, 0px), var(--eh-halo-y, 0px), -90px);
   background: radial-gradient(
-    circle,
-    rgb(255 185 80 / 10%) 0%,
-    rgb(230 110 20 / 5%) 30%,
-    rgb(120 40 5 / 2%) 50%,
-    transparent 68%
+    closest-side,
+    rgb(255 190 100 / 16%) 0%,
+    rgb(235 120 30 / 8%) 35%,
+    rgb(120 40 5 / 3%) 62%,
+    transparent 100%
   );
-  filter: blur(40px);
+  filter: blur(36px);
   pointer-events: none;
   transition: transform 0.22s cubic-bezier(0.15, 0.85, 0.35, 1);
   will-change: transform;
 }
 
-/* 2. Accretion disc — far half, sits behind the shadow.
-   Colour is radial from the ellipse's own centre (the black hole), which
-   naturally gives a white-hot core fading to gold/orange/brown outward in
-   every direction, tapering the disc to nothing at its thin left/right tips. */
+/* 2 + 6. Accretion disc: a thin ellipse, white-hot in the middle, cooling to
+   orange and tapering to nothing at the tips. The back copy is a wider, dimmer
+   glow; the front copy is the crisp band crossing the shadow. */
 .theme-event-horizon .eh-disc-back,
 .theme-event-horizon .eh-disc-front {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 97%;
-  height: 18%;
   border-radius: 50%;
-  background:
-    repeating-radial-gradient(
-      closest-side ellipse,
-      rgba(20, 7, 2, 0.16) 0%,
-      transparent 1.6%,
-      transparent 3.4%,
-      rgba(20, 7, 2, 0.12) 5%
-    ),
-    radial-gradient(
-      closest-side ellipse,
-      transparent 0 22%,
-      rgba(255, 255, 255, 0.9) 27%,
-      #ffd9a0 32%,
-      #f09030 42%,
-      #8a3d10 58%,
-      #4a1d05 76%,
-      transparent 96%
-    );
   pointer-events: none;
 }
 
 .theme-event-horizon .eh-disc-back {
   z-index: 2;
+  width: 118%;
+  height: 12%;
+  background: radial-gradient(
+    closest-side ellipse,
+    rgb(255 214 150 / 70%) 0%,
+    rgb(240 140 50 / 55%) 28%,
+    rgb(150 60 15 / 32%) 58%,
+    transparent 100%
+  );
+  filter: blur(9px);
   transform: translate(-50%, -50%)
-    rotate(-4deg)
     translate3d(var(--eh-disc-x, 0px), var(--eh-disc-y, 0px), -40px)
     rotateX(var(--eh-disc-tilt-x, 0deg))
     rotateY(calc(var(--eh-disc-tilt-y, 0deg) * 0.15));
@@ -207,39 +197,89 @@
   will-change: transform;
 }
 
-/* 3. Lensed ring — thick white-to-orange band hugging the shadow */
+.theme-event-horizon .eh-disc-front {
+  z-index: 6;
+  width: 104%;
+  height: 5.5%;
+  background:
+    radial-gradient(closest-side ellipse, #ffffff 0%, rgb(255 244 214 / 95%) 16%, transparent 46%),
+    radial-gradient(
+      closest-side ellipse,
+      #fff6dc 0%,
+      #ffd08a 24%,
+      #f59a3a 42%,
+      #c8571a 60%,
+      #5e2408 80%,
+      transparent 100%
+    );
+  /* Doppler beaming: the approaching (left) side runs hotter than the receding one */
+  mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgb(0 0 0 / 62%) 100%);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgb(0 0 0 / 62%) 100%);
+  filter: blur(0.6px) drop-shadow(0 0 10px rgb(255 160 60 / 45%));
+  transform: translate(-50%, -50%)
+    translate3d(var(--eh-disc-x, 0px), var(--eh-disc-y, 0px), 40px)
+    rotateX(var(--eh-disc-tilt-x, 0deg))
+    rotateY(calc(var(--eh-disc-tilt-y, 0deg) * 0.15));
+  transition: transform 0.18s cubic-bezier(0.15, 0.85, 0.35, 1);
+  will-change: transform;
+}
+
+/* 3. Lensed image of the disc. A filled disc nudged upward and shaded from the
+   shadow's own centre, so the visible band is thick above and thin below. */
 .theme-event-horizon .eh-lensed-ring {
   position: absolute;
-  top: 50%;
+  top: 48.2%;
   left: 50%;
   z-index: 3;
-  width: 30%;
+  width: 28.4%;
   aspect-ratio: 1;
   border-radius: 50%;
   transform: translate(-50%, -50%) translate3d(var(--eh-ring-x, 0px), var(--eh-ring-y, 0px), -15px);
   background: radial-gradient(
-    closest-side circle,
+    circle farthest-side at 50% 56.3%,
     transparent 0 66%,
     #ffffff 68%,
-    #fff3cf 74%,
-    #ffc06a 84%,
-    #e8761a 92%,
-    rgba(150, 50, 5, 0.35) 97%,
+    #fff3d2 74%,
+    #ffc468 84%,
+    #ec7a1c 93%,
+    rgb(150 50 8 / 40%) 98%,
     transparent 100%
   );
-  filter: blur(0.8px) drop-shadow(0 0 18px rgb(255 165 60 / 55%));
+  filter: blur(0.9px) drop-shadow(0 0 16px rgb(255 160 55 / 50%));
   transition: transform 0.2s cubic-bezier(0.15, 0.85, 0.35, 1);
   will-change: transform;
   pointer-events: none;
 }
 
-/* 4. Event Horizon Shadow (Singularity Core) */
+/* Outer arch: the same disc imaged again, wider and fainter, over the top only */
+.theme-event-horizon .eh-lensed-ring::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 112%;
+  border-radius: 50%;
+  content: '';
+  transform: translate(-50%, -62%);
+  background: radial-gradient(
+    closest-side ellipse,
+    transparent 0 88%,
+    rgb(255 190 100 / 55%) 94%,
+    rgb(220 100 25 / 25%) 98%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(to bottom, #000 0 48%, transparent 62%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0 48%, transparent 62%);
+  filter: blur(2px);
+}
+
+/* 4. Event horizon shadow */
 .theme-event-horizon .eh-singularity {
   position: absolute;
   top: 50%;
   left: 50%;
   z-index: 4;
-  width: 20%;
+  width: 21%;
   aspect-ratio: 1;
   border-radius: 50%;
   transform: translate(-50%, -50%) translate3d(var(--eh-core-x, 0px), var(--eh-core-y, 0px), 0px);
@@ -256,40 +296,26 @@
   background: #000000;
 }
 
-/* 5. The Photon Sphere / Einstein Ring — thin ultra-bright rim */
+/* 5. Photon ring: a thin, ultra-bright rim on the shadow's edge */
 .theme-event-horizon .eh-photon-ring {
   position: absolute;
   top: 50%;
   left: 50%;
   z-index: 5;
-  width: 20.6%;
+  width: 21.4%;
   aspect-ratio: 1;
   border-radius: 50%;
   transform: translate(-50%, -50%) translate3d(var(--eh-ring-x, 0px), var(--eh-ring-y, 0px), 15px);
   border: 1.5px solid rgba(255, 255, 255, 0.96);
   box-shadow:
-    0 0 5px 1.5px #ffffff,
-    0 0 12px 3px #ffe29a,
-    0 0 26px 6px #ff9826,
-    inset 0 0 5px 1px rgba(255, 255, 255, 0.95);
+    0 0 4px 1px #ffffff,
+    0 0 10px 2px #ffe29a,
+    0 0 22px 4px #ff9826,
+    inset 0 0 4px 1px rgba(255, 255, 255, 0.9);
   animation: eh-photon-pulse 5s ease-in-out infinite alternate;
   transition: transform 0.2s cubic-bezier(0.15, 0.85, 0.35, 1);
   will-change: transform;
   pointer-events: none;
-}
-
-/* 6. Accretion disc — near half, crosses the shadow's lower third */
-.theme-event-horizon .eh-disc-front {
-  z-index: 6;
-  mask-image: linear-gradient(to bottom, transparent 0 54%, #000 70%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0 54%, #000 70%);
-  transform: translate(-50%, -50%)
-    rotate(-4deg)
-    translate3d(var(--eh-disc-x, 0px), var(--eh-disc-y, 0px), 40px)
-    rotateX(var(--eh-disc-tilt-x, 0deg))
-    rotateY(calc(var(--eh-disc-tilt-y, 0deg) * 0.15));
-  transition: transform 0.18s cubic-bezier(0.15, 0.85, 0.35, 1);
-  will-change: transform;
 }
 
 /* ---------- typography ---------- */
