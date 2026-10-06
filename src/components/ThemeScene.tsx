@@ -50,9 +50,9 @@ const createBackgroundStars = (count: number): BackgroundStar[] => {
     let lensAngle = 0
     let arcStretch = 1
 
-    // Black hole center is at (50%, 48%)
+    // Black hole center is at (50%, 54%)
     const dx = x - 50
-    const dy = (y - 48) * 1.25 // spherical aspect ratio correction
+    const dy = (y - 54) * 1.25 // spherical aspect ratio correction
     const dist = Math.hypot(dx, dy)
     const shadowRadius = 15.5 // shadow boundary %
 
@@ -61,7 +61,7 @@ const createBackgroundStars = (count: number): BackgroundStar[] => {
       const angle = Math.atan2(dy, dx)
       const deflectedDist = shadowRadius + 1.2 + random() * 8.5
       x = Math.round((50 + Math.cos(angle) * deflectedDist) * 100) / 100
-      y = Math.round((48 + (Math.sin(angle) * deflectedDist) / 1.25) * 100) / 100
+      y = Math.round((54 + (Math.sin(angle) * deflectedDist) / 1.25) * 100) / 100
       isLensed = true
       lensAngle = Math.round((angle * (180 / Math.PI) + 90) * 10) / 10
       arcStretch = Math.round((1.8 + random() * 1.4) * 100) / 100
@@ -148,9 +148,7 @@ export function ThemeScene({ theme, biome = 'meadows' }: ThemeSceneProps) {
           </div>
           <span className="eh-dust" />
           <div className="eh-hole">
-            <span className="eh-bloom" />
             <div className="eh-disc-back" />
-            <span className="eh-lensed-ring" />
             <div className="eh-singularity">
               <span className="eh-sphere" />
             </div>
